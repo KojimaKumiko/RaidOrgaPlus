@@ -1,23 +1,10 @@
 import React, { useState } from "react";
-import logo from "./logo.svg";
 import { styled } from "@mui/material/styles";
-import {
-	Box,
-	AppBar,
-	Toolbar,
-	IconButton,
-	Typography,
-	Drawer,
-	List,
-	ListItem,
-	ListItemIcon,
-	ListItemText,
-	CssBaseline
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import { Box, Toolbar, Typography } from "@mui/material";
 import "./App.css";
+import AppToolbar from "./components/AppToolbar";
+import MenuDrawer from "./components/MenuDrawer";
+import LoginPage from "./pages/LoginPage";
 
 const drawerWidth = 240;
 
@@ -42,54 +29,15 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
 
 function App() {
 	const [open, setOpen] = useState(true);
+	const [showContent, setShowContent] = useState(false);
 
 	const handleDrawer = () => {
 		setOpen(!open);
 	};
 
-	return (
-		<Box sx={{ display: "flex" }}>
-			<AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-				<Toolbar>
-					<IconButton
-						size="large"
-						edge="start"
-						color="inherit"
-						aria-label="handle drawer"
-						onClick={handleDrawer}
-						sx={{ mr: 2 }}>
-						<MenuIcon />
-					</IconButton>
-					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-						RaidOrga+
-					</Typography>
-				</Toolbar>
-			</AppBar>
-			<Drawer
-				sx={{
-					width: drawerWidth,
-					flexShrink: 0,
-					[`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box" },
-				}}
-				open={open}
-				anchor="left"
-				variant="persistent">
-				<Toolbar />
-				<Box sx={{ overflow: "auto" }}>
-					<List>
-						{["Home", "Meine Raids", "Profil", "Einstellungen", "Hilfe", "Moderation"].map(
-							(text, index) => (
-								<ListItem button key={text}>
-									<ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-									<ListItemText primary={text} />
-								</ListItem>
-							)
-						)}
-					</List>
-				</Box>
-			</Drawer>
-			<Main open={open}>
-				<Toolbar />
+	const showMainPage = () => {
+		return (
+			<span>
 				<Typography paragraph>
 					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
 					et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum facilisis leo vel. Risus at
@@ -112,6 +60,17 @@ function App() {
 					eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam
 					ultrices sagittis orci a.
 				</Typography>
+			</span>
+		)
+	}
+
+	return (
+		<Box sx={{ display: "flex" }}>
+			<AppToolbar onClick={handleDrawer} />
+			<MenuDrawer drawerWidth={drawerWidth} open={open} visible={showContent} />
+			<Main open={open}>
+				<Toolbar />
+				{ showContent ? showMainPage() : <LoginPage /> }
 			</Main>
 		</Box>
 	);

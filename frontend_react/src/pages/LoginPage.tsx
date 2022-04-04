@@ -1,0 +1,143 @@
+import { useState } from "react";
+import { Box, TextField, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
+
+const initialFormValues = {
+	accountName: "",
+	password: "",
+	repeatPassword: "",
+	email: "",
+	name: "",
+	formSubmitted: false,
+	success: false,
+};
+
+const useFormControls = () => {
+	const [values, setValues] = useState(initialFormValues);
+	const [errors, setErrors] = useState({} as any);
+	const validate: any = (fieldValues = values) => {
+		let temp: any = { ...errors };
+
+		if ("accountName" in fieldValues) {
+			temp.accountName = fieldValues.accountName ? "" : "Bitte gib deinen Accountnamen an.";
+			if (fieldValues.accountName) {
+				temp.accountName = /^[a-zA-Z\s]+\.\d{4}$/.test(fieldValues.accountName)
+					? ""
+					: "Bitte gib einen gültigen Accountnamen an.";
+			}
+		}
+
+		if ("name" in fieldValues) {
+			temp.name = fieldValues.name ? "" : "Bitte gib deinen Anzeigenamen an.";
+		}
+
+		if ("email" in fieldValues) {
+			temp.email = fieldValues.email ? "" : "Bitte gib eine E-Mail-Adresse an.";
+			if (fieldValues.email) {
+				temp.email =
+					/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(\.[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+)+$/.test(
+						fieldValues.email
+					)
+						? ""
+						: "Bitte gib eine gültige E-Mail-Adresse an.";
+			}
+		}
+
+		if ("password" in fieldValues) {
+			temp.password = fieldValues.password ? "" : "Bitte gib dein Passwort an";
+		}
+
+		if ("repeatPassword" in fieldValues) {
+			temp.repeatPassword =
+				fieldValues.repeatPassword === values.password ? "" : "Passwörter müssen übereinstimmen!";
+		}
+
+		setErrors({ ...temp });
+	};
+
+	const handleInputValue = (e: EventTarget & (HTMLInputElement | HTMLTextAreaElement)) => {
+		const { name, value } = e;
+		setValues({
+			...values,
+			[name]: value,
+		});
+		validate({ [name]: value });
+	};
+
+	const handleFormSubmit = async (e: any) => {};
+
+	const formIsValid = (): any => {};
+
+	return { handleInputValue, handleFormSubmit, formIsValid, errors };
+};
+
+const LoginPage = () => {
+	const [registerMode, setRegisterMode] = useState(false);
+	const { handleInputValue, errors } = useFormControls();
+	const inputFieldValues = [
+		{
+			name: "accountName",
+			label: "Accountname",
+			id: "account-name",
+			type: "text",
+		},
+		{
+			name: "name",
+			label: "Anzeigename",
+			id: "name",
+			type: "text",
+			registerMode: true,
+		},
+		{
+			name: "email",
+			label: "E-Mail-Adresse",
+			id: "email",
+			type: "text",
+			registerMode: true,
+		},
+		{
+			name: "password",
+			label: "Passwort",
+			id: "password",
+			type: "password",
+		},
+		{
+			name: "repeatPassword",
+			label: "Passwort wiederholen",
+			id: "repeat-password",
+			type: "password",
+			registerMode: true,
+		},
+	];
+
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setRegisterMode(event.target.checked);
+	}
+
+	return (
+		<Box component="form" sx={{ "& .MuiTextField-root": { m: 1 } }} noValidate autoComplete="off">
+			{inputFieldValues.map((value, index) => {
+				const styles = [ value.registerMode && !registerMode && { "display": "none" } ];
+				return (
+					<TextField
+						required
+						fullWidth
+						variant="standard"
+						key={index}
+						name={value.name}
+						label={value.label}
+						type={value.type}
+						sx={styles}
+						onBlur={(e) => handleInputValue(e.target)}
+						onChange={(e) => handleInputValue(e.target)}
+						{...(errors[value.name] && { error: true, helperText: errors[value.name] })}
+					/>
+				);
+			})}
+			<FormGroup>
+				<FormControlLabel control={<Checkbox checked={registerMode} onChange={handleChange} /> } label="Neu registrieren?" />
+			</FormGroup>
+		</Box>
+	);
+};
+
+export default LoginPage;

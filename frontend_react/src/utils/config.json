@@ -1,0 +1,4 @@
+{
+	"development": "http://localhost:5001/#/",
+	"production": "https://orga.rising-light.de/#/"
+}

@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Box, TextField, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
+import { Box, TextField, FormGroup, FormControlLabel, Checkbox, Button } from "@mui/material";
+import Spinner from "../components/Spinner";
+import { login as loginUser } from "../services/endpoints/user";
+import { setCookie } from "../services/cookies";
 
 const initialFormValues = {
 	accountName: "",
@@ -63,16 +66,29 @@ const useFormControls = () => {
 		validate({ [name]: value });
 	};
 
-	const handleFormSubmit = async (e: any) => {};
+	const handleFormSubmit = async (cb: (fieldValues: typeof values) => void) => {
+		cb(values);
+	};
 
-	const formIsValid = (): any => {};
+	const formIsValid = (registerMode: boolean, fieldValues = values) => {
+		let isValid: boolean =
+			!!fieldValues.accountName && !!fieldValues.password && !!Object.values(errors).every((x) => x === "");
+
+		if (registerMode) {
+			isValid = isValid && !!fieldValues.email && !!fieldValues.name && !!fieldValues.repeatPassword;
+		}
+
+		return isValid;
+	};
 
 	return { handleInputValue, handleFormSubmit, formIsValid, errors };
 };
 
 const LoginPage = () => {
 	const [registerMode, setRegisterMode] = useState(false);
-	const { handleInputValue, errors } = useFormControls();
+	const [buttonText, setButtonText] = useState("Anmelden");
+	const [loading, setLoading] = useState(false);
+	const { handleInputValue, errors, formIsValid, handleFormSubmit } = useFormControls();
 	const inputFieldValues = [
 		{
 			name: "accountName",
@@ -110,13 +126,41 @@ const LoginPage = () => {
 	];
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setRegisterMode(event.target.checked);
-	}
+		const value = event.target.checked;
+		setRegisterMode(value);
+
+		if (value) {
+			setButtonText("Registrieren");
+		} else {
+			setButtonText("Anmelden");
+		}
+	};
+
+	const handleClick = async () => {
+		setLoading(true);
+		handleFormSubmit(values => {
+			if (registerMode) {
+			} else {
+				login(values.accountName, values.password);
+			}
+		});
+	};
+
+	const login = async (accname: string, password: string) => {
+		const response = await loginUser(accname, password);
+
+		if (response === "wrongUsername") {
+		} else if (response === "wrongPassword") {
+		} else {
+			setCookie("session", response);
+			window.location.href = "/";
+		}
+	};
 
 	return (
 		<Box component="form" sx={{ "& .MuiTextField-root": { m: 1 } }} noValidate autoComplete="off">
 			{inputFieldValues.map((value, index) => {
-				const styles = [ value.registerMode && !registerMode && { "display": "none" } ];
+				const styles = [value.registerMode && !registerMode && { display: "none" }];
 				return (
 					<TextField
 						required
@@ -133,9 +177,16 @@ const LoginPage = () => {
 					/>
 				);
 			})}
+			<Button variant="text" onClick={handleClick} disabled={!formIsValid(registerMode)}>
+				{buttonText}
+			</Button>
 			<FormGroup>
-				<FormControlLabel control={<Checkbox checked={registerMode} onChange={handleChange} /> } label="Neu registrieren?" />
+				<FormControlLabel
+					control={<Checkbox checked={registerMode} onChange={handleChange} />}
+					label="Neu registrieren?"
+				/>
 			</FormGroup>
+			<Spinner loading={loading} />
 		</Box>
 	);
 };

@@ -5,6 +5,7 @@ import "./App.css";
 import AppToolbar from "./components/AppToolbar";
 import MenuDrawer from "./components/MenuDrawer";
 import LoginPage from "./pages/LoginPage";
+import Counter from "./components/Counter/Counter";
 
 const drawerWidth = 240;
 

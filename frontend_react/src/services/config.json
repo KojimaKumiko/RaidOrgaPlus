@@ -1,0 +1,4 @@
+{
+  "development": "http://localhost:8081/",
+  "production": "https://sv.rising-light.de:8080/"
+}

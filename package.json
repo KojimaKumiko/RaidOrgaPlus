@@ -1,6 +1,6 @@
 {
 	"name": "RaidOrgaPlus",
-	"version": "0.1.0",
+	"version": "2.4.0",
 	"scripts": {
 		"postinstall": "(cd models && npm install); (cd frontend && npm install); (cd backend && npm install); (cd discord && npm install)",
 		"build": "cd models && npm run build && cd ../frontend && npm run build",

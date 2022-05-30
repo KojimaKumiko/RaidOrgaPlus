@@ -2,6 +2,28 @@ import { Changelog } from "@/models/Changelog";
 
 export const changelogs: Changelog[] = [
 	{
+		version: "v2.4.0",
+		release: "21.05.2022",
+		features: [
+			"Strike Missionen hinzugefügt.",
+			"Quickness und Alacrity Icons für die Aufstellung hinzugefügt.",
+			"Neuer alter Bot-Befehl: /termine aufstellung [termin] [boss] [raid]",
+			"Mit dem Befehl kann die Aufstellung für einen kompletten Termin oder für einzelne Bosse ausgegeben werden.",
+			"Credits für die neuen Icons - @Mo | AoPle.7326"
+		],
+		subversions: [
+			{
+				version: "v2.4.1",
+				release: "30.05.2022",
+				features: [
+					"Quickness und Alacrity Icons den Profil-Builds hinzugefügt.",
+					"Das Support-Icon als auswahl entfernt.",
+					"Profil-Builds können nur noch dann gespeichert werden, wenn die Klasse und alle verwendete Rollen ausgewählt sind."
+				],
+			}
+		]
+	},
+	{
 		version: "v2.3.0",
 		release: "20.11.2021",
 		features: [

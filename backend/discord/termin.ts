@@ -12,7 +12,7 @@ const terminTimeouts: NrDictionary<NodeJS.Timeout> = {};
 const baseTimeoutTime = 1000 * 60;
 
 /**
- * Updates the termin embed in Discord after a minute of waiting
+ * Updates the termin embed in Discord after roughly a minute of waiting
  * @param termin the Id of the Termin which was updated.
  */
 export function updateTerminEmbed(termin: number): void {

@@ -48,7 +48,7 @@
 					return this.blankoElements.find(e => e.pos === position);
 				}
 			},
-			copyBlanko: function(info: any): void {
+			copyBlanko: function(info: number[]): void {
 				this.$emit("copyBlanko", info);
 			},
 		},

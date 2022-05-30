@@ -13,3 +13,4 @@ core/*
 **/build/
 frontend/src/components/legal/data.json
 googlefd757d5932b1a0b1.html
+*.zip

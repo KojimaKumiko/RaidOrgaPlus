@@ -17,5 +17,5 @@ export function miscIcon(icon) {
 }
 
 export function linkBuilder(subfolder, icon) {
-    return `${config.production}icons/${subfolder}/${icon.toLowerCase()}.png`;
+    return `${config[process.env.NODE_ENV]}icons/${subfolder}/${icon.toLowerCase()}.png`;
 }

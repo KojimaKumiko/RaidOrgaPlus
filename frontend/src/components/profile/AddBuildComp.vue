@@ -45,7 +45,7 @@
 			<v-btn @click="closeDialog">
 				Abbr.
 			</v-btn>
-			<v-btn @click="addBuild">
+			<v-btn @click="addBuild" :disabled="!canAdd">
 				Hinzufügen
 			</v-btn>
 		</v-card-actions>
@@ -53,12 +53,13 @@
 </template>
 
 <script lang="ts">
-	import { Build } from "models/Build";
-	import { Role } from "models/Rolle";
 	import Vue from "vue";
 	import MenuClassComp from "../aufstellung/MenuClassComp.vue";
 	import MenuRoleComp from "../aufstellung/MenuRoleComp.vue";
 	import BuildChipComp from "./BuildChipComp.vue";
+	import { Build } from "models/Build";
+	import { Class } from "models/Klasse";
+	import { Role } from "models/Rolle";
 
 	export default Vue.extend({
 		name: "AddBuildComp",
@@ -70,8 +71,13 @@
 			selected: null as number,
 		}),
 		components: { BuildChipComp, MenuRoleComp, MenuClassComp },
+		computed: {
+			canAdd: function(): boolean {
+				return this.build && this.build.class && this.build.role && !this.build.role.some(r => r.id === 0);
+			},
+		},
 		methods: {
-			pickClass: function(clss: any): void {
+			pickClass: function(clss: Class): void {
 				this.build.class = clss;
 			},
 			pickRole: function(role: Role): void {

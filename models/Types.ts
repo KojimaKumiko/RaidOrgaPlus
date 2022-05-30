@@ -4,6 +4,7 @@ import { Raid } from "./Raid";
 import { Role } from "./Rolle";
 import { Spieler, SpielerRaid, SpielerTermin } from "./Spieler";
 import { Termin } from "./Termin";
+import { Wing } from "./Wing";
 
 export type element = {
 	aufstellung: number;
@@ -69,4 +70,8 @@ export type Response<T = any> = {
 
 export type defaultExport<T> = {
 	default: T;
+}
+
+export type wingStrike = Wing & {
+	isStrike: boolean;
 }

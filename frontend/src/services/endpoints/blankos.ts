@@ -23,6 +23,6 @@ function setElement(raid: any, enc: any, position: any, value: any, type: any): 
     return con('blankos', 'post', {raid, enc, position, value, type}, true);
 }
 
-function copyFromTo(raid: any, from: any, to: any): Promise<any> {
+function copyFromTo(raid: number, from: number, to: number): Promise<blankoElement[]> {
     return con('blankos/copy', 'post', {raid, from, to}, true);
 }

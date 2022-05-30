@@ -5,7 +5,7 @@ import { Authentication } from "models/Auth";
 import { OkPacket } from "mysql";
 import { ControllerEndpoint } from "models/ControllerEndpoint";
 import { blankoElement } from "models/Types";
-import { ROLES, Role } from "../../../models/Rolle";
+import { mapRoleStringToRoles } from "../../util/misc";
 
 const endpoints: ControllerEndpoint[] = [
 	{ function: getElements, path: "", method: "get", authed: true },
@@ -78,16 +78,7 @@ async function copyFromTo(req: Request, authentication: Authentication): Promise
 function setRoles(value: blankoElement) {
 	if (value.roleIds) {
 		const roleIds = value.roleIds.split(",");
-		value.roles = roleIds.map((r) => {
-			let role: Role = { id: 0, name: "", abbr: "" };
-			const id = Number(r) - 1;
-
-			if (id > -1) {
-				role = ROLES[id];
-			}
-
-			return role;
-		});
+		value.roles = roleIds.map(mapRoleStringToRoles);
 	} else {
 		value.roles = [];
 	}

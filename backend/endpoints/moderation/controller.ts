@@ -1,40 +1,59 @@
-import { Request } from 'express';
+import { Request } from "express";
 import { OkPacket } from "mysql";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
 
-import * as _roles from '../../authentication/role';
-import * as _users from './users';
-import * as _raids from './raids';
-import * as _invites from '../raids/invites';
-import * as _discord from '../../discord/discord';
-import * as _guild from '../../gw2api/guilds';
-import { getAllExtraAccounts } from '../users/user';
-import { Authentication } from 'models/Auth';
-import { ControllerEndpoint } from 'models/ControllerEndpoint';
-import { Spieler } from 'models/Spieler';
-import { ModRaid } from '../../../models/Raid';
-import { User } from '../../../models/Types';
-import { UserRole } from '../../../models/Enums';
+import * as _roles from "../../authentication/role";
+import * as _users from "./users";
+import * as _raids from "./raids";
+import * as _invites from "../raids/invites";
+import * as _discord from "../../discord/discord";
+import * as _guild from "../../gw2api/guilds";
+import { getAllExtraAccounts } from "../users/user";
+import { Authentication } from "models/Auth";
+import { ControllerEndpoint } from "models/ControllerEndpoint";
+import { Spieler } from "models/Spieler";
+import { ModRaid } from "../../../models/Raid";
+import { User } from "../../../models/Types";
+import { UserRole } from "../../../models/Enums";
+import { toBoolean } from "../../models/Util";
+
+dayjs.extend(duration);
 
 const endpoints: ControllerEndpoint[] = [
-	{ function: getUsers, path: '/users', method: 'get', authed: true },
-	{ function: getRaids, path: '/raids', method: 'get', authed: true },
-	{ function: createRaid, path: '/raids', method: 'post', authed: true },
-	{ function: deleteRaid, path: '/raids', method: 'delete', authed: true },
-	{ function: invitablePlayers, path: '/raids/invitable', method: 'get', authed: true },
-	{ function: addPlayer, path: '/raids/spieler', method: 'post', authed: true },
-	{ function: getPlayersForRaid, path: '/raids/spieler', method: 'get', authed: true },
-	{ function: setPlayerRole, path: '/raids/role', method: 'put', authed: true },
-	{ function: removePlayer, path: '/raids/spieler', method: 'delete', authed: true },
-	{ function: setComment, path: '/users/comment', method: 'put', authed: true },
-	{ function: updateUserRole, path: '/users/role', method: 'put', authed: true },
+	{ function: getUsers, path: "/users", method: "get", authed: true },
+	{ function: getRaids, path: "/raids", method: "get", authed: true },
+	{ function: createRaid, path: "/raids", method: "post", authed: true },
+	{ function: deleteRaid, path: "/raids", method: "delete", authed: true },
+	{ function: invitablePlayers, path: "/raids/invitable", method: "get", authed: true },
+	{ function: addPlayer, path: "/raids/spieler", method: "post", authed: true },
+	{ function: getPlayersForRaid, path: "/raids/spieler", method: "get", authed: true },
+	{ function: setPlayerRole, path: "/raids/role", method: "put", authed: true },
+	{ function: removePlayer, path: "/raids/spieler", method: "delete", authed: true },
+	{ function: setComment, path: "/users/comment", method: "put", authed: true },
+	{ function: updateUserRole, path: "/users/role", method: "put", authed: true },
+	{ function: archiveUser, path: "/users/archive", method: "put", authed: true },
+	{ function: restoreUser, path: "/users/restore", method: "put", authed: true },
 ];
 export default endpoints;
-export { getUsers, getRaids, createRaid, deleteRaid, invitablePlayers, addPlayer, getPlayersForRaid, setPlayerRole, removePlayer, setComment };
+export {
+	getUsers,
+	getRaids,
+	createRaid,
+	deleteRaid,
+	invitablePlayers,
+	addPlayer,
+	getPlayersForRaid,
+	setPlayerRole,
+	removePlayer,
+	setComment,
+};
 
 async function getUsers(req: Request, authentication: Authentication): Promise<User[]> {
+	const start = dayjs();
 	const role = _roles.getRole(authentication);
 	if (role > UserRole.Raider) {
-		const users = await _users.getUsers() as User[];
+		const users = (await _users.getUsers()) as User[];
 		const discordUsers = await _discord.getAllUsers();
 		const guildUsers = await _guild.getUsers();
 		const guildLog = await _guild.getGuildLog();
@@ -42,7 +61,7 @@ async function getUsers(req: Request, authentication: Authentication): Promise<U
 		for (const user of users) {
 			const discordUser = _discord.findUser(user, discordUsers);
 			const guildUser = _guild.findUser(user, guildUsers);
-			const extraAccounts = allExtraAccounts.filter(e => e.fk_spieler === user.id);
+			const extraAccounts = allExtraAccounts.filter((e) => e.fk_spieler === user.id);
 
 			if (discordUser) {
 				user.discord = discordUser;
@@ -59,6 +78,8 @@ async function getUsers(req: Request, authentication: Authentication): Promise<U
 				user.extraAccounts = extraAccounts;
 			}
 		}
+		const duration = dayjs().diff(start);
+		console.log(dayjs.duration(duration).asMilliseconds());
 		return users;
 	}
 	return [];
@@ -67,7 +88,7 @@ async function getUsers(req: Request, authentication: Authentication): Promise<U
 async function getRaids(req: Request, authentication: Authentication): Promise<ModRaid[]> {
 	const role = _roles.getRole(authentication);
 	if (role > UserRole.Raider) {
-		const raids = await _raids.getRaids() as ModRaid[];
+		const raids = (await _raids.getRaids()) as ModRaid[];
 		const discordUsers = await _discord.getAllUsers();
 		for (const raid of raids) {
 			const users = await _raids.listPlayers(raid.id);
@@ -156,7 +177,7 @@ async function removePlayer(req: Request, authentication: Authentication): Promi
 
 	if (role > UserRole.Maz && raid && spieler) {
 		await _discord.removeRole(accName, raidName);
-		
+
 		await _raids.removePlayer(raid, spieler);
 	}
 	return;
@@ -173,8 +194,7 @@ async function setPlayerRole(req: Request, authentication: Authentication): Prom
 
 		if (raidCount <= 1 && role_to_set == 0) {
 			await _discord.removeRaidLead(accName);
-		}
-		else {
+		} else {
 			await _discord.addRaidLead(accName);
 		}
 
@@ -196,7 +216,39 @@ async function updateUserRole(req: Request, authentication: Authentication): Pro
 	const userRole = Number(req.body.role);
 	const role = _roles.getRole(authentication);
 
-	if (userRole != null && spielerId != null && (role >= UserRole.Moderator || role > userRole))  {
+	if (userRole != null && spielerId != null && (role >= UserRole.Moderator || role > userRole)) {
 		await _users.updateSpielerRole(spielerId, userRole);
+	}
+}
+
+/**
+ * archives a specified user.
+ * @param req the request.
+ * @param authentication the authentication of the user who send the request.
+ * @returns the archival date or null.
+ */
+async function archiveUser(req: Request, authentication: Authentication): Promise<Date> {
+	const userId = Number(req.body.userId);
+	const role = _roles.getRole(authentication);
+
+	if (userId != null && role >= UserRole.Moderator) {
+		const archiveDate = dayjs().toDate();
+		await _users.archiveUser(userId, archiveDate);
+
+		return archiveDate;
+	}
+}
+
+/**
+ * restores a specified archived user.
+ * @param req the request.
+ * @param authentication the authentication of the user who send the request.
+ */
+async function restoreUser(req: Request, authentication: Authentication): Promise<void> {
+	const userId = Number(req.body.userId);
+	const role = _roles.getRole(authentication);
+
+	if (userId != null && role >= UserRole.Moderator) {
+		await _users.restoreUser(userId);
 	}
 }

@@ -4,6 +4,7 @@ import { CacheType, CommandInteraction, MessageEmbed } from "discord.js";
 import { RaidRole } from "../../models/Enums";
 import { Raid } from "models/Raid";
 import { listRaidsForUser, removeChannelFromRaid, setChannelForRaid } from "../Utils/queries";
+import { equalsIgnoreCase } from "../Utils/misc";
 
 const command = new SlashCommandBuilder()
 	.setName("link")
@@ -93,7 +94,7 @@ async function setRaid(interaction: CommandInteraction<CacheType>): Promise<void
 		return;
 	}
 
-	const raid = raids.find((r) => r.name === raidName);
+	const raid = raids.find((r) => equalsIgnoreCase(r.name, raidName));
 
 	if (raid == null) {
 		await interaction.editReply(`Der Raid mit dem Namen \`${raidName}\` konnte nicht gefunden werden.`);
@@ -123,7 +124,7 @@ async function removeRaid(interaction: CommandInteraction<CacheType>): Promise<v
 	if (raidName == null || raidName.trim() == "") {
 		raid = raids.find((r) => r.discordChannel === interaction.channelId);
 	} else {
-		raid = raids.find((r) => r.name === raidName);
+		raid = raids.find((r) => equalsIgnoreCase(r.name, raidName));
 	}
 
 	if (raid == null) {
@@ -147,7 +148,7 @@ async function getRaid(interaction: CommandInteraction<CacheType>): Promise<void
 	if (raidName == null || raidName.trim() == "") {
 		raid = raids.find((r) => r.discordChannel === interaction.channelId);
 	} else {
-		raid = raids.find((r) => r.name === raidName);
+		raid = raids.find((r) => equalsIgnoreCase(r.name, raidName));
 	}
 
 	if (raid == null) {

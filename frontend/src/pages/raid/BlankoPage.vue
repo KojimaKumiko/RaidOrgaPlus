@@ -28,19 +28,28 @@
 	import BlankoMenuWingComp from "../../components/blanko/BlankoMenuWingComp.vue";
 	import { Encounter } from "../../../../models/Encounter";
 	import { blankoElement, userRaid } from "models/Types";
+	import { wingStrike } from "../../../../models/Types";
 
 	export default Vue.extend({
 		name: "BlankoPage",
 		components: { BlankoMenuWingComp, BlankoComp },
 		data: () => ({
-			wingFilter: 0,
+			wingFilter: null as wingStrike,
 			elements: null as blankoElement[],
 			bosses: [] as Encounter[],
 		}),
 		computed: {
 			filteredBosses: function(): Encounter[] {
-				if (!this.wingFilter) return this.bosses;
-				return this.bosses.filter(b => b.wing === this.wingFilter);
+				if (!this.wingFilter || this.wingFilter.id === 0) {
+					return this.bosses;
+				}
+
+				if (!this.wingFilter.isStrike) {
+					return this.bosses.filter(b => b.wing === this.wingFilter.id);
+				}
+				else {
+					return this.bosses.filter(b => b.strike === this.wingFilter.id);
+				}
 			},
 			raid: function(): userRaid {
 				return this.$vStore.getters.raid;
@@ -50,10 +59,10 @@
 			},
 		},
 		methods: {
-			pick: async function(wing: any): Promise<void> {
-				this.wingFilter = wing.id;
+			pick: async function(wing: wingStrike): Promise<void> {
+				this.wingFilter = wing;
 			},
-			copyBlanko: async function(info: any): Promise<void> {
+			copyBlanko: async function(info: number[]): Promise<void> {
 				this.elements = await _blankos.copyFromTo(this.raid.id, info[0], info[1]);
 			},
 		},

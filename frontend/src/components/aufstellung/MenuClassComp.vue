@@ -27,6 +27,7 @@
 	import Vue from "vue";
 	import _icons from "../../services/icons";
 	import MenuSubclassComp from "./MenuSubclassComp.vue";
+	import { Class } from "models/Klasse";
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	const whatInput = require("what-input");
 
@@ -51,7 +52,7 @@
 			classIcon: function(name: string): string {
 				return _icons.classIcon(name);
 			},
-			pick: function(clss: any): void {
+			pick: function(clss: Class): void {
 				this.$emit("pick", clss);
 			},
 		},

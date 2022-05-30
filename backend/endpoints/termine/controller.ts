@@ -126,6 +126,8 @@ async function addBoss(req: Request, authentication: Authentication): Promise<(A
 	const termin = Number(req.body.termin);
 	const boss = Number(req.body.boss);
 	const wing = Number(req.body.wing);
+	const strike = Number(req.body.strike);
+
 	if (termin) {
 		const role = await _roles.forTermin(authentication, termin);
 		if (role > 0) {
@@ -136,6 +138,15 @@ async function addBoss(req: Request, authentication: Authentication): Promise<(A
 				});
 			} else if (wing) {
 				return _termin.addWing(termin, wing).then(async (res: OkPacket) => {
+					const minId = res.insertId;
+					const maxId = minId + res.affectedRows - 1;
+					for (let i = minId; i <= maxId; i++) {
+						await _aufstellung.loadBlanko(i);
+					}
+					return await _aufstellung.getForTermin(termin);
+				});
+			} else if (strike) {
+				return _termin.addStrike(termin, strike).then(async (res: OkPacket) => {
 					const minId = res.insertId;
 					const maxId = minId + res.affectedRows - 1;
 					for (let i = minId; i <= maxId; i++) {

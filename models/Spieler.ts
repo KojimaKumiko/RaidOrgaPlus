@@ -16,6 +16,8 @@ export interface Spieler {
 	comment: string;
 	lastActive: Date;
 	theme: Theme;
+	archived: boolean;
+	archiveDate: Date;
 }
 
 export interface SpielerBuild {

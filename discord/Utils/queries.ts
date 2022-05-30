@@ -164,7 +164,7 @@ export async function getElementsForAufstellung(aufstellung: number): Promise<el
 			if (e.roleIds) {
 				const roleIds = e.roleIds.split(",");
 				e.roles = roleIds.map((r) => {
-					let role: Role = { id: 0, name: "", abbr: "" };
+					let role: Role = { id: 0, name: "", abbr: "", visible: false, order: null };
 					const id = Number(r) - 1;
 
 					if (id > -1) {

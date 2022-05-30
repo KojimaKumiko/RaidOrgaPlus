@@ -12,6 +12,33 @@ VALUES
 (1, 'The Icebrood Saga'),
 (2, 'End of Dragons');
 
+ALTER TABLE encounter
+ADD COLUMN strike INT UNSIGNED;
+
+ALTER TABLE encounter
+ADD CONSTRAINT fk_strike
+FOREIGN KEY (strike) REFERENCES Strikes(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+INSERT INTO encounter (NAME, abbr, apiname, main, strike)
+VALUES
+('Shiverpeaks Pass', 'pass', '', 1, 1),
+('Voice of the Fallen and Claw of the Fallen', 'the Fallen', '', 1, 1),
+('Fraenir of Jormag', 'Fraenir', '', 1, 1),
+('Boneskinner', 'Boneskinner', '', 1, 1),
+('Whisper of Jormag', 'Whisper', '', 1, 1),
+('Forging Steel', 'FS', '', 1, 1),
+('Cold War', 'CW', '', 1, 1),
+('Aetherblade Hideout', 'Mai Trin', '', 1, 2),
+('Xunlai Jade Junkyard', 'Ankka', '', 1, 2),
+('Kainen Overlook', 'Minister', '', 1, 2),
+('Harvest Temple', 'Dragonvoid', '', 1, 2);
+
+ALTER TABLE Spieler
+ADD COLUMN archived TINYINT NOT NULL DEFAULT 0;
+
+ALTER TABLE Spieler
+ADD COLUMN archiveDate TIMESTAMP DEFAULT NULL;
+
 --------------------------------------
 -- Changes from 13.03.2022
 --------------------------------------

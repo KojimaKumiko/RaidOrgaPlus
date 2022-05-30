@@ -9,7 +9,7 @@ import { OkPacket } from "mysql";
 import { ControllerEndpoint } from "models/ControllerEndpoint";
 import { toBoolean } from "../../models/Util";
 import { element } from "../../../models/Types";
-import { Role, ROLES } from "../../../models/Rolle";
+import { mapRoleStringToRoles } from "../../util/misc";
 
 const endpoints: ControllerEndpoint[] = [
 	{ function: getForTermin, path: "", method: "get", authed: true },
@@ -89,16 +89,7 @@ async function getElement(req: Request, authentication: Authentication): Promise
 		elements.forEach((e) => {
 			if (e.roleIds) {
 				const roleIds = e.roleIds.split(",");
-				e.roles = roleIds.map((r) => {
-					let role: Role = { id: 0, name: "", abbr: "" };
-					const id = Number(r) - 1;
-
-					if (id > -1) {
-						role = ROLES[id];
-					}
-
-					return role;
-				});
+				e.roles = roleIds.map(mapRoleStringToRoles);
 			} else {
 				e.roles = [];
 			}

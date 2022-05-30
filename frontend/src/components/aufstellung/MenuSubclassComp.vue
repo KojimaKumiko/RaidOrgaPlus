@@ -29,31 +29,34 @@
 	import Vue from "vue";
 	import _icons from "../../services/icons";
 	import _gamedata from "../../services/endpoints/gamedata";
+	import { Class } from "models/Klasse";
 
 	export default Vue.extend({
 		name: "MenuSubclassComp",
-		props: ["base"],
+		props: {
+			base: Number,
+		},
 		data: () => ({
-			hovered: null,
-			classes: [] as any[],
+			hovered: null as number,
+			classes: [] as Class[],
 		}),
 		methods: {
-			classIcon: function(name: any): string {
+			classIcon: function(name: string): string {
 				return _icons.classIcon(name);
 			},
-			pick: function(clss: any): void {
+			pick: function(clss: Class): void {
 				this.$emit("pick", clss);
 			},
-			enter: function(index: any): void {
+			enter: function(index: number): void {
 				this.hovered = index;
 			},
 			leave: function(): void {
 				this.hovered = null;
 			},
-			isHovered: function(index: any): boolean {
+			isHovered: function(index: number): boolean {
 				return this.hovered === index;
 			},
-			backgroundColor: function(index: any): string {
+			backgroundColor: function(index: number): string {
 				if (this.isHovered(index)) {
 					return this.darkenColor(this.classes[0].color);
 				} else {

@@ -4,6 +4,7 @@ import { client } from "../../discord/bot";
 import config from "./config.json";
 import { Spieler } from "models/Spieler";
 import { DiscordMember, DiscordRole } from "models/Discord";
+import { equalsIgnoreCase } from "../util/misc";
 
 export async function getUser(id: string): Promise<DiscordMember> {
 	return (await getAllUsers()).find((m) => m.id === id);
@@ -61,9 +62,8 @@ function getAvatarURL(member: GuildMember): string {
 }
 
 export function findUser(roUser: Spieler, discordUsers: DiscordMember[]): DiscordMember {
-	if (!roUser.discord) return;
 	return discordUsers.find((d) => {
-		return d.id.toString() === roUser.discord.toString();
+		return d.nickname.includes(roUser.accname);
 	});
 }
 
@@ -122,8 +122,4 @@ export async function getRole(roleName: string): Promise<Role> {
 	}
 
 	return role;
-}
-
-function equalsIgnoreCase(text: string, search: string) {
-	return text.localeCompare(search, undefined, { sensitivity: "base" }) === 0;
 }

@@ -17,6 +17,7 @@ import { Termin } from "../../models/Termin";
 import { encIcon } from "../services/icons";
 import { Aufstellung } from "../../models/Aufstellung";
 import { Encounter } from "../../models/Encounter";
+import { equalsIgnoreCase } from "../Utils/misc";
 
 const command = new SlashCommandBuilder()
 	.setName("termine")
@@ -201,7 +202,7 @@ async function getRaid(interaction: CommandInteraction<CacheType>, raidName: str
 	if (raidName == null || raidName.trim() == "") {
 		raid = raids.find((r) => r.discordChannel === interaction.channelId);
 	} else {
-		raid = raids.find((r) => r.name === raidName);
+		raid = raids.find((r) => equalsIgnoreCase(r.name, raidName));
 	}
 
 	return raid;

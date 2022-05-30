@@ -82,31 +82,29 @@
 					<span>Aufstellungen gesperrt</span>
 				</v-tooltip>
 			</template>
-		</template>
-		<v-tooltip bottom>
-			<template v-slot:activator="{ on }">
-				<span v-on="on">
-					<v-switch
-						inset
-						v-model="showExtraRoles"
-						class="switch"
-						label="Rollen Buttons"
-						@change="extraRolesChanged"
-					/>
-				</span>
-			</template>
-			<span>Buttons zum Hinzufügen bzw. Entfernen von extra Rollen Ein-/Auschalten</span>
-		</v-tooltip>
-		<template v-if="role > 0 && active === false">
 			<v-tooltip bottom>
 				<template v-slot:activator="{ on }">
-					<v-btn icon @click="uploadLog" class="button" v-on="on">
-						<v-icon>cloud_upload</v-icon>
-					</v-btn>
+					<span v-on="on">
+						<v-switch
+							inset
+							v-model="showExtraRoles"
+							class="switch"
+							label="Rollen Buttons"
+							@change="extraRolesChanged"
+						/>
+					</span>
 				</template>
-				<span>Logs uploaden</span>
+				<span>Buttons zum Hinzufügen bzw. Entfernen von extra Rollen Ein-/Auschalten</span>
 			</v-tooltip>
 		</template>
+		<v-tooltip bottom v-if="role > 0 && active === false">
+			<template v-slot:activator="{ on }">
+				<v-btn icon @click="uploadLog" class="button" v-on="on">
+					<v-icon>cloud_upload</v-icon>
+				</v-btn>
+			</template>
+			<span>Logs uploaden</span>
+		</v-tooltip>
 	</div>
 </template>
 
@@ -118,6 +116,7 @@
 	import KommentarComp from "./KommentarComp.vue";
 	import { MyActions } from "@/models/Store/State";
 	import { Termin } from "models/Termin";
+	import { Encounter } from "models/Encounter";
 
 	export default Vue.extend({
 		name: "TerminToolbarComp",
@@ -150,7 +149,7 @@
 			},
 		},
 		methods: {
-			addBoss: function(info: number[]): void {
+			addBoss: function(info: Encounter): void {
 				this.$vStore.dispatch(MyActions.AddBoss, info);
 			},
 			openArchiveDialog: function(): void {

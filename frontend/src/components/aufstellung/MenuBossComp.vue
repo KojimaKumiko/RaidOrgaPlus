@@ -1,6 +1,6 @@
 <template>
 	<v-list>
-		<v-list-item v-for="(boss, index) in bosses" :key="index" @click="pick(boss.id, boss.wing)">
+		<v-list-item v-for="(boss, index) in bosses" :key="index" @click="pick(boss)">
 			<v-list-item-title>{{ boss.name }}</v-list-item-title>
 		</v-list-item>
 	</v-list>
@@ -14,25 +14,30 @@
 		name: "MenuBossComp",
 		props: {
 			wing: Array as PropType<Encounter[]>,
-			showFC: Boolean
+			showFC: Boolean,
 		},
 		computed: {
-			bosses: function(): { id: number; name: string; wing: number }[] {
+			bosses: function(): Encounter[] {
 				if (this.showFC) {
-					const fc = [{ id: 0, name: "Full Clear", wing: this.wing[0].wing }];
-					return fc.concat(this.wing);
+					let fc = { id: 0, name: "Full Clear", wing: null as number, strike: null as number } as Encounter;
+					if (this.wing[0].wing != null) {
+						fc.wing = this.wing[0].wing;
+					} else {
+						fc.strike = this.wing[0].strike;
+					}
+
+					return [fc, ...this.wing];
 				} else {
 					return this.wing;
 				}
-			}
+			},
 		},
 		methods: {
-			pick: function(id: number, wing: number) {
-				this.$emit("pick", [id, wing]);
-			}
-		}
+			pick: function(boss: Encounter) {
+				this.$emit("pick", boss);
+			},
+		},
 	});
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

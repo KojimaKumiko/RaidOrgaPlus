@@ -1,7 +1,7 @@
 import { queryV } from "../../../database/connector";
 import { OkPacket } from 'mysql';
 import { Build } from 'models/Build';
-import { ROLES } from '../../../models/Rolle';
+import { mapRoleStringToRoles } from "../../util/misc";
 
 export async function getBuilds(user: number): Promise<Build[]> {
 	const stmt = `
@@ -46,11 +46,12 @@ export async function putPrefer(user: number, clss: number, role: string, pref: 
 }
 
 function classRoleMapper(element): Build {
+	const roles = (element.roles as string).split(",").map(mapRoleStringToRoles);
 	return {
 		class: {
 			abbr: element.classAbbr, id: element.classId, color: element.classColor, name: element.className
 		},
-		role: (element.roles as string).split(',').map(r => ROLES[Number(r) - 1]),
+		role: roles,
 		prefer: element.prefer
 	} as Build;
 }

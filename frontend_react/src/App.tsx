@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { Box, Toolbar, Typography } from "@mui/material";
 import "./App.css";
@@ -6,6 +6,12 @@ import AppToolbar from "./components/AppToolbar";
 import MenuDrawer from "./components/MenuDrawer";
 import LoginPage from "./pages/LoginPage";
 import Counter from "./components/Counter/Counter";
+import { Outlet } from "react-router-dom";
+import { get } from "./services/endpoints/user";
+import Spinner from "./components/Spinner";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./store/store";
+import { getUser, selectLoadingStatus, selectLoginState } from "./store/slices/userSlice";
 
 const drawerWidth = 240;
 
@@ -31,39 +37,29 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
 function App() {
 	const [open, setOpen] = useState(true);
 	const [showContent, setShowContent] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const dispatch = useDispatch();
+	const loginState = useSelector(selectLoginState);
+	const loadingStatus = useSelector(selectLoadingStatus);
+
+	useEffect(() => {
+		switch (loadingStatus) {
+			case "idle": 
+				dispatch(getUser());
+				break;
+			case "finished":
+				setLoading(false);
+				break;
+		}
+
+		if (loginState === 1) {
+			setShowContent(true)
+		}
+	}, [loadingStatus, loginState, dispatch]);
 
 	const handleDrawer = () => {
 		setOpen(!open);
 	};
-
-	const showMainPage = () => {
-		return (
-			<span>
-				<Typography paragraph>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-					et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum facilisis leo vel. Risus at
-					ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus. Convallis
-					convallis tellus id interdum velit laoreet id donec ultrices. Odio morbi quis commodo odio aenean
-					sed adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies integer quis. Cursus euismod
-					quis viverra nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris
-					commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue
-					eget arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-					donec massa sapien faucibus et molestie ac.
-				</Typography>
-				<Typography paragraph>
-					Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla facilisi
-					etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac tincidunt. Ornare
-					suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat consequat mauris. Elementum
-					eu facilisis sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi tincidunt
-					ornare massa eget egestas purus viverra accumsan in. In hendrerit gravida rutrum quisque non tellus
-					orci ac. Pellentesque nec nam aliquam sem et tortor. Habitant morbi tristique senectus et.
-					Adipiscing elit duis tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-					eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam
-					ultrices sagittis orci a.
-				</Typography>
-			</span>
-		)
-	}
 
 	return (
 		<Box sx={{ display: "flex" }}>
@@ -71,7 +67,13 @@ function App() {
 			<MenuDrawer drawerWidth={drawerWidth} open={open} visible={showContent} />
 			<Main open={open}>
 				<Toolbar />
-				{ showContent ? showMainPage() : <LoginPage /> }
+				{loading ? (
+					<Spinner loading={loading} style={{ position: "absolute", top: "50%", left: "50%" }} />
+				) : showContent ? (
+					<Outlet />
+				) : (
+					<LoginPage />
+				)}
 			</Main>
 		</Box>
 	);

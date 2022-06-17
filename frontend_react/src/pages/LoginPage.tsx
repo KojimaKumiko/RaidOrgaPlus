@@ -17,7 +17,7 @@ const initialFormValues = {
 const useFormControls = () => {
 	const [values, setValues] = useState(initialFormValues);
 	const [errors, setErrors] = useState({} as any);
-	const validate: any = (fieldValues = values) => {
+	const validate = (fieldValues: any = values) => {
 		let temp: any = { ...errors };
 
 		if ("accountName" in fieldValues) {

@@ -1,6 +1,7 @@
-import { Box, Toolbar, Drawer, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, Toolbar, Drawer, List, ListItem, ListItemIcon, ListItemText, ListItemButton } from "@mui/material";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import { Link } from "react-router-dom";
 
 interface IProps {
 	drawerWidth: number;
@@ -14,6 +15,15 @@ const MenuDrawer = (props: IProps) => {
 		flexShrink: 0,
 		[`& .MuiDrawer-paper`]: { width: props.drawerWidth, boxSizing: "border-box" },
 	};
+
+	const links = [
+		{ name: "Home", link: "/" },
+		{ name: "Meine Raids", link: "/raids" },
+		{ name: "Profil", link: "/profile" },
+		{ name: "Einstellungen", link: "/settings" },
+		{ name: "Hilfe", link: "/help" },
+		{ name: "Moderation", link: "/moderation" },
+	]
 	
 	return (
 		<Drawer
@@ -24,10 +34,10 @@ const MenuDrawer = (props: IProps) => {
 			<Toolbar />
 			<Box sx={{ overflow: "auto" }}>
 				<List>
-					{["Home", "Meine Raids", "Profil", "Einstellungen", "Hilfe", "Moderation"].map((text, index) => (
-						<ListItem button key={text}>
+					{links.map((linkObject, index) => (
+						<ListItem button key={linkObject.name} component={Link} to={linkObject.link}>
 							<ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-							<ListItemText primary={text} />
+							<ListItemText primary={linkObject.name} />
 						</ListItem>
 					))}
 				</List>

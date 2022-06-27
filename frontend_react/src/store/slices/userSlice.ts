@@ -22,7 +22,9 @@ const initialState: UserState = {
 export const getUser = createAsyncThunk(
 	"user/getUser",
 	async () => {
-		return await get();
+		// return await get();
+		const response = await get();
+		return response;
 	},
 	{
 		condition: (payload, { getState, extra }) => {
@@ -44,8 +46,13 @@ export const userSlice = createSlice({
 				state.loadingStatus = "loading";
 			})
 			.addCase(getUser.fulfilled, (state, action) => {
-				state.loggedInUser = action.payload;
-				state.loginState = 1;
+				if (action.payload != null && action.payload instanceof Object) {
+					state.loginState = 1;
+					state.loggedInUser = action.payload;
+				} else {
+					state.loginState = -1;
+				}
+
 				state.loadingStatus = "finished";
 			})
 			.addCase(getUser.rejected, (state, action) => {
@@ -57,5 +64,6 @@ export const userSlice = createSlice({
 
 export const selectLoadingStatus = (state: RootState) => state.user.loadingStatus;
 export const selectLoginState = (state: RootState) => state.user.loginState;
+export const selectLoggedInUser = (state: RootState) => state.user.loggedInUser;
 
 export default userSlice.reducer;

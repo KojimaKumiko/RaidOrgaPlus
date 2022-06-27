@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Box, TextField, FormGroup, FormControlLabel, Checkbox, Button } from "@mui/material";
-import Spinner from "../components/Spinner";
+
+import { Box, TextField, FormGroup, FormControlLabel, Checkbox, Button, Snackbar } from "@mui/material";
+
 import { login as loginUser } from "../services/endpoints/user";
 import { setCookie } from "../services/cookies";
+import Spinner from "../components/Spinner";
 
 const initialFormValues = {
 	accountName: "",
@@ -88,7 +90,10 @@ const LoginPage = () => {
 	const [registerMode, setRegisterMode] = useState(false);
 	const [buttonText, setButtonText] = useState("Anmelden");
 	const [loading, setLoading] = useState(false);
+	const [snackbarText, setSnackbarText] = useState("");
+	const [open, setOpen] = useState(false);
 	const { handleInputValue, errors, formIsValid, handleFormSubmit } = useFormControls();
+
 	const inputFieldValues = [
 		{
 			name: "accountName",
@@ -150,12 +155,22 @@ const LoginPage = () => {
 		const response = await loginUser(accname, password);
 
 		if (response === "wrongUsername") {
+			setSnackbarText("Der Accountname ist falsch!");
+			setOpen(true);
 		} else if (response === "wrongPassword") {
+			setSnackbarText("Das Passwort ist falsch!");
+			setOpen(true);
 		} else {
 			setCookie("session", response);
 			window.location.href = "/";
 		}
+		
+		setLoading(false);
 	};
+
+	const handleClose = () => {
+		setOpen(false);
+	}
 
 	return (
 		<Box component="form" sx={{ "& .MuiTextField-root": { m: 1 } }} noValidate autoComplete="off">
@@ -187,6 +202,13 @@ const LoginPage = () => {
 				/>
 			</FormGroup>
 			<Spinner loading={loading} />
+			<Snackbar
+				open={open}
+				autoHideDuration={3000}
+				onClose={handleClose}
+				message={snackbarText}
+				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+			/>
 		</Box>
 	);
 };

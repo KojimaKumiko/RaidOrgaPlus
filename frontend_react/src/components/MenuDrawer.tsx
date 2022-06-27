@@ -1,7 +1,14 @@
-import { Box, Toolbar, Drawer, List, ListItem, ListItemIcon, ListItemText, ListItemButton } from "@mui/material";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+import { Box, Toolbar, Drawer, List, ListItem, ListItemIcon, ListItemText, Stack } from "@mui/material";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import { Link } from "react-router-dom";
+
+import { selectLoggedInUser } from "../store/slices/userSlice";
+import ProfileAvatar from "./UserProfile/ProfileAvatar";
+
+import { User } from "../../../models/Types";
 
 interface IProps {
 	drawerWidth: number;
@@ -10,6 +17,8 @@ interface IProps {
 }
 
 const MenuDrawer = (props: IProps) => {
+	const loggedInUser = useSelector(selectLoggedInUser) as User;
+	
 	const drawerStyle = {
 		width: props.drawerWidth,
 		flexShrink: 0,
@@ -34,6 +43,10 @@ const MenuDrawer = (props: IProps) => {
 			<Toolbar />
 			<Box sx={{ overflow: "auto" }}>
 				<List>
+					<Stack direction="row" sx={{ marginLeft: 2, marginTop: 1 }}>
+						<ProfileAvatar user={loggedInUser} sx={{ marginTop: "auto", marginBottom: "auto" }} />
+						<p style={{ marginLeft: 16 }}> { loggedInUser?.name } </p>
+					</Stack>
 					{links.map((linkObject, index) => (
 						<ListItem button key={linkObject.name} component={Link} to={linkObject.link}>
 							<ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>

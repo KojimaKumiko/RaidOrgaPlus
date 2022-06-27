@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 import { styled } from "@mui/material/styles";
-import { Box, Toolbar, Typography } from "@mui/material";
-import "./App.css";
+import { Box, Toolbar } from "@mui/material";
+
+import { getUser, selectLoadingStatus, selectLoginState } from "./store/slices/userSlice";
+import { saveWindowWidth } from "./store/slices/baseSlice";
 import AppToolbar from "./components/AppToolbar";
 import MenuDrawer from "./components/MenuDrawer";
 import LoginPage from "./pages/LoginPage";
-import Counter from "./components/Counter/Counter";
-import { Outlet } from "react-router-dom";
-import { get } from "./services/endpoints/user";
 import Spinner from "./components/Spinner";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "./store/store";
-import { getUser, selectLoadingStatus, selectLoginState } from "./store/slices/userSlice";
+import "./App.css";
 
 const drawerWidth = 240;
 
@@ -44,7 +44,7 @@ function App() {
 
 	useEffect(() => {
 		switch (loadingStatus) {
-			case "idle": 
+			case "idle":
 				dispatch(getUser());
 				break;
 			case "finished":
@@ -53,9 +53,21 @@ function App() {
 		}
 
 		if (loginState === 1) {
-			setShowContent(true)
+			setShowContent(true);
 		}
 	}, [loadingStatus, loginState, dispatch]);
+
+	useEffect(() => {
+		const handleResize = () => {
+			dispatch(saveWindowWidth(window.innerWidth));
+		};
+
+		window.addEventListener("resize", handleResize);
+
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		}
+	}, [dispatch]);
 
 	const handleDrawer = () => {
 		setOpen(!open);

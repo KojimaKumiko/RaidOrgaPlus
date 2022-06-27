@@ -20,7 +20,8 @@ export default async function fetch<T>(
 	
 	switch(method) {
 		case "get":
-			return (await instance({ method, url: endpoint, params })).data;
+			const response = (await instance({ method, url: endpoint, params }));
+			return response.data;
 			break;
 		case "form":
 			const formData = new FormData();

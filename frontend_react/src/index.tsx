@@ -1,56 +1,44 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Provider } from "react-redux";
+
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+
+import { store } from "./store/store";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { CssBaseline, Typography } from "@mui/material";
-import { store } from "./store/store";
-import { Provider } from "react-redux";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Counter from "./components/Counter/Counter";
+import HomePage from "./pages/HomePage";
+import RaidPage from "./pages/RaidPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
+import HelpPage from "./pages/HelpPage";
+import ModerationPage from "./pages/ModerationPage";
+import "./index.css";
+
+// import "./theme";
 
 const theme = createTheme({
 	palette: {
-		mode: "dark"
+		mode: "dark",
+		neutral: {
+			main: "#272727",
+			contrastText: "#fff",
+		},
+	},
+	components: {
+		MuiTooltip: {
+			styleOverrides: {
+				tooltip: {
+					fontSize: 14
+				}
+			}
+		}
 	}
 });
 
 const container = document.getElementById("root");
-
-const Raids = () => <span>Raids!</span>;
-const Profile = () => <span>Profile!</span>
-const Settings = () => <span>Settings!</span>;
-const Help = () => <span>Help!</span>;
-const Moderation = () => <span>Moderation!</span>;
-const Main = () => {
-	return (
-		<span>
-			<Typography paragraph>
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-				et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum facilisis leo vel. Risus at
-				ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus. Convallis
-				convallis tellus id interdum velit laoreet id donec ultrices. Odio morbi quis commodo odio aenean
-				sed adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies integer quis. Cursus euismod
-				quis viverra nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris
-				commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue
-				eget arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-				donec massa sapien faucibus et molestie ac.
-			</Typography>
-			<Typography paragraph>
-				Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla facilisi
-				etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac tincidunt. Ornare
-				suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat consequat mauris. Elementum
-				eu facilisis sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi tincidunt
-				ornare massa eget egestas purus viverra accumsan in. In hendrerit gravida rutrum quisque non tellus
-				orci ac. Pellentesque nec nam aliquam sem et tortor. Habitant morbi tristique senectus et.
-				Adipiscing elit duis tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-				eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam
-				ultrices sagittis orci a.
-			</Typography>
-		</span>
-	)
-}
 
 const root = createRoot(container!);
 root.render(
@@ -61,12 +49,12 @@ root.render(
 				<BrowserRouter>
 					<Routes>
 						<Route path="/" element={<App />}>
-							<Route index element={<Main />} />
-							<Route path="raids" element={<Raids />} />
-							<Route path="profile" element={<Profile />} />
-							<Route path="settings" element={<Settings />} />
-							<Route path="help" element={<Help />} />
-							<Route path="moderation" element={<Counter />} />
+							<Route index element={<HomePage />} />
+							<Route path="raids" element={<RaidPage />} />
+							<Route path="profile" element={<ProfilePage />} />
+							<Route path="settings" element={<SettingsPage />} />
+							<Route path="help" element={<HelpPage />} />
+							<Route path="moderation" element={<ModerationPage />} />
 						</Route>
 					</Routes>
 				</BrowserRouter>

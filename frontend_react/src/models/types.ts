@@ -1,0 +1,1 @@
+export type InputTarget = EventTarget & (HTMLInputElement | HTMLTextAreaElement);

@@ -3,8 +3,7 @@ import { useState } from "react";
 import { Button, Stack, TextField, Snackbar } from "@mui/material";
 
 import { changeEmail } from "../../services/endpoints/user";
-
-type InputTarget = EventTarget & (HTMLInputElement | HTMLTextAreaElement);
+import { InputTarget } from "../../models/types";
 
 const EmailSettings = () => {
 	const [email, setEmail] = useState("");

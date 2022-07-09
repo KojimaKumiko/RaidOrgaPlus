@@ -62,6 +62,9 @@ function App() {
 			dispatch(saveWindowWidth(window.innerWidth));
 		};
 
+		// initialize the window width.
+		dispatch(saveWindowWidth(window.innerWidth));
+
 		window.addEventListener("resize", handleResize);
 
 		return () => {

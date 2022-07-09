@@ -7,6 +7,7 @@ import { selectLoggedInUser } from "../store/slices/userSlice";
 import ProfileAvatar from "../components/UserProfile/ProfileAvatar";
 
 import { User } from "../../../models/Types";
+import ProfileName from "../components/UserProfile/ProfileName";
 
 const ProfilePage = () => {
 	const loggedInUser = useSelector(selectLoggedInUser) as User;
@@ -26,7 +27,10 @@ const ProfilePage = () => {
 		<span>
 			<h2>Profile</h2>
 			<Stack>
-				<ProfileAvatar user={loggedInUser} size={avatarSize()} />
+				<Stack direction="row">
+					<ProfileAvatar user={loggedInUser} size={avatarSize()} />
+					<ProfileName user={loggedInUser} ownProfile={true} />
+				</Stack>
 			</Stack>
 		</span>
 	);

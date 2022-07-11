@@ -8,6 +8,7 @@ import ProfileAvatar from "../components/UserProfile/ProfileAvatar";
 
 import { User } from "../../../models/Types";
 import ProfileName from "../components/UserProfile/ProfileName";
+import ProfileBuilds from "../components/UserProfile/ProfileBuilds";
 
 const ProfilePage = () => {
 	const loggedInUser = useSelector(selectLoggedInUser) as User;
@@ -30,6 +31,9 @@ const ProfilePage = () => {
 				<Stack direction="row">
 					<ProfileAvatar user={loggedInUser} size={avatarSize()} />
 					<ProfileName user={loggedInUser} ownProfile={true} />
+				</Stack>
+				<Stack direction="row" sx={{ marginTop: 2 }}>
+					<ProfileBuilds />
 				</Stack>
 			</Stack>
 		</span>

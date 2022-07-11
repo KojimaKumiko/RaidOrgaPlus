@@ -23,6 +23,7 @@
 		"@types/react-dom": "^18.0.0",
 		"@types/react-redux": "^7.1.23",
 		"axios": "^0.26.1",
+		"models": "file:../models/build",
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0",
 		"react-redux": "^7.2.8",

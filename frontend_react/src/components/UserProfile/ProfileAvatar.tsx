@@ -8,6 +8,7 @@ interface IProps {
 	user?: User;
 	size?: number;
 	sx?: SxProps<Theme>;
+	onDoubleClick?: () => void;
 }
 
 const ProfileAvatar = (props: IProps) => {
@@ -27,7 +28,7 @@ const ProfileAvatar = (props: IProps) => {
 		...(sx != null ? (Array.isArray(sx) ? sx : [sx]) : [])
 	];
 
-	return <Avatar src={src} sx={style} />;
+	return <Avatar src={src} sx={style} onDoubleClick={props.onDoubleClick} />;
 };
 
 export default ProfileAvatar;

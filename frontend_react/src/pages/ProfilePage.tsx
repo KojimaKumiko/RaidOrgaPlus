@@ -33,7 +33,7 @@ const ProfilePage = () => {
 					<ProfileName user={loggedInUser} ownProfile={true} />
 				</Stack>
 				<Stack direction="row" sx={{ marginTop: 2 }}>
-					<ProfileBuilds />
+					<ProfileBuilds user={loggedInUser} />
 				</Stack>
 			</Stack>
 		</span>

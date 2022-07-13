@@ -1,22 +1,41 @@
 import BuildChip from "./BuildChip";
 
 import { Build } from "models/Build";
-import { CLASSES } from "models/Klasse";
-import { ROLES } from "models/Rolle";
+import { useEffect, useState } from "react";
+import { Spieler } from "models/Spieler";
+import { getBuilds } from "../../services/endpoints/user";
 
-const ProfileBuilds = () => {
-	const build: Build = {
-		class: CLASSES.find(c => c.name === "Weaver")!,
-		role: [ ROLES[0], ROLES[1] ],
-		prefer: 0
-	}
+interface IProps {
+	user: Spieler;
+}
+
+const ProfileBuilds = (props: IProps) => {
+	const [builds, setBuilds] = useState<Build[]>([]);
+
+	useEffect(() => {
+		const getBuildsForUser = async () => {
+			setBuilds(await getBuilds(props.user.id));
+		};
+
+		getBuildsForUser().catch(console.error);
+	}, [props.user.id]);
+
+	const generateKey = (build: Build) => {
+		let roleIds = 0;
+		if (build.role && build.role.length > 0) {
+			build.role.forEach((r) => (roleIds += r.id));
+		}
+		return `${build.class.name}_${roleIds}_${build.class.id}`;
+	};
 
 	return (
 		<span>
 			<h3>Meine Builds</h3>
-			<BuildChip ownProfile star edit build={build} />
+			{builds.map((b) => (
+				<BuildChip ownProfile star edit build={b} key={generateKey(b)} />
+			))}
 		</span>
 	);
-}
+};
 
 export default ProfileBuilds;

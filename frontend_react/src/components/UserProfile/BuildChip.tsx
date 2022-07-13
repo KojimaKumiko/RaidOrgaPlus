@@ -38,7 +38,7 @@ const ChipIcons = (props: IChipIconsProps) => {
 			<Avatar src={classSrc} sx={{ width: 24, marginRight: 0.5 }} imgProps={imgProps} />
 			{roles.map((r) => {
 				let src = roleIcon(r.abbr);
-				return <Avatar src={src} sx={{ width: 24 }} imgProps={imgProps} />;
+				return <Avatar src={src} sx={{ width: 24 }} imgProps={imgProps} key={r.id} />;
 			})}
 			{props.build.prefer > 0 ? (
 				<StarIcon sx={{ marginLeft: 1, color: prefered(props.build.prefer) }} />

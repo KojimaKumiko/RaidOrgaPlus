@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import { Box, Toolbar, Drawer, List, ListItem, ListItemIcon, ListItemText, Stack } from "@mui/material";
+import { Box, Toolbar, Drawer, List, ListItem, ListItemIcon, ListItemText, Stack, Dialog } from "@mui/material";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 
@@ -9,6 +10,7 @@ import { selectLoggedInUser } from "../store/slices/userSlice";
 import ProfileAvatar from "./UserProfile/ProfileAvatar";
 
 import { User } from "../../../models/Types";
+import Snake from "./Misc/Snake";
 
 interface IProps {
 	drawerWidth: number;
@@ -17,6 +19,7 @@ interface IProps {
 }
 
 const MenuDrawer = (props: IProps) => {
+	const [open, setOpen] = useState(false);
 	const loggedInUser = useSelector(selectLoggedInUser) as User;
 	
 	const drawerStyle = {
@@ -33,6 +36,10 @@ const MenuDrawer = (props: IProps) => {
 		{ name: "Hilfe", link: "/help" },
 		{ name: "Moderation", link: "/moderation" },
 	]
+
+	const handleClose = () => {
+		setOpen(false);
+	}
 	
 	return (
 		<Drawer
@@ -44,7 +51,7 @@ const MenuDrawer = (props: IProps) => {
 			<Box sx={{ overflow: "auto" }}>
 				<List>
 					<Stack direction="row" sx={{ marginLeft: 2, marginTop: 1 }}>
-						<ProfileAvatar user={loggedInUser} sx={{ marginTop: "auto", marginBottom: "auto" }} />
+						<ProfileAvatar user={loggedInUser} sx={{ marginTop: "auto", marginBottom: "auto" }} onDoubleClick={() => setOpen(true)} />
 						<p style={{ marginLeft: 16 }}> { loggedInUser?.name } </p>
 					</Stack>
 					{links.map((linkObject, index) => (
@@ -55,6 +62,9 @@ const MenuDrawer = (props: IProps) => {
 					))}
 				</List>
 			</Box>
+			<Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+				<Snake />
+			</Dialog>
 		</Drawer>
 	);
 };

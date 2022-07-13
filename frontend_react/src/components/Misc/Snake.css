@@ -1,0 +1,43 @@
+.main {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex: 1;
+	flexdirection: row;
+	flexwrap: wrap;
+}
+.snake-container {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.grid {
+	width: 500px;
+	height: 500px;
+	margin: auto;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+.grid-item {
+	outline: 1px solid grey;
+	width: 50px;
+	height: 50px;
+}
+
+.snake {
+	outline: 1px solid blue;
+	background-color: blue;
+
+	width: 50px;
+	height: 50px;
+}
+
+.food {
+	outline: 1px solid yellow;
+	background-color: yellow;
+	width: 50px;
+	height: 50px;
+}

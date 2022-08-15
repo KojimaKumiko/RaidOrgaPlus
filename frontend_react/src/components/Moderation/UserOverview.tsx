@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { selectUsers } from "../../store/slices/moderationSlice";
 import UserHeader from "./UserHeader";
 import UserDetails from "./UserDetails";
+import UserActions from "./UserActions";
 
 const a11yProps = (accname: string) => {
 	return {
@@ -36,6 +37,7 @@ const UserOverview = () => {
 					</AccordionSummary>
 					<AccordionDetails>
 						<UserDetails user={u} />
+						<UserActions user={u} />
 					</AccordionDetails>
 				</Accordion>
 			))}

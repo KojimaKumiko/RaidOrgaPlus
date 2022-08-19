@@ -14,3 +14,4 @@ core/*
 frontend/src/components/legal/data.json
 googlefd757d5932b1a0b1.html
 *.zip
+frontend_react/src/components/Misc/data.json

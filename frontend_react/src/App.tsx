@@ -78,7 +78,7 @@ function App() {
 
 	return (
 		<Box sx={{ display: "flex" }}>
-			<AppToolbar onClick={handleDrawer} />
+			<AppToolbar onClick={handleDrawer} visible={showContent} />
 			<MenuDrawer drawerWidth={drawerWidth} open={open} visible={showContent} />
 			<Main open={open}>
 				<Toolbar />

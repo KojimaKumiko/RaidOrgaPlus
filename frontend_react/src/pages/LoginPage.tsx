@@ -151,6 +151,12 @@ const LoginPage = () => {
 		});
 	};
 
+	const handleKeyDown = (key: string) => {
+		if (key === "Enter" && formIsValid(registerMode)) {
+			handleClick();
+		}
+	}
+
 	const login = async (accname: string, password: string) => {
 		const response = await loginUser(accname, password);
 
@@ -188,6 +194,7 @@ const LoginPage = () => {
 						sx={styles}
 						onBlur={(e) => handleInputValue(e.target)}
 						onChange={(e) => handleInputValue(e.target)}
+						onKeyDown={(e) => handleKeyDown(e.key)}
 						{...(errors[value.name] && { error: true, helperText: errors[value.name] })}
 					/>
 				);

@@ -24,7 +24,7 @@
 		<div>
 			<v-menu :close-on-content-click="false" v-model="classMenuOpen" v-if="editAllowed">
 				<template v-slot:activator="{ on: menu }">
-					<template v-on="menu">
+					<span v-on="menu">
 						<v-tooltip bottom :disabled="className == ''">
 							<template v-slot:activator="{ on: tooltip }">
 								<v-avatar :size="20" :tile="true" class="avatar hover" v-on="tooltip" @contextmenu.prevent="clearClass">
@@ -34,7 +34,7 @@
 							</template>
 							<span>{{ className }}</span>
 						</v-tooltip>
-					</template>
+					</span>
 				</template>
 				<MenuClassComp v-on:pick="pickClass" />
 			</v-menu>

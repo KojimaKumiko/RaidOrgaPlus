@@ -22,7 +22,7 @@ const intents = [
 
 const partials: PartialTypes[] = [];
 if (!process.env.BACKEND) {
-	partials.push("MESSAGE", "REACTION", "CHANNEL", "USER");
+	partials.push("MESSAGE", "REACTION", "CHANNEL", "USER", "GUILD_MEMBER");
 }
 
 const client = new DiscordClient({

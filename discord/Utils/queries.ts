@@ -19,7 +19,7 @@ export async function listRaidsForUser(nickname: string, leader?: RaidRole): Pro
 	`;
 	try {
 		let accountName = /[a-zA-Z]+[a-zA-Z\s]*\.\d{4}/.exec(nickname)[0];
-		if (accountName == null || accountName.trim() === '') {
+		if (accountName == null || accountName.trim() === "") {
 			accountName = nickname;
 		}
 
@@ -228,11 +228,37 @@ export async function saveTermin(messageId: string, channelId: string, terminId:
 	}
 }
 
+export async function checkRoleHistory(playerId: number, role: string): Promise<"ADD" | "REMOVE"> {
+	const stmt = `
+		SELECT Type
+		FROM RoleHistory
+		WHERE SpielerId = ?
+		AND NAME = ?
+		ORDER BY Id DESC
+		LIMIT 0, 1;
+	`;
+	try {
+		const result: { Type: "ADD" | "REMOVE" }[] = await queryV(stmt, [playerId, role]);
+		return result.map(r => r.Type)[0];
+	} catch (e) {
+		throw e;
+	}
+}
+
+export async function updateRoleHistory(id: number, role: string, type: "ADD" | "REMOVE", changer: string): Promise<OkPacket> {
+	const stmt = "INSERT INTO RoleHistory (SpielerId, Name, Type, Changer) VALUES (?, ?, ?, ?)";
+	try {
+		return await queryV(stmt, [id, role, type, changer]);
+	} catch (e) {
+		throw e;
+	}
+}
+
 export async function getPlayer(nickname: string): Promise<{ id: number; accname: string }> {
 	const stmt = "SELECT id, accname FROM Spieler WHERE id > 9 AND INSTR(?, accname)";
 	try {
 		let accountName = /[a-zA-Z]+[a-zA-Z\s]*\.\d{4}/.exec(nickname)[0];
-		if (accountName == null || accountName.trim() === '') {
+		if (accountName == null || accountName.trim() === "") {
 			accountName = nickname;
 		}
 

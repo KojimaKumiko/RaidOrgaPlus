@@ -8,6 +8,7 @@
 		"lint": "vue-cli-service lint"
 	},
 	"dependencies": {
+		"@fontsource/roboto": "^4.5.7",
 		"crypto": "^1.0.1",
 		"mysql": "^2.18.1",
 		"password-hash": "^1.2.2",

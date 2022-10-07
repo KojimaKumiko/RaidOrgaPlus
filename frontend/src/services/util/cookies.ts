@@ -2,7 +2,7 @@ export default { setCookie, getCookie, deleteCookie };
 
 function setCookie(cname: string, cvalue: string): void {
     const d = new Date();
-    d.setTime(d.getTime() + (10 * 365 * 24 * 60 * 60 * 1000));
+    d.setTime(d.getTime() + (90 * 24 * 60 * 60 * 1000));
     const expires = "expires="+d.toUTCString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }

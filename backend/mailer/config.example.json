@@ -1,7 +1,3 @@
 {
-  "host": "<<Host des Mailservers",
-  "auth": {
-    "user": "<<Nutzername des E-Mail-Accounts>>",
-    "pass": "<<Passwort des E-Mail-Accounts>>"
-  }
+	"password": ""
 }

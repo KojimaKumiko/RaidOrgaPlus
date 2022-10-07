@@ -2,6 +2,7 @@ import * as _aufstellung from '../aufstellungen/aufstellung';
 import * as _element from '../aufstellungen/element';
 import * as _roles from '../../authentication/role';
 import * as _termin from '../termine/termin';
+import * as _reports from '../reports/reports'
 import { Request } from 'express';
 import { Authentication } from 'models/Auth';
 import { Aufstellung } from 'models/Aufstellung';
@@ -56,6 +57,16 @@ async function setAufstellung(req: Request, authentication: Authentication): Pro
 		if (boss.success === true || boss.success === false) {
 			try {
 				await _aufstellung.setSuccess(aufstellung, Boolean(boss.success));
+			} catch (e) {
+				//Ignore not possible to set success.
+			}
+		}
+		if (boss.reportLink != null) {
+			try {
+				const reportLink = String(boss.reportLink)
+				if (reportLink.startsWith("https://dps.report/") || reportLink.startsWith("https://www.dps.report/")) {
+					await _reports.writeReport(aufstellung, reportLink);
+				}
 			} catch (e) {
 				//Ignore not possible to set success.
 			}

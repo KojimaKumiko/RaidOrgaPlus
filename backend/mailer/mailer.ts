@@ -7,14 +7,10 @@ export { sendPasswortResetMail as passwortReset };
 function sendEmail(user: Spieler, subject: string, text: string): void {
 	const mailAdress = "raidorgakontakt@gmail.com";
 	const transporter = nodemailer.createTransport({
-		host: "smtp.gmail.com",
-		secure: true,
+		service: 'gmail',
 		auth: {
-			type: "OAuth2",
 			user: mailAdress,
-			clientId: config.clientId,
-			clientSecret: config.clientSecrect,
-			refreshToken: config.refreshToken,
+			pass: config.password,
 		},
 	} as any);
 	const to = user.email;

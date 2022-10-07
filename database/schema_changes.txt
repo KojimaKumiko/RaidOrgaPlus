@@ -2,6 +2,25 @@
 -- Recent Schema Changes
 --------------------------------------
 
+CREATE TABLE RoleHistory (
+	Id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	SpielerId BIGINT(20) UNSIGNED NOT NULL, 
+	Name VARCHAR(256) NOT NULL,
+	Type VARCHAR(50) NOT NULL,
+	DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	Changer VARCHAR(200) NOT NULL,
+	FOREIGN KEY (SpielerId)
+		REFERENCES Spieler (id)
+		ON UPDATE CASCADE
+)
+
+ALTER TABLE RoleHistory
+ADD COLUMN Changer VARCHAR(200) NOT NULL;
+
+--------------------------------------
+-- Changes from 21.05.2022
+--------------------------------------
+
 CREATE TABLE Strikes (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	NAME VARCHAR(100) NOT NULL

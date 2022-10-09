@@ -5,11 +5,12 @@ import { ExpandMore } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import DoneIcon from "@mui/icons-material/Done";
 
-import { selectUsers } from "../../store/slices/moderationSlice";
+import { addFilter, filterUsers, removeFilter, selectActiveFilters, selectFilterdLength, selectUserLength, selectUsers } from "../../store/slices/moderationSlice";
 import UserHeader from "./UserHeader";
 import UserDetails from "./UserDetails";
 import UserActions from "./UserActions";
 import { InputTarget } from "../../models/types";
+import { useAppDispatch } from "../../store/hooks";
 
 const a11yProps = (accname: string) => {
 	return {
@@ -20,9 +21,13 @@ const a11yProps = (accname: string) => {
 
 const UserOverview = () => {
 	const [expanded, setExpanded] = useState("");
-	const [activeFilters, setActiveFilter] = useState<string[]>([]);
 
 	const users = useSelector(selectUsers);
+	const userLength = useSelector(selectUserLength);
+	const filteredUserLength = useSelector(selectFilterdLength);
+	const activeFilters = useSelector(selectActiveFilters);
+
+	const dispatch = useAppDispatch();
 
 	const filters = [
 		"Mit Discord",
@@ -48,10 +53,12 @@ const UserOverview = () => {
 	const handleFilterClick = (filter: string) => {
 		let index = activeFilters.indexOf(filter);
 		if (index > -1) {
-			setActiveFilter(activeFilters.filter((f) => f !== filter));
+			dispatch(removeFilter(filter));
 		} else {
-			setActiveFilter([ ...activeFilters, filter ]);
+			dispatch(addFilter(filter));
 		}
+
+		dispatch(filterUsers());
 	};
 
 	const handleIcon = (filter: string) => {
@@ -65,7 +72,7 @@ const UserOverview = () => {
 
 	return (
 		<Box>
-			<Stack direction="row">
+			<Stack direction="row" spacing={1}>
 				{filters.map(f => <Chip label={f} clickable onClick={() => handleFilterClick(f)} icon={handleIcon(f)} />)}
 			</Stack>
 			<Stack direction="row" spacing={4} justifyContent="center" sx={{ marginBottom: 4 }}>
@@ -82,6 +89,9 @@ const UserOverview = () => {
 					variant="standard"
 				/>
 			</Stack>
+			<Box>
+				<p>Zeige: {filteredUserLength} / {userLength}</p>
+			</Box>
 			{users.map((u) => (
 				<Accordion
 					expanded={expanded === u.accname}

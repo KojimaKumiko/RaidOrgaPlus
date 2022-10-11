@@ -1,9 +1,14 @@
 <template>
-	<v-btn fab :color="progressColor">
-		<v-avatar>
-			<v-img :src="icon(boss.abbr)"> </v-img>
-		</v-avatar>
-	</v-btn>
+	<v-tooltip bottom>
+		<template v-slot:activator="{ on }">
+			<v-btn fab :color="progressColor" v-on="on">
+				<v-avatar>
+					<v-img :src="icon(boss.abbr)"> </v-img>
+				</v-avatar>
+			</v-btn>
+		</template>
+		<span>{{boss.name}}</span>
+	</v-tooltip>
 </template>
 
 <script lang="ts">

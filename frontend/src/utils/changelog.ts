@@ -35,6 +35,15 @@ export const changelogs: Changelog[] = [
 				features: [
 					"Font anpassungen und Bugfixes."
 				]
+			},
+			{
+				version: "v2.4.4",
+				release: "10.10.2022",
+				features: [
+					"Call of the Mists (CotM / Buffwing) Buff rotation in der Weekly Progress anzeige gefixt.",
+					"Emobldened Buff der Weekly Progress anzeige hinzugefügt.",
+					"Tooltips für die Weekly Progress anzeige hinzugefügt."
+				]
 			}
 		]
 	},

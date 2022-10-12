@@ -4,11 +4,12 @@ import { getUsers } from "../../services/endpoints/moderation";
 
 import { User } from "models/Types";
 import { type RootState } from "../store";
+import { ExtraAccount } from "models/ExtraAccount";
+import { UserRole } from "models/Enums";
 
 export interface ModerationState {
 	users: User[];
 	usersLoadingStatus: "idle" | "loading" | "finished";
-	filteredUsers: User[];
 	filterName: string;
 	filterRole: string;
 	activeFilters: string[];
@@ -17,7 +18,6 @@ export interface ModerationState {
 const initialState: ModerationState = {
 	users: [],
 	usersLoadingStatus: "idle",
-	filteredUsers: [],
 	filterName: "",
 	filterRole: "",
 	activeFilters: ["Nicht Archiviert"],
@@ -25,13 +25,18 @@ const initialState: ModerationState = {
 
 export const getUsersThunk = createAsyncThunk(
 	"moderation/getUsers",
-	async () => {
+	async (force?: boolean) => {
 		const response = await getUsers();
 		return response;
 	},
 	{
 		condition: (payload, { getState, extra }) => {
 			const { moderation } = getState() as RootState;
+
+			if (payload && moderation.usersLoadingStatus === "finished") {
+				return true;
+			}
+
 			if (moderation.usersLoadingStatus === "loading" || moderation.usersLoadingStatus === "finished") {
 				return false;
 			}
@@ -47,26 +52,33 @@ export const moderationSlice = createSlice({
 			state.activeFilters.push(action.payload);
 		},
 		removeFilter(state, action: PayloadAction<string>) {
-			state.activeFilters = state.activeFilters.filter(f => f !== action.payload);
-		},
-		filterUsers(state) {
-			state.filteredUsers = filter(state.users, state.activeFilters);
+			state.activeFilters = state.activeFilters.filter((f) => f !== action.payload);
 		},
 		setNameFilter(state, action: PayloadAction<string>) {
 			state.filterName = action.payload;
 		},
 		setRoleFilter(state, action: PayloadAction<string>) {
 			state.filterRole = action.payload;
-		}
+		},
+		setComment(state, action: PayloadAction<{ id: number; comment: string }>) {
+			let user = state.users.find((u) => u.id === action.payload.id)!;
+			user.comment = action.payload.comment;
+		},
+		setUserRole(state, action: PayloadAction<{ id: number; role: UserRole }>) {
+			let user = state.users.find(u => u.id === action.payload.id)!;
+			user.role = action.payload.role;
+		},
 	},
 	extraReducers(builder) {
 		builder
 			.addCase(getUsersThunk.pending, (state, action) => {
 				state.usersLoadingStatus = "loading";
+				if (action.meta.arg) {
+					state.users = [];
+				}
 			})
 			.addCase(getUsersThunk.fulfilled, (state, action) => {
 				state.users = action.payload;
-				state.filteredUsers = filter(action.payload, state.activeFilters);
 				state.usersLoadingStatus = "finished";
 			})
 			.addCase(getUsersThunk.rejected, (state, action) => {
@@ -75,11 +87,15 @@ export const moderationSlice = createSlice({
 	},
 });
 
-const filter = (users: User[], filters: string[]): User[] => {
-	return users.filter(u => isInFilter(u, filters));
-}
+const filter = (users: User[], textFilter: string, roleFilter: string, filters: string[]): User[] => {
+	return users.filter((u) => isInFilter(u, textFilter, roleFilter, filters));
+};
 
-const isInFilter = (user: User, filters: string[]): boolean => {
+const isInFilter = (user: User, filterText: string, roleFilter: string, filters: string[]): boolean => {
+	return isInNameFilter(user, filterText) && isInRoleFilter(user, roleFilter) && isInChipFilter(user, filters);
+};
+
+const isInChipFilter = (user: User, filters: string[]): boolean => {
 	for (const filter of filters) {
 		let currentTruth = false;
 		let date: number, diff: number;
@@ -88,7 +104,7 @@ const isInFilter = (user: User, filters: string[]): boolean => {
 				currentTruth = !!user.discord;
 				break;
 			case "Ohne Discord":
-				currentTruth = !(!!user.discord);
+				currentTruth = !!!user.discord;
 				break;
 			case "14 Tage inaktiv":
 				date = Number(new Date(user.lastActive));
@@ -114,12 +130,46 @@ const isInFilter = (user: User, filters: string[]): boolean => {
 		}
 	}
 	return true;
-}
+};
 
-export const selectUsers = (state: RootState) => state.moderation.filteredUsers;
+const isInNameFilter = (user: User, filterText: string): boolean => {
+	const name = user.name.toLowerCase();
+	const accname = user.accname.toLowerCase();
+	const searchText = filterText.toLowerCase();
+	let inExtraAccounts = false;
+
+	if (user.extraAccounts && user.extraAccounts.length > 0) {
+		inExtraAccounts = user.extraAccounts.some(
+			(e: ExtraAccount) => e.accName.toLowerCase().indexOf(searchText) > -1
+		);
+	}
+
+	return name.indexOf(searchText) > -1 || accname.indexOf(searchText) > -1 || inExtraAccounts;
+};
+
+const isInRoleFilter = (user: User, roleFilter: string): boolean => {
+	if (roleFilter === "") {
+		return true;
+	}
+
+	if (!user.discord) {
+		return false;
+	}
+
+	const searchText = roleFilter.toLowerCase();
+	return !!user.discord.roles.find((r: any) => r.name.toLowerCase().indexOf(searchText) > -1);
+};
+
+export const selectUsers = (state: RootState) => state.moderation.users;
 export const selectUserLength = (state: RootState) => state.moderation.users.length;
-export const selectFilterdLength = (state: RootState) => state.moderation.filteredUsers.length;
+export const selectFilteredUsers = (state: RootState) =>
+	filter(
+		state.moderation.users,
+		state.moderation.filterName,
+		state.moderation.filterRole,
+		state.moderation.activeFilters
+	);
 export const selectActiveFilters = (state: RootState) => state.moderation.activeFilters;
 
-export const { addFilter, removeFilter, filterUsers } = moderationSlice.actions;
+export const { addFilter, removeFilter, setNameFilter, setRoleFilter, setComment, setUserRole } = moderationSlice.actions;
 export default moderationSlice.reducer;

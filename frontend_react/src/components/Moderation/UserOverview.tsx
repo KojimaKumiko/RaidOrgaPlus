@@ -1,11 +1,20 @@
 import React, { useState } from "react";
 import { Box } from "@mui/system";
-import { Accordion, AccordionDetails, AccordionSummary, Chip, Stack, TextField } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Chip, Stack, TextField } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import DoneIcon from "@mui/icons-material/Done";
 
-import { addFilter, filterUsers, removeFilter, selectActiveFilters, selectFilterdLength, selectUserLength, selectUsers } from "../../store/slices/moderationSlice";
+import {
+	addFilter,
+	getUsersThunk,
+	removeFilter,
+	selectActiveFilters,
+	selectFilteredUsers,
+	selectUserLength,
+	setNameFilter,
+	setRoleFilter,
+} from "../../store/slices/moderationSlice";
 import UserHeader from "./UserHeader";
 import UserDetails from "./UserDetails";
 import UserActions from "./UserActions";
@@ -22,9 +31,8 @@ const a11yProps = (accname: string) => {
 const UserOverview = () => {
 	const [expanded, setExpanded] = useState("");
 
-	const users = useSelector(selectUsers);
+	const users = useSelector(selectFilteredUsers);
 	const userLength = useSelector(selectUserLength);
-	const filteredUserLength = useSelector(selectFilterdLength);
 	const activeFilters = useSelector(selectActiveFilters);
 
 	const dispatch = useAppDispatch();
@@ -32,7 +40,7 @@ const UserOverview = () => {
 	const filters = [
 		"Mit Discord",
 		"Ohne Discord",
-		"14 Tage Inaktiv",
+		"14 Tage inaktiv",
 		"1. Raid vier Wochen her",
 		"Archiviert",
 		"Nicht Archiviert",
@@ -43,11 +51,11 @@ const UserOverview = () => {
 	};
 
 	const handlePlayerSearch = (e: InputTarget) => {
-		console.log(e.value);
+		dispatch(setNameFilter(e.value));
 	};
 
 	const handleRoleSearch = (e: InputTarget) => {
-		console.log(e.value);
+		dispatch(setRoleFilter(e.value));
 	};
 
 	const handleFilterClick = (filter: string) => {
@@ -57,8 +65,10 @@ const UserOverview = () => {
 		} else {
 			dispatch(addFilter(filter));
 		}
+	};
 
-		dispatch(filterUsers());
+	const handleRefresh = () => {
+		dispatch(getUsersThunk(true));
 	};
 
 	const handleIcon = (filter: string) => {
@@ -73,7 +83,9 @@ const UserOverview = () => {
 	return (
 		<Box>
 			<Stack direction="row" spacing={1}>
-				{filters.map(f => <Chip label={f} clickable onClick={() => handleFilterClick(f)} icon={handleIcon(f)} />)}
+				{filters.map((f) => (
+					<Chip label={f} clickable onClick={() => handleFilterClick(f)} icon={handleIcon(f)} key={f} />
+				))}
 			</Stack>
 			<Stack direction="row" spacing={4} justifyContent="center" sx={{ marginBottom: 4 }}>
 				<TextField
@@ -88,9 +100,14 @@ const UserOverview = () => {
 					sx={{ width: 650 }}
 					variant="standard"
 				/>
+				<Button variant="contained" color="neutral" onClick={handleRefresh}>
+					Refresh
+				</Button>
 			</Stack>
 			<Box>
-				<p>Zeige: {filteredUserLength} / {userLength}</p>
+				<p>
+					Zeige: {users.length} / {userLength}
+				</p>
 			</Box>
 			{users.map((u) => (
 				<Accordion

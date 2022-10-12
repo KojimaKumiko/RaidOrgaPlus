@@ -65,7 +65,7 @@ const Discord = (props: Props) => {
 			<h3 css={userDetailsCss.header}>Discord</h3>
 			<Stack direction="row" sx={{ marginBottom: 1 }}>
 				{discord.roles.map((role, i) => (
-					<Chip label={role.name} sx={{ marginRight: 1, color: color(role), fontSize: 14 }} />
+					<Chip key={role.id} label={role.name} sx={{ marginRight: 1, color: color(role), fontSize: 14 }} />
 				))}
 			</Stack>
 			<Typography>

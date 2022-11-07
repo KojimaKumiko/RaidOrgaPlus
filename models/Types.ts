@@ -1,6 +1,7 @@
 import { DiscordMember } from "./Discord";
 import { ExtraAccount } from "./ExtraAccount";
 import { Raid } from "./Raid";
+import { RoleHistory } from "./RoleHistory";
 import { Role } from "./Rolle";
 import { Spieler, SpielerRaid, SpielerTermin } from "./Spieler";
 import { Termin } from "./Termin";
@@ -50,6 +51,7 @@ export type User = Omit<Spieler, 'discord'> & {
 	guildLog: any;
 	extraAccounts: ExtraAccount[];
 	discord: DiscordMember;
+	roleHistory: RoleHistory[];
 };
 
 export type terminDate = Pick<Termin, "date" | "dateString" | "time" | "endtime">;

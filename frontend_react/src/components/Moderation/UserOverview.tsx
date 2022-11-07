@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Box } from "@mui/system";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Chip, Stack, TextField } from "@mui/material";
-import { ExpandMore } from "@mui/icons-material";
 import { useSelector } from "react-redux";
+import { Box } from "@mui/system";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Chip, TextField } from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
 import DoneIcon from "@mui/icons-material/Done";
+import Grid from "@mui/material/Unstable_Grid2";
 
 import {
 	addFilter,
@@ -82,28 +83,40 @@ const UserOverview = () => {
 
 	return (
 		<Box>
-			<Stack direction="row" spacing={1}>
+			<Grid container spacing={1}>
 				{filters.map((f) => (
-					<Chip label={f} clickable onClick={() => handleFilterClick(f)} icon={handleIcon(f)} key={f} />
+					<Grid key={f}>
+						<Chip label={f} clickable onClick={() => handleFilterClick(f)} icon={handleIcon(f)} />
+					</Grid>
 				))}
-			</Stack>
-			<Stack direction="row" spacing={4} justifyContent="center" sx={{ marginBottom: 4 }}>
-				<TextField
-					label="Suche nach Spielern"
-					onChange={(e) => handlePlayerSearch(e.target)}
-					sx={{ width: 650 }}
-					variant="standard"
-				/>
-				<TextField
-					label="Suche nach Rollen"
-					onChange={(e) => handleRoleSearch(e.target)}
-					sx={{ width: 650 }}
-					variant="standard"
-				/>
-				<Button variant="contained" color="neutral" onClick={handleRefresh}>
-					Refresh
-				</Button>
-			</Stack>
+			</Grid>
+			<Grid container spacing={4} sx={{ marginBottom: 2, alignItems: "flex-end" }}>
+				<Grid xs={12} sm={5}>
+					<TextField
+						label="Suche nach Spielern"
+						onChange={(e) => handlePlayerSearch(e.target)}
+						variant="standard"
+						fullWidth
+					/>
+				</Grid>
+				<Grid xs={12} sm={5}>
+					<TextField
+						label="Suche nach Rollen"
+						onChange={(e) => handleRoleSearch(e.target)}
+						variant="standard"
+						fullWidth
+					/>
+				</Grid>
+				<Grid xs={12} sm={2}>
+					<Button
+						variant="contained"
+						color="neutral"
+						sx={{ minWidth: 80, maxWidth: 160, width: "100%" }}
+						onClick={handleRefresh}>
+						Refresh
+					</Button>
+				</Grid>
+			</Grid>
 			<Box>
 				<p>
 					Zeige: {users.length} / {userLength}

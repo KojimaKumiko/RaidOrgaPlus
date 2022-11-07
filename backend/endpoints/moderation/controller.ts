@@ -9,7 +9,7 @@ import * as _raids from "./raids";
 import * as _invites from "../raids/invites";
 import * as _discord from "../../discord/discord";
 import * as _guild from "../../gw2api/guilds";
-import { getAllExtraAccounts } from "../users/user";
+import { getAllExtraAccounts, getFullRoleHistory } from "../users/user";
 import { Authentication } from "models/Auth";
 import { ControllerEndpoint } from "models/ControllerEndpoint";
 import { Spieler } from "models/Spieler";
@@ -58,10 +58,12 @@ async function getUsers(req: Request, authentication: Authentication): Promise<U
 		const guildUsers = await _guild.getUsers();
 		const guildLog = await _guild.getGuildLog();
 		const allExtraAccounts = await getAllExtraAccounts();
+		const fullRoleHistory = await getFullRoleHistory();
 		for (const user of users) {
 			const discordUser = _discord.findUser(user, discordUsers);
 			const guildUser = _guild.findUser(user, guildUsers);
 			const extraAccounts = allExtraAccounts.filter((e) => e.fk_spieler === user.id);
+			const roleHistory = fullRoleHistory.filter((e) => e.spielerId === user.id);
 
 			if (discordUser) {
 				user.discord = discordUser;
@@ -76,6 +78,12 @@ async function getUsers(req: Request, authentication: Authentication): Promise<U
 
 			if (extraAccounts && extraAccounts.length > 0) {
 				user.extraAccounts = extraAccounts;
+			}
+
+			if (roleHistory && roleHistory.length > 0) {
+				user.roleHistory = roleHistory;
+			} else {
+				user.roleHistory = [];
 			}
 		}
 		const duration = dayjs().diff(start);

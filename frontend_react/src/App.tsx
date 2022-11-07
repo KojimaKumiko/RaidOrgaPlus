@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { styled } from "@mui/material/styles";
-import { Box, Toolbar } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 
 import { getUser, selectLoadingStatus, selectLoginState } from "./store/slices/userSlice";
 import { saveWindowWidth } from "./store/slices/baseSlice";
@@ -15,25 +14,6 @@ import "./App.css";
 
 const drawerWidth = 240;
 
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
-	open?: boolean;
-}>(({ theme, open }) => ({
-	flexGrow: 1,
-	padding: theme.spacing(3),
-	transition: theme.transitions.create("margin", {
-		easing: theme.transitions.easing.sharp,
-		duration: theme.transitions.duration.leavingScreen,
-	}),
-	marginLeft: `-${drawerWidth}px`,
-	...(open && {
-		transition: theme.transitions.create("margin", {
-			easing: theme.transitions.easing.easeOut,
-			duration: theme.transitions.duration.enteringScreen,
-		}),
-		marginLeft: 0,
-	}),
-}));
-
 function App() {
 	const [open, setOpen] = useState(true);
 	const [showContent, setShowContent] = useState(false);
@@ -41,6 +21,24 @@ function App() {
 	const dispatch = useDispatch();
 	const loginState = useSelector(selectLoginState);
 	const loadingStatus = useSelector(selectLoadingStatus);
+	const theme = useTheme();
+	const breakpoint = useMediaQuery(theme.breakpoints.up("lg"));
+
+	const mainStyle = {
+		flexGrow: 1,
+		padding: theme.spacing(3),
+		transition: theme.transitions.create("margin", {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.leavingScreen,
+		}),
+		...(open && breakpoint && {
+			transition: theme.transitions.create("margin", {
+				easing: theme.transitions.easing.easeOut,
+			duration: theme.transitions.duration.enteringScreen,
+			}),
+			marginLeft: `${drawerWidth}px`,
+		})
+	}
 
 	useEffect(() => {
 		switch (loadingStatus) {
@@ -60,6 +58,12 @@ function App() {
 	useEffect(() => {
 		const handleResize = () => {
 			dispatch(saveWindowWidth(window.innerWidth));
+			
+			if (window.innerWidth >= 1200) {
+				setOpen(true);
+			} else {
+				setOpen(false);
+			}
 		};
 
 		// initialize the window width.
@@ -76,12 +80,15 @@ function App() {
 		setOpen(!open);
 	};
 
+	const closeDrawer = () => {
+		setOpen(false);
+	}
+
 	return (
-		<Box sx={{ display: "flex" }}>
+		<Box>
 			<AppToolbar onClick={handleDrawer} visible={showContent} />
-			<MenuDrawer drawerWidth={drawerWidth} open={open} visible={showContent} />
-			<Main open={open}>
-				<Toolbar />
+			<MenuDrawer drawerWidth={drawerWidth} open={open} onClose={closeDrawer} visible={showContent} />
+			<main style={mainStyle}>
 				{loading ? (
 					<Spinner loading={loading} style={{ position: "absolute", top: "50%", left: "50%" }} />
 				) : showContent ? (
@@ -89,7 +96,7 @@ function App() {
 				) : (
 					<LoginPage />
 				)}
-			</Main>
+			</main>
 		</Box>
 	);
 }

@@ -143,7 +143,7 @@ export default class Snake extends Component {
 			row.map((value, j) => <div name={`${i}=${j}`} className={value} />)
 		);
 		return (
-			<div className="">
+			<div className="main">
 				<h1> Snake v0.1.1</h1>
 				<ul>
 					<li>press "space" to pause the game.</li>

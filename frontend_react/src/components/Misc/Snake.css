@@ -1,14 +1,14 @@
 .main {
-	width: 100vw;
-	height: 100vh;
+	width: 100%;
 	display: flex;
 	flex: 1;
-	flexdirection: row;
-	flexwrap: wrap;
+	flex-direction: row;
+	flex-wrap: wrap;
+	overflow: hidden;
 }
 .snake-container {
 	width: 100vw;
-	height: 100vh;
+	height: 75vh;
 	display: flex;
 	align-items: center;
 	justify-content: center;

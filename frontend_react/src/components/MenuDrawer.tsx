@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import { Box, Toolbar, Drawer, List, ListItem, ListItemIcon, ListItemText, Stack, Dialog } from "@mui/material";
+import { Box, Toolbar, Drawer, List, ListItem, ListItemIcon, ListItemText, Stack, Dialog, useTheme, useMediaQuery } from "@mui/material";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 
@@ -16,12 +16,13 @@ interface IProps {
 	drawerWidth: number;
 	open: boolean;
 	visible: boolean;
+	onClose: () => void;
 }
 
 const MenuDrawer = (props: IProps) => {
 	const [open, setOpen] = useState(false);
 	const loggedInUser = useSelector(selectLoggedInUser) as User;
-	
+
 	const drawerStyle = {
 		width: props.drawerWidth,
 		flexShrink: 0,
@@ -35,24 +36,32 @@ const MenuDrawer = (props: IProps) => {
 		{ name: "Einstellungen", link: "/settings" },
 		{ name: "Hilfe", link: "/help" },
 		{ name: "Moderation", link: "/moderation" },
-	]
+	];
 
 	const handleClose = () => {
 		setOpen(false);
-	}
-	
+	};
+
+	const theme = useTheme();
+	const greaterThanLargeBreakpoint = useMediaQuery(theme.breakpoints.up("lg"));
+
 	return (
 		<Drawer
-			sx={[ drawerStyle, !props.visible && { "display": "none" } ]}
+			sx={[drawerStyle, !props.visible && { display: "none" }]}
 			open={props.open}
+			onClose={props.onClose}
 			anchor="left"
-			variant="persistent">
+			variant={ greaterThanLargeBreakpoint ? "persistent" : "temporary" }>
 			<Toolbar />
 			<Box sx={{ overflow: "auto" }}>
 				<List>
 					<Stack direction="row" sx={{ marginLeft: 2, marginTop: 1 }}>
-						<ProfileAvatar user={loggedInUser} sx={{ marginTop: "auto", marginBottom: "auto" }} onDoubleClick={() => setOpen(true)} />
-						<p style={{ marginLeft: 16 }}> { loggedInUser?.name } </p>
+						<ProfileAvatar
+							user={loggedInUser}
+							sx={{ marginTop: "auto", marginBottom: "auto" }}
+							onDoubleClick={() => setOpen(true)}
+						/>
+						<p style={{ marginLeft: 16 }}> {loggedInUser?.name} </p>
 					</Stack>
 					{links.map((linkObject, index) => (
 						<ListItem button key={linkObject.name} component={Link} to={linkObject.link}>
@@ -62,7 +71,7 @@ const MenuDrawer = (props: IProps) => {
 					))}
 				</List>
 			</Box>
-			<Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+			<Dialog open={open} onClose={handleClose} maxWidth="lg">
 				<Snake />
 			</Dialog>
 		</Drawer>

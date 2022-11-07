@@ -2,6 +2,7 @@
 import { Fragment } from "react";
 
 import { Chip, Divider, Stack, Typography, css } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2";
 
 import { DiscordRole } from "models/Discord";
 import { User } from "models/Types";
@@ -63,11 +64,13 @@ const Discord = (props: Props) => {
 		<Fragment>
 			<Divider css={userDetailsCss.divider} />
 			<h3 css={userDetailsCss.header}>Discord</h3>
-			<Stack direction="row" sx={{ marginBottom: 1 }}>
+			<Grid container sx={{ marginBottom: 1 }} spacing={0.5}>
 				{discord.roles.map((role, i) => (
-					<Chip key={role.id} label={role.name} sx={{ marginRight: 1, color: color(role), fontSize: 14 }} />
+					<Grid key={role.id}>
+						<Chip label={role.name} sx={{ color: color(role), fontSize: 14 }} />
+					</Grid>
 				))}
-			</Stack>
+			</Grid>
 			<Typography>
 				<span css={userDetailsCss.span}>Accountname:</span> {discord.username}
 			</Typography>

@@ -8,12 +8,20 @@ import {
 	Dialog,
 	Divider,
 	IconButton,
+	Paper,
 	Stack,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
 	TextField,
 	ToggleButton,
 	ToggleButtonGroup,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import Grid from "@mui/material/Unstable_Grid2";
 
 import { User } from "models/Types";
 import { InputTarget } from "../../models/types";
@@ -143,11 +151,39 @@ const GuildHistory = () => {
 	);
 };
 
-const RoleHistory = () => {
+const RoleHistory = (props: Props) => {
+	const roleHistory = props.user.roleHistory;
+
+	const getDate = (date: Date) => {
+		return new Date(date).toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "medium" });
+	};
+
 	return (
-		<Fragment>
+		<Box>
 			<h3>Rolenhistorie</h3>
-		</Fragment>
+			<TableContainer component={Paper}>
+				<Table sx={{ minWidth: 650 }} aria-label="simple table">
+					<TableHead>
+						<TableRow>
+							<TableCell>Name</TableCell>
+							<TableCell>Art</TableCell>
+							<TableCell>Datum</TableCell>
+							<TableCell>Changer</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{roleHistory.map((history) => (
+							<TableRow key={history.id} sx={{ "&:last-child td": { border: 0 } , "&:nth-of-type(odd)": { backgroundColor: "action.hover" } }}>
+								<TableCell>{history.name}</TableCell>
+								<TableCell>{history.type}</TableCell>
+								<TableCell>{getDate(history.date)}</TableCell>
+								<TableCell>{history.changer}</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</Box>
 	);
 };
 
@@ -156,6 +192,14 @@ const Archive = () => {
 		<Fragment>
 			<h3>Archivieren</h3>
 		</Fragment>
+	);
+};
+
+const Restore = () => {
+	return (
+		<Box>
+			<h3>Wiederherstellen</h3>
+		</Box>
 	);
 };
 
@@ -179,35 +223,57 @@ const UserActions = (props: Props) => {
 			case "guild":
 				return <GuildHistory />;
 			case "role":
-				return <RoleHistory />;
+				return <RoleHistory user={props.user} />;
 			case "archive":
 				return <Archive />;
+			case "restore":
+				return <Restore />;
 			default:
 				break;
 		}
 	};
 
+	const archiveButton = (
+		<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("archive")}>
+			Archivieren
+		</Button>
+	);
+
+	const restoreButton = (
+		<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("restore")}>
+			Wiederherstellen
+		</Button>
+	);
+
 	return (
-		<Stack direction="row" css={style.stack}>
-			<Button variant="contained" color="neutral" css={style.button} disabled>
-				Profile
-			</Button>
-			<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("edit")}>
-				Bearbeiten
-			</Button>
-			<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("guild")}>
-				Gildenhistorie
-			</Button>
+		<Grid container css={style.stack} spacing={0.5}>
+			<Grid>
+				<Button variant="contained" color="neutral" css={style.button} disabled>
+					Profile
+				</Button>
+			</Grid>
+			<Grid>
+				<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("edit")}>
+					Bearbeiten
+				</Button>
+			</Grid>
+			<Grid>
+				<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("guild")}>
+					Gildenhistorie
+				</Button>
+			</Grid>
+			<Grid>
 			<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("role")}>
 				Rolenhistorie
 			</Button>
-			<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("archive")}>
-				Archivieren
-			</Button>
+			</Grid>
+			<Grid>
+				{props.user.archived ? restoreButton : archiveButton}
+			</Grid>
 			<Dialog open={open} onClose={handleClose} maxWidth="lg">
 				{showComponent()}
 			</Dialog>
-		</Stack>
+		</Grid>
 	);
 };
 

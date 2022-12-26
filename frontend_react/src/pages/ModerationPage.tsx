@@ -13,11 +13,6 @@ interface TabPanelProps {
 
 const TabPanel = (props: TabPanelProps) => {
 	const { children, value, index, ...other } = props;
-	const dispatch = useDispatch();
-
-	useEffect(() => {
-		dispatch(getUsersThunk());
-	}, [dispatch]);
 
 	return (
 		<div
@@ -47,6 +42,12 @@ const ModerationPage = () => {
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
 		setValue(newValue);
 	};
+
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(getUsersThunk());
+	}, [dispatch]);
 
 	return (
 		<Box>

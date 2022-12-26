@@ -10,6 +10,7 @@ import { Authentication } from "models/Auth";
 import { Spieler } from "models/Spieler";
 import { ControllerEndpoint } from "models/ControllerEndpoint";
 import { playerInvite, Response, terminState, userRaid } from "models/Types";
+import { Raid } from "../../../models/Raid";
 
 const endpoints: ControllerEndpoint[] = [
 	{ function: getRaids, path: "", method: "get", authed: true },
@@ -29,8 +30,14 @@ const endpoints: ControllerEndpoint[] = [
 ];
 export default endpoints;
 
-async function getRaids(req: Request, authentication: Authentication): Promise<userRaid[]> {
-	return await _raids.listForPlayer(authentication.user);
+async function getRaids(req: Request, authentication: Authentication): Promise<Raid | userRaid[]> {
+	const raidId = Number(req.query.raidId);
+	if (raidId) {
+		return await _raids.get(raidId);
+	}
+	else {
+		return await _raids.listForPlayer(authentication.user);
+	}
 }
 
 async function getRole(req: Request, authentication: Authentication): Promise<{ role: number }> {

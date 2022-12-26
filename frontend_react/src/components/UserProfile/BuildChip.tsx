@@ -1,14 +1,23 @@
-import { Avatar, Chip, Stack } from "@mui/material";
+/** @jsxImportSource @emotion/react */
+import { Avatar, Chip, css, Stack, styled } from "@mui/material";
 import { yellow, grey } from "@mui/material/colors";
 import StarIcon from "@mui/icons-material/Star";
 import StarOutlineIcon from "@mui/icons-material/StarOutline";
 
 import { classIcon, roleIcon } from "../../services/icons";
 import { Build } from "models/Build";
+import { Class } from "models/Klasse";
 
 interface IChipIconsProps {
 	build: Build;
+	showStar?: boolean;
 }
+
+const StyledChip = styled(Chip, { shouldForwardProp: (prop) => prop !== "cl" })<{ cl: Class }>(({ cl }) => ({
+	"& .MuiChip-label": { display: "none" },
+	margin: 4,
+	// backgroundColor: cl.color,
+}));
 
 const ChipIcons = (props: IChipIconsProps) => {
 	const classSrc = classIcon(props.build.class.abbr);
@@ -21,7 +30,7 @@ const ChipIcons = (props: IChipIconsProps) => {
 		let color = "";
 
 		if (star === 0) {
-			color = "#000";
+			color = "#9E9E9E";
 		} else if (star === 1) {
 			color = yellow[900];
 		} else if (star === 2) {
@@ -33,6 +42,21 @@ const ChipIcons = (props: IChipIconsProps) => {
 		return color;
 	};
 
+	const showStar = () => {
+		let star = null;
+
+		if (props.showStar) {
+			star =
+				props.build.prefer > 0 ? (
+					<StarIcon sx={{ marginLeft: 1, color: prefered(props.build.prefer) }} />
+				) : (
+					<StarOutlineIcon sx={{ marginLeft: 1, color: prefered(props.build.prefer) }} />
+				);
+		}
+
+		return star;
+	};
+
 	return (
 		<Stack direction="row" alignItems="center" sx={{ paddingLeft: 1.5, paddingRight: 1.5 }}>
 			<Avatar src={classSrc} sx={{ width: 24, marginRight: 0.5 }} imgProps={imgProps} />
@@ -40,34 +64,35 @@ const ChipIcons = (props: IChipIconsProps) => {
 				let src = roleIcon(r.abbr);
 				return <Avatar src={src} sx={{ width: 24 }} imgProps={imgProps} key={r.id} />;
 			})}
-			{props.build.prefer > 0 ? (
-				<StarIcon sx={{ marginLeft: 1, color: prefered(props.build.prefer) }} />
-			) : (
-				<StarOutlineIcon sx={{ marginLeft: 1, color: prefered(props.build.prefer) }} />
-			)}
+			{showStar()}
 		</Stack>
 	);
 };
 
 interface IProps {
 	build: Build;
-	ownProfile: boolean;
-	star: boolean;
-	edit: boolean;
+	ownProfile?: boolean;
+	star?: boolean;
+	edit?: boolean;
+	onDelete?: () => void;
 }
 
 const BuildChip = (props: IProps) => {
-	const handleDelete = () => {};
+	let chip = null;
 
-	return (
-		<span>
-			<Chip
-				avatar={<ChipIcons build={props.build} />}
-				onDelete={handleDelete}
-				sx={{ "& .MuiChip-label": { display: "none" } }}
+	if (props.ownProfile) {
+		chip = (
+			<StyledChip
+				avatar={<ChipIcons build={props.build} showStar={props.star} />}
+				onDelete={props.onDelete}
+				cl={props.build.class}
 			/>
-		</span>
-	);
+		);
+	} else {
+		chip = <StyledChip avatar={<ChipIcons build={props.build} showStar={props.star} />} cl={props.build.class} />;
+	}
+
+	return chip;
 };
 
 export default BuildChip;

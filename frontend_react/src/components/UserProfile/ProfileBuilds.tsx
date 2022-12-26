@@ -3,7 +3,7 @@ import BuildChip from "./BuildChip";
 import { Build } from "models/Build";
 import { useEffect, useState } from "react";
 import { Spieler } from "models/Spieler";
-import { getBuilds } from "../../services/endpoints/user";
+import { deleteBuild, getBuilds } from "../../services/endpoints/user";
 
 interface IProps {
 	user: Spieler;
@@ -28,11 +28,17 @@ const ProfileBuilds = (props: IProps) => {
 		return `${build.class.name}_${roleIds}_${build.class.id}`;
 	};
 
+	const handleDelete = async (build: Build, index: number) => {
+		let roles = build.role.map(r => r.id).join(', ');
+		await deleteBuild(build.class.id, roles);
+		setBuilds(builds.filter((b, i) => i !== index));
+	}
+
 	return (
 		<span>
 			<h3>Meine Builds</h3>
-			{builds.map((b) => (
-				<BuildChip ownProfile star edit build={b} key={generateKey(b)} />
+			{builds.map((build, index) => (
+				<BuildChip ownProfile star edit build={build} key={generateKey(build)} onDelete={() => handleDelete(build, index)} />
 			))}
 		</span>
 	);

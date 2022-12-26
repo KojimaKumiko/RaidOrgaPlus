@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useMatches } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Box, useMediaQuery, useTheme } from "@mui/material";
@@ -23,22 +23,28 @@ function App() {
 	const loadingStatus = useSelector(selectLoadingStatus);
 	const theme = useTheme();
 	const breakpoint = useMediaQuery(theme.breakpoints.up("lg"));
+	const matches = useMatches();
+	const raidPage = matches.some(m => m.params["raidId"] != null);
 
 	const mainStyle = {
 		flexGrow: 1,
-		padding: theme.spacing(3),
-		transition: theme.transitions.create("margin", {
+		margin: "1% 2%",
+		transition: theme.transitions.create("padding", {
 			easing: theme.transitions.easing.sharp,
 			duration: theme.transitions.duration.leavingScreen,
 		}),
-		...(open && breakpoint && {
-			transition: theme.transitions.create("margin", {
-				easing: theme.transitions.easing.easeOut,
-			duration: theme.transitions.duration.enteringScreen,
+		...(open &&
+			breakpoint && {
+				transition: theme.transitions.create("padding", {
+					easing: theme.transitions.easing.easeOut,
+					duration: theme.transitions.duration.enteringScreen,
+				}),
+				paddingLeft: `${drawerWidth}px`,
 			}),
-			marginLeft: `${drawerWidth}px`,
+		...(raidPage && {
+			margin: 0
 		})
-	}
+	};
 
 	useEffect(() => {
 		switch (loadingStatus) {
@@ -58,7 +64,7 @@ function App() {
 	useEffect(() => {
 		const handleResize = () => {
 			dispatch(saveWindowWidth(window.innerWidth));
-			
+
 			if (window.innerWidth >= 1200) {
 				setOpen(true);
 			} else {
@@ -73,8 +79,8 @@ function App() {
 
 		return () => {
 			window.removeEventListener("resize", handleResize);
-		}
-	}, [dispatch]);
+		};
+	}, [dispatch, showContent]);
 
 	const handleDrawer = () => {
 		setOpen(!open);
@@ -82,21 +88,21 @@ function App() {
 
 	const closeDrawer = () => {
 		setOpen(false);
-	}
+	};
 
 	return (
 		<Box>
 			<AppToolbar onClick={handleDrawer} visible={showContent} />
 			<MenuDrawer drawerWidth={drawerWidth} open={open} onClose={closeDrawer} visible={showContent} />
-			<main style={mainStyle}>
-				{loading ? (
-					<Spinner loading={loading} style={{ position: "absolute", top: "50%", left: "50%" }} />
-				) : showContent ? (
+			{loading ? (
+				<Spinner loading={loading} style={{ position: "absolute", top: "50%", left: "50%" }} />
+			) : showContent ? (
+				<main style={mainStyle}>
 					<Outlet />
-				) : (
-					<LoginPage />
-				)}
-			</main>
+				</main>
+			) : (
+				<LoginPage />
+			)}
 		</Box>
 	);
 }

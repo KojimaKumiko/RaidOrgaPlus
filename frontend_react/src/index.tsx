@@ -1,6 +1,13 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Routes } from "react-router-dom";
+import {
+	BrowserRouter,
+	createBrowserRouter,
+	createRoutesFromElements,
+	Route,
+	RouterProvider,
+	Routes,
+} from "react-router-dom";
 import { Provider } from "react-redux";
 
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -21,6 +28,7 @@ import "./index.css";
 import RaidPage from "./pages/Raids/RaidPage";
 import MembersPage from "./pages/Raids/MembersPage";
 import { getRaidFromId } from "./services/endpoints/raids";
+import RaidDashboard from "./pages/Raids/RaidDashboard";
 
 // import "./theme";
 
@@ -56,6 +64,7 @@ const router = createBrowserRouter(
 				loader={async ({ params }) => {
 					return await getRaidFromId(Number(params.raidId));
 				}}>
+				<Route index element={<RaidDashboard />} />
 				<Route path="spielerliste" element={<MembersPage />} />
 			</Route>
 			<Route path="profile" element={<ProfilePage />} />

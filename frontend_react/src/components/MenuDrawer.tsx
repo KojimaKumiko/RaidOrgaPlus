@@ -1,10 +1,23 @@
+/** @jsxImportSource @emotion/react */
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import { Box, Toolbar, Drawer, List, ListItem, ListItemIcon, ListItemText, Stack, Dialog, useTheme, useMediaQuery } from "@mui/material";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import {
+	Box,
+	Toolbar,
+	Drawer,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+	Stack,
+	Dialog,
+	useTheme,
+	useMediaQuery,
+	Icon,
+	css,
+} from "@mui/material";
 
 import { selectLoggedInUser } from "../store/slices/userSlice";
 import ProfileAvatar from "./UserProfile/ProfileAvatar";
@@ -23,19 +36,29 @@ const MenuDrawer = (props: IProps) => {
 	const [open, setOpen] = useState(false);
 	const loggedInUser = useSelector(selectLoggedInUser) as User;
 
-	const drawerStyle = {
-		width: props.drawerWidth,
-		flexShrink: 0,
-		[`& .MuiDrawer-paper`]: { width: props.drawerWidth, boxSizing: "border-box" },
-	};
+	const style = {
+		drawer: css({
+			width: props.drawerWidth,
+			flexShrink: 0,
+			[`& .MuiDrawer-paper`]: { width: props.drawerWidth, boxSizing: "border-box" },
+			...(!props.visible && {
+				display: "none"
+			})
+		}),
+		box: css({
+			overflow: "auto",
+			backgroundColor: "#363636",
+			height: "100%",
+		})
+	}
 
 	const links = [
-		{ name: "Home", link: "/" },
-		{ name: "Meine Raids", link: "/raids" },
-		{ name: "Profil", link: "/profile" },
-		{ name: "Einstellungen", link: "/settings" },
-		{ name: "Hilfe", link: "/help" },
-		{ name: "Moderation", link: "/moderation" },
+		{ name: "Home", link: "/", icon: "home" },
+		{ name: "Meine Raids", link: "/raids", icon: "explore" },
+		{ name: "Profil", link: "/profile", icon: "account_circle" },
+		{ name: "Einstellungen", link: "/settings", icon: "settings" },
+		{ name: "Hilfe", link: "/help", icon: "help" },
+		{ name: "Moderation", link: "/moderation", icon: "vpn_key" },
 	];
 
 	const handleClose = () => {
@@ -47,13 +70,14 @@ const MenuDrawer = (props: IProps) => {
 
 	return (
 		<Drawer
-			sx={[drawerStyle, !props.visible && { display: "none" }]}
+			css={style.drawer}
 			open={props.open}
 			onClose={props.onClose}
 			anchor="left"
-			variant={ greaterThanLargeBreakpoint ? "persistent" : "temporary" }>
+			variant={greaterThanLargeBreakpoint ? "persistent" : "temporary"}>
+			{/* required to prevent clipping from the Toolbar */}
 			<Toolbar />
-			<Box sx={{ overflow: "auto" }}>
+			<Box css={style.box}>
 				<List>
 					<Stack direction="row" sx={{ marginLeft: 2, marginTop: 1 }}>
 						<ProfileAvatar
@@ -65,7 +89,9 @@ const MenuDrawer = (props: IProps) => {
 					</Stack>
 					{links.map((linkObject, index) => (
 						<ListItem button key={linkObject.name} component={Link} to={linkObject.link}>
-							<ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+							<ListItemIcon>
+								<Icon>{linkObject.icon}</Icon>
+							</ListItemIcon>
 							<ListItemText primary={linkObject.name} />
 						</ListItem>
 					))}

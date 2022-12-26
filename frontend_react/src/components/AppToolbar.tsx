@@ -59,7 +59,7 @@ const AppToolbar = (props: IProps) => {
 					color="inherit"
 					aria-label="handle drawer"
 					onClick={props.onClick}
-					sx={{ mr: 2 }}>
+					sx={[{ mr: 2 }, !props.visible && { display: "none" }]}>
 					<Menu />
 				</IconButton>
 				<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>

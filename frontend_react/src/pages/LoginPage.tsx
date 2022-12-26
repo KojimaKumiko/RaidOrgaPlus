@@ -179,7 +179,7 @@ const LoginPage = () => {
 	}
 
 	return (
-		<Box component="form" sx={{ "& .MuiTextField-root": { m: 1 } }} noValidate autoComplete="off">
+		<Box component="form" sx={{ "& .MuiTextField-root": { m: 1 }, padding: (theme) => theme.spacing(3) }} noValidate autoComplete="off">
 			{inputFieldValues.map((value, index) => {
 				const styles = [value.registerMode && !registerMode && { display: "none" }];
 				return (

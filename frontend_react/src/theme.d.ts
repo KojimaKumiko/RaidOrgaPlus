@@ -17,3 +17,9 @@ declare module "@mui/material/Button" {
 		neutral: true;
 	}
 }
+
+declare module "@mui/material/IconButton" {
+	interface IconButtonPropsColorOverrides {
+		neutral: true;
+	}
+}

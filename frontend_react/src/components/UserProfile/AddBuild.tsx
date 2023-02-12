@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2";
 
 import ClassMenu from "../Aufstellung/ClassMenu";
 import RoleMenu from "../Aufstellung/RoleMenu";
@@ -12,13 +13,17 @@ const AddBuild = () => {
 	const [build, setBuild] = useState<Build>({ class: { abbr: "" } as Class, role: [], prefer: 0 });
 
 	return (
-		<Stack alignItems="flex-start">
-			<Stack direction="row">
+		<Grid container spacing={1}>
+			<Grid xs={6}>
 				<ClassMenu />
+			</Grid>
+			<Grid xs={6}>
 				<RoleMenu />
-			</Stack>
-			<BuildChip build={build} edit />
-		</Stack>
+			</Grid>
+			<Grid xs={12}>
+				<BuildChip build={build} edit />
+			</Grid>
+		</Grid>
 	);
 }
 

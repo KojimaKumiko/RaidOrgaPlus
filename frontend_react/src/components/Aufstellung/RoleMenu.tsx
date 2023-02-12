@@ -3,12 +3,10 @@ import { Stack } from "@mui/system";
 
 import { ROLES } from "models/Rolle";
 import { roleIcon } from "../../services/icons";
+import CustomIcon from "../Misc/CustomIcon";
 
 const RoleMenu = () => {
-	const roles = ROLES.filter((r) => r.visible);
-	const imgProps = {
-		sx: { height: 24, width: 24 },
-	};
+	const roles = ROLES.filter((r) => r.visible).sort((a, b) => a.order! - b.order!);
 
 	const getRoles = (offset: number) => {
 		let rows: any = [];
@@ -16,11 +14,11 @@ const RoleMenu = () => {
 		for (let i = 0; i < 3; i++) {
 			const role = roles[i + offset];
 			if (role) {
-				rows.push(<Avatar src={roleIcon(role.abbr)} imgProps={imgProps} sx={{ width: 24 }} />);
+				rows.push(<CustomIcon src={roleIcon(role.abbr)} />);
 			}
 		}
 
-		return <Stack direction="row">{rows}</Stack>;
+		return <Stack direction="row" justifyContent="space-around">{rows}</Stack>;
 	};
 
 	return (

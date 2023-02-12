@@ -59,7 +59,7 @@ const ChipIcons = (props: IChipIconsProps) => {
 
 	return (
 		<Stack direction="row" alignItems="center" sx={{ paddingLeft: 1.5, paddingRight: 1.5 }}>
-			<Avatar src={classSrc} sx={{ width: 24, marginRight: 0.5 }} imgProps={imgProps} />
+			<Avatar src={classSrc} sx={{ width: 24, height: 24, marginRight: 0.5 }} imgProps={imgProps} />
 			{roles.map((r) => {
 				let src = roleIcon(r.abbr);
 				return <Avatar src={src} sx={{ width: 24 }} imgProps={imgProps} key={r.id} />;

@@ -8,23 +8,30 @@ import BuildChip from "./BuildChip";
 
 import { Build } from "models/Build";
 import { Class } from "models/Klasse";
+import { Role } from "models/Rolle";
 
-const AddBuild = () => {
-	const [build, setBuild] = useState<Build>({ class: { abbr: "" } as Class, role: [], prefer: 0 });
+interface Props {
+	build: Build;
+	onClassPick: (specilization: Class) => void;
+	onRolePick: (role: Role) => void;
+}
+
+const AddBuild = (props: Props) => {
+	const { build } = props;
 
 	return (
 		<Grid container spacing={1}>
 			<Grid xs={6}>
-				<ClassMenu />
+				<ClassMenu onClassPick={props.onClassPick} />
 			</Grid>
 			<Grid xs={6}>
-				<RoleMenu />
+				<RoleMenu onRolePick={props.onRolePick} />
 			</Grid>
 			<Grid xs={12}>
 				<BuildChip build={build} edit />
 			</Grid>
 		</Grid>
 	);
-}
+};
 
 export default AddBuild;

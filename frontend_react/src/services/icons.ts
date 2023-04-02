@@ -21,6 +21,10 @@ export function wingIcon(icon: any): string {
 }
 
 export function linkBuilder(subfolder: string, icon: any): string {
+	if (!icon) {
+		return "";
+	}
+
     const environment = process.env.NODE_ENV as "development" | "production";
     return `${config[environment]}icons/${subfolder}/${icon.toString().toLowerCase()}.png`;
 }

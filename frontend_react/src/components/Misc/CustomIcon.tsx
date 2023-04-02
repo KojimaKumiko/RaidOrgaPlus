@@ -1,13 +1,14 @@
-import { Avatar, SxProps, Theme, AvatarProps } from "@mui/material";
+import { Avatar, SxProps, Theme, AvatarProps, Tooltip } from "@mui/material";
 
 interface IconProps extends AvatarProps {
 	src: string;
 	imgProps?: { width: number; height: number };
 	sx?: SxProps<Theme> | undefined;
+	tooltip?: string;
 }
 
 const CustomIcon = (props: IconProps) => {
-	const { src, imgProps, sx, ...rest } = props;
+	const { src, imgProps, sx, tooltip, ...rest } = props;
 
 	let imgAttr: any;
 	if (!imgProps) {
@@ -17,7 +18,18 @@ const CustomIcon = (props: IconProps) => {
 		imgAttr = { sx: imgProps };
 	}
 
-	return <Avatar src={src} imgProps={imgAttr} sx={[...(Array.isArray(sx) ? sx : [sx])]} {...rest} />;
+	const avatar = <Avatar src={src} imgProps={imgAttr} sx={[...(Array.isArray(sx) ? sx : [sx])]} {...rest} />;
+
+	if (tooltip) {
+		return (
+			<Tooltip title={tooltip} arrow>
+				{avatar}
+			</Tooltip>
+		);
+	}
+	else {
+		return avatar;
+	}
 };
 
 export default CustomIcon;

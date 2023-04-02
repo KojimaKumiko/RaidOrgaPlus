@@ -7,6 +7,7 @@ import StarOutlineIcon from "@mui/icons-material/StarOutline";
 import { classIcon, roleIcon } from "../../services/icons";
 import { Build } from "models/Build";
 import { Class } from "models/Klasse";
+import CustomIcon from "../Misc/CustomIcon";
 
 interface IChipIconsProps {
 	build: Build;
@@ -59,10 +60,10 @@ const ChipIcons = (props: IChipIconsProps) => {
 
 	return (
 		<Stack direction="row" alignItems="center" sx={{ paddingLeft: 1.5, paddingRight: 1.5 }}>
-			<Avatar src={classSrc} sx={{ width: 24, height: 24, marginRight: 0.5 }} imgProps={imgProps} />
+			<CustomIcon src={classSrc} sx={{ width: 28, height: 28, marginRight: 0.5 }} />
 			{roles.map((r) => {
 				let src = roleIcon(r.abbr);
-				return <Avatar src={src} sx={{ width: 24 }} imgProps={imgProps} key={r.id} />;
+				return <CustomIcon src={src} sx={{ width: 28, height: 28 }} key={r.id} />;
 			})}
 			{showStar()}
 		</Stack>

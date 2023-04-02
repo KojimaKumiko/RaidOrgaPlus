@@ -1,50 +1,97 @@
 import * as React from "react";
-import { Fragment, useState } from "react";
-import { Avatar, Grid, Menu, MenuItem, Stack } from "@mui/material";
-import { CLASSES } from "models/Klasse";
+import { Fragment, useEffect, useState } from "react";
+import { Avatar, Grid, Menu, MenuItem, Stack, Tooltip, Zoom } from "@mui/material";
+import { debounce } from "debounce";
+import whatInput from "what-input";
+
+import { Class, CLASSES } from "models/Klasse";
 import { classIcon } from "../../services/icons";
 import CustomIcon from "../Misc/CustomIcon";
 
-const ClassMenu = () => {
+interface ClassProps {
+	onClassPick: (specilization: Class) => void;
+}
+
+const ClassMenu = (props: ClassProps) => {
+	const [isTouch, setIsTouch] = useState(false);
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [baseClassId, setBaseClassId] = useState(0);
 	const open = Boolean(anchorEl);
 
 	const baseClasses = CLASSES.filter((c) => c.isBase);
 
-	const handleClick = (event: React.MouseEvent<HTMLElement>, baseClassId: number) => {
-		setAnchorEl(event.currentTarget);
+	useEffect(() => {
+		setIsTouch(whatInput.ask() === "touch");
+	}, []);
+
+	const handleSpecClick = (specilization: Class) => {
+		setAnchorEl(null);
+		props.onClassPick(specilization);
+	};
+
+	const getSpecs = (baseId: number) => {
+		const specs = CLASSES.filter((c) => c.fk_base === baseId);
+
+		return specs.map((s) => (
+			<Tooltip title={s.name} arrow key={s.name} TransitionComponent={Zoom}>
+				<MenuItem>
+					<CustomIcon src={classIcon(s.abbr)} onClick={() => handleSpecClick(s)} />
+				</MenuItem>
+			</Tooltip>
+		));
+	};
+
+	const debouncedHandler = debounce(
+		(target: EventTarget & HTMLElement, baseClassId: number) => handleBaseClick(target, baseClassId),
+		200
+	);
+
+	const handleBaseClick = (target: EventTarget & HTMLElement, baseClassId: number) => {
+		setAnchorEl(target);
 		setBaseClassId(baseClassId);
-	}
+	};
+
+	const handleLeave = () => {
+		debouncedHandler.clear();
+	};
 
 	const handleClose = () => {
 		setAnchorEl(null);
-	}
-
-	const getSpecs = (baseId: number) => {
-		const specs = CLASSES.filter(c => c.fk_base === baseId);
-
-		return specs.map(s => <MenuItem key={s.name}><CustomIcon src={classIcon(s.abbr)}/></MenuItem>);
-	}
+		debouncedHandler.clear();
+	};
 
 	const getBaseClasses = (offset: number) => {
-		let rows: any = [];
+		let rows: JSX.Element[] = [];
 
 		for (let i = 0; i < 3; i++) {
 			const baseClass = baseClasses[i + offset];
-			if (baseClass) {
-				rows.push(
-					<React.Fragment key={baseClass.name}>
-						<CustomIcon
-							src={classIcon(baseClass.abbr)}
-							onClick={(e) => handleClick(e, baseClass.id)}
-						/>
-					</React.Fragment>
+			let icon: JSX.Element;
+
+			if (isTouch) {
+				icon = (
+					<CustomIcon
+						src={classIcon(baseClass.abbr)}
+						onClick={(e) => handleBaseClick(e.currentTarget, baseClass.id)}
+					/>
+				);
+			} else {
+				icon = (
+					<CustomIcon
+						src={classIcon(baseClass.abbr)}
+						onMouseEnter={(e) => debouncedHandler(e.currentTarget, baseClass.id)}
+						onMouseLeave={handleLeave}
+					/>
 				);
 			}
+
+			rows.push(<React.Fragment key={baseClass.name}>{icon}</React.Fragment>);
 		}
 
-		return <Stack direction="row" justifyContent="space-around">{rows}</Stack>;
+		return (
+			<Stack direction="row" justifyContent="space-around">
+				{rows}
+			</Stack>
+		);
 	};
 
 	return (
@@ -58,7 +105,12 @@ const ClassMenu = () => {
 				onClose={handleClose}
 				MenuListProps={{
 					onMouseLeave: handleClose,
-					sx: { display: "flex", "& .MuiMenuItem-root": { paddingLeft: 1, paddingRight: 1 } },
+					sx: {
+						display: "flex",
+						"& .MuiMenuItem-root": { paddingLeft: 0.75, paddingRight: 0.75 },
+						marginLeft: 1,
+						marginRight: 1,
+					},
 				}}
 				anchorOrigin={{
 					vertical: "top",

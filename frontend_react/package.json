@@ -1,5 +1,6 @@
 {
 	"name": "frontend_react",
+	"homepage": "https://orga.rising-light.de",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {

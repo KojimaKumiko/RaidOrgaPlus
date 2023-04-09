@@ -18,5 +18,8 @@
 	},
 	"include": ["./**/*"],
 	"exclude": ["node_modules", "./dist/**/*"],
-	"references": [{ "path": "../models" }, { "path": "../database" }, { "path": "../discord" }]
+	"references": [{ "path": "../models" }, { "path": "../database" }, { "path": "../discord" }],
+	"ts-node": {
+		"require": ["tsconfig-paths/register"]
+	}
 }

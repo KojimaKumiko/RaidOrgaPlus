@@ -106,11 +106,6 @@ const isInChipFilter = (user: User, filters: string[]): boolean => {
 			case "Ohne Discord":
 				currentTruth = !!!user.discord;
 				break;
-			case "14 Tage inaktiv":
-				date = Number(new Date(user.lastActive));
-				diff = Number(new Date()) - date;
-				currentTruth = diff > 1000 * 60 * 60 * 24 * 14;
-				break;
 			case "1. Raid vier Wochen her":
 				if (!user.firstTermin) return false;
 				date = Number(new Date(user.firstTermin));

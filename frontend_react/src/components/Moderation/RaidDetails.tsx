@@ -2,7 +2,9 @@ import {
 	Box,
 	Button,
 	Dialog,
+	DialogActions,
 	DialogContent,
+	DialogContentText,
 	DialogTitle,
 	IconButton,
 	List,
@@ -28,6 +30,7 @@ import {
 	addSpieler,
 	getSpielerForRaid,
 	invitablePlayers,
+	removeRaid,
 	removeSpieler,
 	setPlayerRole,
 } from "../../services/endpoints/moderation";
@@ -47,6 +50,7 @@ import {
 
 interface IProps {
 	raid: ModRaid;
+	refreshRaids: () => Promise<void>;
 }
 
 const RaidDetails = (props: IProps) => {
@@ -69,11 +73,26 @@ const RaidDetails = (props: IProps) => {
 		filterPlayers(filter);
 	}, [filter, invitePlayers]);
 
-	const [open, setOpen] = useState(false);
+	const [playerDialogOpen, setPlayerDialogOpen] = useState(false);
+	const [removeRaidDialogOpen, setRemoveRaidDialogOpen] = useState(false);
 
-	const handleClickOpen = () => {
-		setOpen(true);
+	const handleClickAddPlayerOpen = () => {
+		setPlayerDialogOpen(true);
 		setFilteredPlayers(invitePlayers);
+	};
+
+	const handleClickRemoveRaidOpen = () => {
+		setRemoveRaidDialogOpen(true);
+	};
+
+	const handleClose = () => {
+		setPlayerDialogOpen(false);
+		setRemoveRaidDialogOpen(false);
+	};
+
+	const handleRemoveRaid = async () => {
+		await removeRaid(raid.id, raid.name);
+		await props.refreshRaids();
 	};
 
 	const refreshPlayers = async () => {
@@ -89,6 +108,7 @@ const RaidDetails = (props: IProps) => {
 		const role = spieler.role === 2 ? 0 : 2;
 		await setPlayerRole(raid.id, spieler.id, role, spieler.accname);
 		await refreshPlayers();
+		await props.refreshRaids();
 	};
 
 	const kickPlayer = async (spieler: Spieler) => {
@@ -120,57 +140,31 @@ const RaidDetails = (props: IProps) => {
 	return (
 		<Box>
 			<Stack direction="row">
-				<AddPlayer handleClick={handleClickOpen} />
-				<RemoveRaid />
+				<Button
+					variant="contained"
+					color="success"
+					sx={{ color: "white", mr: 1 }}
+					onClick={handleClickAddPlayerOpen}>
+					Spieler hinzufügen
+				</Button>
+				<Button
+					variant="contained"
+					color="error"
+					disabled={spieler.length > 0}
+					onClick={handleClickRemoveRaidOpen}>
+					Raid entfernen
+				</Button>
 			</Stack>
 			<PlayerList spieler={spieler} changePlayerRole={changePlayerRole} kickPlayer={kickPlayer} />
-			<Dialog open={open} onClose={() => setOpen(false)}>
-				<DialogTitle>Spieler Hinzufügen</DialogTitle>
-				<DialogContent sx={{ height: 500 }}>
-					<TextField
-						variant="outlined"
-						label="Suche nach Spielern"
-						onChange={(e) => filterPlayers(e.currentTarget.value)}
-					/>
-					{/* <FixedSizeList
-						height={400}
-						width={320}
-						itemSize={72}
-						itemCount={filteredPlayers.length}
-						itemData={filteredPlayers}
-						overscanCount={5}>
-						{renderRow}
-					</FixedSizeList> */}
-					{filteredPlayers.map((p) => (
-						<ListItem key={p.id}>
-							<ListItemButton onClick={() => addPlayer(p)}>
-								<ListItemText primary={p.name} secondary={p.accname} />
-							</ListItemButton>
-						</ListItem>
-					))}
-				</DialogContent>
-			</Dialog>
+			<AddPlayerDialog
+				open={playerDialogOpen}
+				onClose={handleClose}
+				filteredPlayers={filteredPlayers}
+				filterPlayers={filterPlayers}
+				addPlayer={addPlayer}
+			/>
+			<RemoveRaidDialog open={removeRaidDialogOpen} raidName={raid.name} onClose={handleClose} handleRemoveRaid={handleRemoveRaid} />
 		</Box>
-	);
-};
-
-interface IAddPlayerProps {
-	handleClick: () => void;
-}
-
-const AddPlayer = (props: IAddPlayerProps) => {
-	return (
-		<Button variant="contained" color="success" sx={{ color: "white" }} onClick={props.handleClick}>
-			Spieler hinzufügen
-		</Button>
-	);
-};
-
-const RemoveRaid = () => {
-	return (
-		<Button variant="contained" color="error" disabled>
-			Raid entfernen
-		</Button>
 	);
 };
 
@@ -213,6 +207,75 @@ const PlayerList = (props: IPlayerListProps) => {
 				</ListItem>
 			))}
 		</List>
+	);
+};
+
+interface IAddPlayerDialog {
+	open: boolean;
+	filteredPlayers: Spieler[];
+	onClose: () => void;
+	filterPlayers: (filter: string) => void;
+	addPlayer: (player: Spieler) => void;
+}
+
+const AddPlayerDialog = (props: IAddPlayerDialog) => {
+	const { open, filteredPlayers, onClose, filterPlayers, addPlayer } = props;
+
+	return (
+		<Dialog open={open} onClose={onClose}>
+			<DialogTitle>Spieler Hinzufügen</DialogTitle>
+			<DialogContent sx={{ height: 500 }}>
+				<TextField
+					variant="outlined"
+					label="Suche nach Spielern"
+					onChange={(e) => filterPlayers(e.currentTarget.value)}
+					margin="dense"
+				/>
+				{/* <FixedSizeList
+						height={400}
+						width={320}
+						itemSize={72}
+						itemCount={filteredPlayers.length}
+						itemData={filteredPlayers}
+						overscanCount={5}>
+						{renderRow}
+					</FixedSizeList> */}
+				{filteredPlayers.map((p) => (
+					<ListItem key={p.id}>
+						<ListItemButton onClick={() => addPlayer(p)}>
+							<ListItemText primary={p.name} secondary={p.accname} />
+						</ListItemButton>
+					</ListItem>
+				))}
+			</DialogContent>
+		</Dialog>
+	);
+};
+
+interface IRemoveRaidDialog {
+	open: boolean;
+	raidName: string;
+	onClose: () => void;
+	handleRemoveRaid: () => Promise<void>;
+}
+
+const RemoveRaidDialog = (props: IRemoveRaidDialog) => {
+	const { open, raidName, onClose, handleRemoveRaid } = props;
+
+	return (
+		<Dialog open={open} onClose={onClose}>
+			<DialogTitle>Raid Löschen</DialogTitle>
+			<DialogContent>
+				<DialogContentText>
+					Bist du dir sicher das du den Raid <span style={{ fontWeight: "bold" }}>{raidName}</span> Löschen
+					möchtest?
+				</DialogContentText>
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={onClose}>Nein</Button>
+				<Button onClick={handleRemoveRaid}>Ja</Button>
+			</DialogActions>
+		</Dialog>
 	);
 };
 

@@ -1,12 +1,10 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import {
-	BrowserRouter,
 	createBrowserRouter,
 	createRoutesFromElements,
 	Route,
 	RouterProvider,
-	Routes,
 } from "react-router-dom";
 import { Provider } from "react-redux";
 
@@ -18,17 +16,23 @@ import "@fontsource/material-icons";
 import { store } from "./store/store";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { getRaidFromId } from "./services/endpoints/raids";
+
 import HomePage from "./pages/HomePage";
 import MyRaidPage from "./pages/MyRaidPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import HelpPage from "./pages/HelpPage";
 import ModerationPage from "./pages/ModerationPage";
-import "./index.css";
 import RaidPage from "./pages/Raids/RaidPage";
 import MembersPage from "./pages/Raids/MembersPage";
-import { getRaidFromId } from "./services/endpoints/raids";
 import RaidDashboard from "./pages/Raids/RaidDashboard";
+import TerminPage from "./pages/Raids/TerminPage";
+import ArchivePage from "./pages/Raids/ArchivePage";
+import BlankoPage from "./pages/Raids/BlankoPage";
+import RaidSettingsPage from "./pages/Raids/RaidSettingsPage";
+
+import "./index.css";
 
 // import "./theme";
 
@@ -66,6 +70,10 @@ const router = createBrowserRouter(
 				}}>
 				<Route index element={<RaidDashboard />} />
 				<Route path="spielerliste" element={<MembersPage />} />
+				<Route path="termine" element={<TerminPage />} />
+				<Route path="archiv" element={<ArchivePage />} />
+				<Route path="blankos" element={<BlankoPage />} />
+				<Route path="settings" element={<RaidSettingsPage />} />
 			</Route>
 			<Route path="profile" element={<ProfilePage />} />
 			<Route path="settings" element={<SettingsPage />} />

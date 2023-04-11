@@ -1,7 +1,7 @@
 import { Box, Tab, Tabs } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import RaidOverview from "../components/Moderation/RaidOverview";
+import RaidManagement from "../components/Moderation/RaidManagement";
 import UserOverview from "../components/Moderation/UserOverview";
 import { getUsersThunk } from "../store/slices/moderationSlice";
 
@@ -62,7 +62,7 @@ const ModerationPage = () => {
 				<UserOverview />
 			</TabPanel>
 			<TabPanel value={value} index={1}>
-				<RaidOverview />
+				<RaidManagement />
 			</TabPanel>
 		</Box>
 	);

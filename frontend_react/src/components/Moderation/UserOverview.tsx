@@ -41,7 +41,6 @@ const UserOverview = () => {
 	const filters = [
 		"Mit Discord",
 		"Ohne Discord",
-		"14 Tage inaktiv",
 		"1. Raid vier Wochen her",
 		"Archiviert",
 		"Nicht Archiviert",

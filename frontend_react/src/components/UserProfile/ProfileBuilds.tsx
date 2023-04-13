@@ -14,9 +14,12 @@ import { Role } from "models/Rolle";
 
 interface IProps {
 	user: Spieler;
+	ownProfile: boolean;
 }
 
 const ProfileBuilds = (props: IProps) => {
+	const { user, ownProfile } = props;
+
 	const [builds, setBuilds] = useState<Build[]>([]);
 	const [open, setOpen] = useState(false);
 	const [newBuild, setNewBuild] = useState<Build>({
@@ -27,11 +30,11 @@ const ProfileBuilds = (props: IProps) => {
 
 	useEffect(() => {
 		const getBuildsForUser = async () => {
-			setBuilds(await getBuilds(props.user.id));
+			setBuilds(await getBuilds(user.id));
 		};
 
 		getBuildsForUser().catch(console.error);
-	}, [props.user.id]);
+	}, [user.id]);
 
 	const generateKey = (build: Build) => {
 		let roleIds = 0;
@@ -76,16 +79,18 @@ const ProfileBuilds = (props: IProps) => {
 			<h3>Meine Builds</h3>
 			{builds.map((build, index) => (
 				<BuildChip
-					ownProfile
+					ownProfile={ownProfile}
 					star
 					build={build}
 					key={generateKey(build)}
 					onDelete={() => handleDelete(build, index)}
 				/>
 			))}
-			<IconButton sx={{ backgroundColor: "#444" }} size="small" onClick={() => setOpen(true)}>
-				<AddIcon />
-			</IconButton>
+			{ownProfile ? (
+				<IconButton sx={{ backgroundColor: "#444" }} size="small" onClick={() => setOpen(true)}>
+					<AddIcon />
+				</IconButton>
+			) : null}
 			<Dialog open={open} maxWidth="xs">
 				<DialogTitle>
 					<Stack direction="row" justifyContent="space-between">

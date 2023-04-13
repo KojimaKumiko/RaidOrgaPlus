@@ -12,6 +12,8 @@ interface IProps {
 }
 
 const ProfileName = (props: IProps) => {
+	const { user, ownProfile } = props;
+
 	const [edit, setEdit] = useState(false);
 
 	const handleEdit = () => {
@@ -26,17 +28,19 @@ const ProfileName = (props: IProps) => {
 		return (
 			<Stack direction="row">
 				<p style={{ fontSize: 24 }}>
-					{props.user.name} ({props.user.accname})
+					{user.name} ({user.accname})
 				</p>
-				<IconButton onClick={handleEdit}>
-					<EditIcon />
-				</IconButton>
+				{ownProfile ? (
+					<IconButton onClick={handleEdit}>
+						<EditIcon />
+					</IconButton>
+				) : null}
 			</Stack>
 		);
 	};
 
 	const Form = () => {
-		const [name, setName] = useState(props.user.name);
+		const [name, setName] = useState(user.name);
 		const [helperText, setHelperText] = useState("");
 
 		useEffect(() => {

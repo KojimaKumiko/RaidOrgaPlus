@@ -29,6 +29,7 @@ import { UserRole } from "models/Enums";
 import { useSelector } from "react-redux";
 import { selectLoggedInUser } from "../../store/slices/userSlice";
 import RoleHistoryTable from "./RoleHistory";
+import { Link } from "react-router-dom";
 
 interface Props {
 	user: User;
@@ -154,43 +155,6 @@ const GuildHistory = () => {
 		</Fragment>
 	);
 };
-
-// const RoleHistory = (props: Props) => {
-// 	const roleHistory = props.user.roleHistory;
-
-// 	const getDate = (date: Date) => {
-// 		return new Date(date).toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "medium" });
-// 	};
-
-// 	return (
-// 		<Box>
-// 			<h3>Rolenhistorie</h3>
-// 			<TableContainer component={Paper}>
-// 				<Table sx={{ minWidth: 650 }} aria-label="simple table">
-// 					<TableHead>
-// 						<TableRow>
-// 							<TableCell>Name</TableCell>
-// 							<TableCell>Art</TableCell>
-// 							<TableCell>Datum</TableCell>
-// 							<TableCell>Changer</TableCell>
-// 						</TableRow>
-// 					</TableHead>
-// 					<TableBody>
-// 						{roleHistory.map((history) => (
-// 							<TableRow key={history.id} sx={{ "&:last-child td": { border: 0 } , "&:nth-of-type(odd)": { backgroundColor: "action.hover" } }}>
-// 								<TableCell>{history.name}</TableCell>
-// 								<TableCell>{history.type}</TableCell>
-// 								<TableCell>{getDate(history.date)}</TableCell>
-// 								<TableCell>{history.changer}</TableCell>
-// 							</TableRow>
-// 						))}
-// 					</TableBody>
-// 				</Table>
-// 			</TableContainer>
-// 		</Box>
-// 	);
-// };
-
 const Archive = () => {
 	return (
 		<Fragment>
@@ -253,7 +217,7 @@ const UserActions = (props: Props) => {
 	return (
 		<Grid container css={style.stack} spacing={0.5}>
 			<Grid>
-				<Button variant="contained" color="neutral" css={style.button} disabled>
+				<Button component={Link} to={"/profile/" + user.id} variant="contained" color="neutral" css={style.button}>
 					Profile
 				</Button>
 			</Grid>
@@ -273,7 +237,7 @@ const UserActions = (props: Props) => {
 					color="neutral"
 					css={style.button}
 					onClick={() => setOpenRoleHistoryDialog(true)}>
-					Rolenhistorie
+					Rollenhistorie
 				</Button>
 			</Grid>
 			<Grid>

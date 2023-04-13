@@ -174,7 +174,7 @@ const TableToolbar = (props: ITableToolbarProps) => {
 			}}>
 			<Stack>
 				<Typography sx={{ flex: "1 1 100%", pb: 1 }} variant="h6" id="tableTitle" component="div">
-					Rollen Historie
+					Rollenhistorie
 				</Typography>
 				<Stack direction="row" flexWrap="wrap">
 					<FormControl sx={{ m: 0.5, width: 240 }}>

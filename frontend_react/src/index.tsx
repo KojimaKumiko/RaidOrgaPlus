@@ -76,6 +76,7 @@ const router = createBrowserRouter(
 				<Route path="settings" element={<RaidSettingsPage />} />
 			</Route>
 			<Route path="profile" element={<ProfilePage />} />
+			<Route path="profile/:id" element={<ProfilePage />} />
 			<Route path="settings" element={<SettingsPage />} />
 			<Route path="help" element={<HelpPage />} />
 			<Route path="moderation" element={<ModerationPage />} />

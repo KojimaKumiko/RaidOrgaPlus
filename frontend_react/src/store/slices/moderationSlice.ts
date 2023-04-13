@@ -174,6 +174,8 @@ export const selectFilteredUsers = (state: RootState) =>
 		state.moderation.activeFilters
 	);
 export const selectActiveFilters = (state: RootState) => state.moderation.activeFilters;
+export const selectNameFilter = (state: RootState) => state.moderation.filterName;
+export const selectRoleFilter = (state: RootState) => state.moderation.filterRole;
 
 export const { addFilter, removeFilter, setNameFilter, setRoleFilter, setComment, setUserRole, archivePlayer, restorePlayer } = moderationSlice.actions;
 export default moderationSlice.reducer;

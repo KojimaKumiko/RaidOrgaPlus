@@ -2,6 +2,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 
 import {
+	Avatar,
 	Box,
 	Button,
 	css,
@@ -22,7 +23,12 @@ import Grid from "@mui/material/Unstable_Grid2";
 
 import { User } from "models/Types";
 import { InputTarget } from "../../models/types";
-import { archiveSpieler, restoreSpieler, setComment as setUserComment, updateSpielerRole } from "../../services/endpoints/moderation";
+import {
+	archiveSpieler,
+	restoreSpieler,
+	setComment as setUserComment,
+	updateSpielerRole,
+} from "../../services/endpoints/moderation";
 import { useAppDispatch } from "../../store/hooks";
 import { setComment as setStoreComment, setUserRole } from "../../store/slices/moderationSlice";
 import { UserRole } from "models/Enums";
@@ -175,12 +181,14 @@ const UserActions = (props: Props) => {
 	const { user, onArchivePlayer } = props;
 
 	const [open, setOpen] = useState(false);
+	const [openGuildHistoryDialog, setOpenGuildHistoryDialog] = useState(false);
 	const [openRoleHistoryDialog, setOpenRoleHistoryDialog] = useState(false);
 	const [openArchiveDialog, setOpenArchiveDialog] = useState(false);
 	const [comp, setComp] = useState("");
 
 	const handleClose = () => {
 		setOpen(false);
+		setOpenGuildHistoryDialog(false);
 		setOpenRoleHistoryDialog(false);
 		setOpenArchiveDialog(false);
 	};
@@ -214,10 +222,75 @@ const UserActions = (props: Props) => {
 		}
 	};
 
+	const guildLogEntry = (logEntry: any) => {
+		const date = new Date(logEntry.time);
+		const dateOptions = {
+			day: "2-digit",
+			month: "2-digit",
+			year: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+		};
+		const formatedDate = date.toLocaleDateString("de-DE", dateOptions as any);
+
+		let type: string = "";
+		switch (logEntry.type) {
+			case "joined":
+				type = "Gilde beigetreten";
+				break;
+			case "invited":
+				type = "Eingeladen";
+				break;
+			case "kick":
+				type = "Aus Gilde gekickt";
+				break;
+			case "rank_change":
+				type = "Rang geändert";
+				break;
+			case "item":
+				type = logEntry.stashText;
+				break;
+			case "coin":
+				type = logEntry.stashText;
+				break;
+			default:
+				type = "Unbekannter Eintrag";
+				break;
+		}
+
+		let by: string = "";
+		switch (logEntry.type) {
+			case "invited":
+				by = ` von ${logEntry.invited_by}`;
+				break;
+			case "kick":
+				by = ` von ${logEntry.kicked_by}`;
+				break;
+			case "rank_change":
+				by = ` von ${logEntry.changed_by}`;
+				break;
+			default:
+				by = "";
+				break;
+		}
+
+		let rank: string = logEntry.type === "rank_change" ? `${logEntry.old_rank} => ${logEntry.new_rank}` : "";
+
+		const log = formatedDate + ": " + type + by + rank;
+
+		return log;
+	};
+
 	return (
 		<Grid container css={style.stack} spacing={0.5}>
 			<Grid>
-				<Button component={Link} to={"/profile/" + user.id} variant="contained" color="neutral" css={style.button}>
+				<Button
+					component={Link}
+					to={"/profile/" + user.id}
+					variant="contained"
+					color="neutral"
+					css={style.button}>
 					Profile
 				</Button>
 			</Grid>
@@ -227,7 +300,11 @@ const UserActions = (props: Props) => {
 				</Button>
 			</Grid>
 			<Grid>
-				<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("guild")}>
+				<Button
+					variant="contained"
+					color="neutral"
+					css={style.button}
+					onClick={() => setOpenGuildHistoryDialog(true)}>
 					Gildenhistorie
 				</Button>
 			</Grid>
@@ -252,6 +329,30 @@ const UserActions = (props: Props) => {
 			<Dialog open={open} onClose={handleClose} maxWidth="lg">
 				{showComponent()}
 			</Dialog>
+			<Dialog open={openGuildHistoryDialog} onClose={handleClose} maxWidth="lg">
+				<DialogTitle>
+					<Typography variant="h6" component="div">
+						Gildenhistorie
+					</Typography>
+				</DialogTitle>
+				<DialogContent>
+					{user.guild != null ? user.guildLog.map((log: any) => (
+						<Stack direction="row" key={log.id}>
+							<Typography>
+								{guildLogEntry(log)}
+							</Typography>
+							{log.stashIcon ? (
+								<Avatar src={log.stashIcon} sx={{ height: 28, width: 28, ml: 1 }} />
+							) : null}
+						</Stack>
+					)) : null}
+				</DialogContent>
+				<DialogActions>
+					<Button variant="contained" color="neutral" onClick={handleClose}>
+						Close
+					</Button>
+				</DialogActions>
+			</Dialog>
 			<Dialog
 				open={openRoleHistoryDialog}
 				onClose={handleClose}
@@ -269,7 +370,9 @@ const UserActions = (props: Props) => {
 			</Dialog>
 			<Dialog open={openArchiveDialog} onClose={handleClose} maxWidth="md">
 				<DialogTitle>
-					<Typography>Spieler {user.accname} {user.archived ? "Wiederherstellen" : "Archivieren"}?</Typography>
+					<Typography>
+						Spieler {user.accname} {user.archived ? "Wiederherstellen" : "Archivieren"}?
+					</Typography>
 				</DialogTitle>
 				<DialogContent>
 					<Typography>

@@ -14,6 +14,8 @@ import {
 	restorePlayer,
 	selectActiveFilters,
 	selectFilteredUsers,
+	selectNameFilter,
+	selectRoleFilter,
 	selectUserLength,
 	setNameFilter,
 	setRoleFilter,
@@ -38,6 +40,8 @@ const UserOverview = () => {
 	const users = useSelector(selectFilteredUsers);
 	const userLength = useSelector(selectUserLength);
 	const activeFilters = useSelector(selectActiveFilters);
+	const nameFilter = useSelector(selectNameFilter);
+	const roleFilter = useSelector(selectRoleFilter);
 
 	const dispatch = useAppDispatch();
 
@@ -105,6 +109,7 @@ const UserOverview = () => {
 				<Grid xs={12} sm={5}>
 					<TextField
 						label="Suche nach Spielern"
+						value={nameFilter}
 						onChange={(e) => handlePlayerSearch(e.target)}
 						variant="standard"
 						fullWidth
@@ -113,6 +118,7 @@ const UserOverview = () => {
 				<Grid xs={12} sm={5}>
 					<TextField
 						label="Suche nach Rollen"
+						value={roleFilter}
 						onChange={(e) => handleRoleSearch(e.target)}
 						variant="standard"
 						fullWidth

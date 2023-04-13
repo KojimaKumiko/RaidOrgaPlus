@@ -8,26 +8,21 @@ import {
 	Dialog,
 	DialogActions,
 	DialogContent,
+	DialogTitle,
 	Divider,
 	IconButton,
-	Paper,
 	Stack,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
 	TextField,
 	ToggleButton,
 	ToggleButtonGroup,
+	Typography,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import Grid from "@mui/material/Unstable_Grid2";
 
 import { User } from "models/Types";
 import { InputTarget } from "../../models/types";
-import { setComment as setUserComment, updateSpielerRole } from "../../services/endpoints/moderation";
+import { archiveSpieler, restoreSpieler, setComment as setUserComment, updateSpielerRole } from "../../services/endpoints/moderation";
 import { useAppDispatch } from "../../store/hooks";
 import { setComment as setStoreComment, setUserRole } from "../../store/slices/moderationSlice";
 import { UserRole } from "models/Enums";
@@ -37,6 +32,8 @@ import RoleHistoryTable from "./RoleHistory";
 
 interface Props {
 	user: User;
+	onArchivePlayer: (archiveDate: Date) => void;
+	onRestorePlayer: () => void;
 }
 
 const style = {
@@ -59,7 +56,11 @@ const style = {
 	}),
 };
 
-const EditUser = (props: Props) => {
+interface IEditUserProps {
+	user: User;
+}
+
+const EditUser = (props: IEditUserProps) => {
 	const [comment, setComment] = useState(props.user.comment);
 	const [isDirty, setIsDirty] = useState(false);
 	const [helperText, setHelperText] = useState("");
@@ -207,15 +208,17 @@ const Restore = () => {
 };
 
 const UserActions = (props: Props) => {
-	const { user } = props;
+	const { user, onArchivePlayer } = props;
 
 	const [open, setOpen] = useState(false);
 	const [openRoleHistoryDialog, setOpenRoleHistoryDialog] = useState(false);
+	const [openArchiveDialog, setOpenArchiveDialog] = useState(false);
 	const [comp, setComp] = useState("");
 
 	const handleClose = () => {
 		setOpen(false);
 		setOpenRoleHistoryDialog(false);
+		setOpenArchiveDialog(false);
 	};
 
 	const handleClick = (comp: string) => {
@@ -238,17 +241,14 @@ const UserActions = (props: Props) => {
 		}
 	};
 
-	const archiveButton = (
-		<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("archive")}>
-			Archivieren
-		</Button>
-	);
-
-	const restoreButton = (
-		<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("restore")}>
-			Wiederherstellen
-		</Button>
-	);
+	const handleArchivePlayer = async () => {
+		if (user.archived) {
+			await restoreSpieler(user.id);
+		} else {
+			const archiveDate = await archiveSpieler(user.id);
+			onArchivePlayer(archiveDate);
+		}
+	};
 
 	return (
 		<Grid container css={style.stack} spacing={0.5}>
@@ -268,20 +268,58 @@ const UserActions = (props: Props) => {
 				</Button>
 			</Grid>
 			<Grid>
-				<Button variant="contained" color="neutral" css={style.button} onClick={() => setOpenRoleHistoryDialog(true)}>
+				<Button
+					variant="contained"
+					color="neutral"
+					css={style.button}
+					onClick={() => setOpenRoleHistoryDialog(true)}>
 					Rolenhistorie
 				</Button>
 			</Grid>
-			<Grid>{props.user.archived ? restoreButton : archiveButton}</Grid>
+			<Grid>
+				<Button
+					variant="contained"
+					color="neutral"
+					css={style.button}
+					onClick={() => setOpenArchiveDialog(true)}>
+					{user.archived ? "Wiederherstellen" : "Archivieren"}
+				</Button>
+			</Grid>
 			<Dialog open={open} onClose={handleClose} maxWidth="lg">
 				{showComponent()}
 			</Dialog>
-			<Dialog open={openRoleHistoryDialog} onClose={handleClose} maxWidth="lg" fullWidth PaperProps={{ sx: { minHeight: "90vh" }}}>
+			<Dialog
+				open={openRoleHistoryDialog}
+				onClose={handleClose}
+				maxWidth="lg"
+				fullWidth
+				PaperProps={{ sx: { minHeight: "90vh" } }}>
 				<DialogContent sx={{ display: "flex", flexDirection: "column" }}>
 					<RoleHistoryTable roleHistory={user.roleHistory} />
 				</DialogContent>
 				<DialogActions>
-					<Button variant="contained" color="neutral" onClick={handleClose}>Close</Button>
+					<Button variant="contained" color="neutral" onClick={handleClose}>
+						Close
+					</Button>
+				</DialogActions>
+			</Dialog>
+			<Dialog open={openArchiveDialog} onClose={handleClose} maxWidth="md">
+				<DialogTitle>
+					<Typography>Spieler {user.accname} {user.archived ? "Wiederherstellen" : "Archivieren"}?</Typography>
+				</DialogTitle>
+				<DialogContent>
+					<Typography>
+						Möchtest du den/die Spieler*in <span style={{ fontWeight: "bold" }}>{user.accname}</span>{" "}
+						wirklich {user.archived ? "wiederherstellen" : "archivieren"}?
+					</Typography>
+				</DialogContent>
+				<DialogActions>
+					<Button variant="contained" color="neutral" onClick={handleArchivePlayer}>
+						Ja
+					</Button>
+					<Button variant="contained" color="neutral" onClick={handleClose}>
+						Nein
+					</Button>
 				</DialogActions>
 			</Dialog>
 		</Grid>

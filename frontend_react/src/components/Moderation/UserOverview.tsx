@@ -8,8 +8,10 @@ import Grid from "@mui/material/Unstable_Grid2";
 
 import {
 	addFilter,
+	archivePlayer,
 	getUsersThunk,
 	removeFilter,
+	restorePlayer,
 	selectActiveFilters,
 	selectFilteredUsers,
 	selectUserLength,
@@ -21,6 +23,7 @@ import UserDetails from "./UserDetails";
 import UserActions from "./UserActions";
 import { InputTarget } from "../../models/types";
 import { useAppDispatch } from "../../store/hooks";
+import { User } from "models/Types";
 
 const a11yProps = (accname: string) => {
 	return {
@@ -80,6 +83,15 @@ const UserOverview = () => {
 		}
 	};
 
+	const handleArchivePlayer = (user: User) => (archiveDate: Date) => {
+		const id = user.id;
+		dispatch(archivePlayer({ id, archiveDate }));
+	}
+
+	const handleRestorePlayer = (user: User) => () => {
+		dispatch(restorePlayer(user.id));
+	}
+
 	return (
 		<Box>
 			<Grid container spacing={1}>
@@ -132,7 +144,7 @@ const UserOverview = () => {
 					</AccordionSummary>
 					<AccordionDetails>
 						<UserDetails user={u} />
-						<UserActions user={u} />
+						<UserActions user={u} onArchivePlayer={handleArchivePlayer(u)} onRestorePlayer={handleRestorePlayer(u)} />
 					</AccordionDetails>
 				</Accordion>
 			))}

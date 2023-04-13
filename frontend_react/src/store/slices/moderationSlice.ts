@@ -68,6 +68,15 @@ export const moderationSlice = createSlice({
 			let user = state.users.find(u => u.id === action.payload.id)!;
 			user.role = action.payload.role;
 		},
+		archivePlayer(state, action: PayloadAction<{ id: number, archiveDate: Date }>) {
+			let user = state.users.find(u => u.id === action.payload.id)!;
+			user.archived = true;
+			user.archiveDate = action.payload.archiveDate;
+		},
+		restorePlayer(state, action: PayloadAction<number>) {
+			let user = state.users.find(u => u.id === action.payload)!;
+			user.archived = false;
+		}
 	},
 	extraReducers(builder) {
 		builder
@@ -166,5 +175,5 @@ export const selectFilteredUsers = (state: RootState) =>
 	);
 export const selectActiveFilters = (state: RootState) => state.moderation.activeFilters;
 
-export const { addFilter, removeFilter, setNameFilter, setRoleFilter, setComment, setUserRole } = moderationSlice.actions;
+export const { addFilter, removeFilter, setNameFilter, setRoleFilter, setComment, setUserRole, archivePlayer, restorePlayer } = moderationSlice.actions;
 export default moderationSlice.reducer;

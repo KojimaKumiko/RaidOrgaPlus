@@ -78,6 +78,6 @@ export async function archiveSpieler(userId: number): Promise<Date> {
  * restores a user
  * @param userId the id of the user to restore.
  */
-export async function restoreUser(userId: number): Promise<void> {
+export async function restoreSpieler(userId: number): Promise<void> {
 	return await fetch("moderation/users/restore", "put", { userId }, true);
 }

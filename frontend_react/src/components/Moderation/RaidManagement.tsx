@@ -154,7 +154,7 @@ const RaidOverviewDialog = (props: IRaidOverviewDialogProps) => {
 	const { open, raids, onClose } = props;
 
 	return (
-		<Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { minHeight: "90vh" }}}>
+		<Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: { minHeight: "90vh" }}}>
 			{/* <DialogTitle>Raid Overview</DialogTitle> */}
 			<DialogContent sx={{ display: "flex", flexDirection: "column" }}>
 				<RaidOverview raids={raids} />

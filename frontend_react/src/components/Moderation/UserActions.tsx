@@ -6,6 +6,8 @@ import {
 	Button,
 	css,
 	Dialog,
+	DialogActions,
+	DialogContent,
 	Divider,
 	IconButton,
 	Paper,
@@ -31,6 +33,7 @@ import { setComment as setStoreComment, setUserRole } from "../../store/slices/m
 import { UserRole } from "models/Enums";
 import { useSelector } from "react-redux";
 import { selectLoggedInUser } from "../../store/slices/userSlice";
+import RoleHistoryTable from "./RoleHistory";
 
 interface Props {
 	user: User;
@@ -151,41 +154,41 @@ const GuildHistory = () => {
 	);
 };
 
-const RoleHistory = (props: Props) => {
-	const roleHistory = props.user.roleHistory;
+// const RoleHistory = (props: Props) => {
+// 	const roleHistory = props.user.roleHistory;
 
-	const getDate = (date: Date) => {
-		return new Date(date).toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "medium" });
-	};
+// 	const getDate = (date: Date) => {
+// 		return new Date(date).toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "medium" });
+// 	};
 
-	return (
-		<Box>
-			<h3>Rolenhistorie</h3>
-			<TableContainer component={Paper}>
-				<Table sx={{ minWidth: 650 }} aria-label="simple table">
-					<TableHead>
-						<TableRow>
-							<TableCell>Name</TableCell>
-							<TableCell>Art</TableCell>
-							<TableCell>Datum</TableCell>
-							<TableCell>Changer</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{roleHistory.map((history) => (
-							<TableRow key={history.id} sx={{ "&:last-child td": { border: 0 } , "&:nth-of-type(odd)": { backgroundColor: "action.hover" } }}>
-								<TableCell>{history.name}</TableCell>
-								<TableCell>{history.type}</TableCell>
-								<TableCell>{getDate(history.date)}</TableCell>
-								<TableCell>{history.changer}</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		</Box>
-	);
-};
+// 	return (
+// 		<Box>
+// 			<h3>Rolenhistorie</h3>
+// 			<TableContainer component={Paper}>
+// 				<Table sx={{ minWidth: 650 }} aria-label="simple table">
+// 					<TableHead>
+// 						<TableRow>
+// 							<TableCell>Name</TableCell>
+// 							<TableCell>Art</TableCell>
+// 							<TableCell>Datum</TableCell>
+// 							<TableCell>Changer</TableCell>
+// 						</TableRow>
+// 					</TableHead>
+// 					<TableBody>
+// 						{roleHistory.map((history) => (
+// 							<TableRow key={history.id} sx={{ "&:last-child td": { border: 0 } , "&:nth-of-type(odd)": { backgroundColor: "action.hover" } }}>
+// 								<TableCell>{history.name}</TableCell>
+// 								<TableCell>{history.type}</TableCell>
+// 								<TableCell>{getDate(history.date)}</TableCell>
+// 								<TableCell>{history.changer}</TableCell>
+// 							</TableRow>
+// 						))}
+// 					</TableBody>
+// 				</Table>
+// 			</TableContainer>
+// 		</Box>
+// 	);
+// };
 
 const Archive = () => {
 	return (
@@ -204,11 +207,15 @@ const Restore = () => {
 };
 
 const UserActions = (props: Props) => {
+	const { user } = props;
+
 	const [open, setOpen] = useState(false);
+	const [openRoleHistoryDialog, setOpenRoleHistoryDialog] = useState(false);
 	const [comp, setComp] = useState("");
 
 	const handleClose = () => {
 		setOpen(false);
+		setOpenRoleHistoryDialog(false);
 	};
 
 	const handleClick = (comp: string) => {
@@ -219,11 +226,9 @@ const UserActions = (props: Props) => {
 	const showComponent = () => {
 		switch (comp) {
 			case "edit":
-				return <EditUser user={props.user} />;
+				return <EditUser user={user} />;
 			case "guild":
 				return <GuildHistory />;
-			case "role":
-				return <RoleHistory user={props.user} />;
 			case "archive":
 				return <Archive />;
 			case "restore":
@@ -263,15 +268,21 @@ const UserActions = (props: Props) => {
 				</Button>
 			</Grid>
 			<Grid>
-			<Button variant="contained" color="neutral" css={style.button} onClick={() => handleClick("role")}>
-				Rolenhistorie
-			</Button>
+				<Button variant="contained" color="neutral" css={style.button} onClick={() => setOpenRoleHistoryDialog(true)}>
+					Rolenhistorie
+				</Button>
 			</Grid>
-			<Grid>
-				{props.user.archived ? restoreButton : archiveButton}
-			</Grid>
+			<Grid>{props.user.archived ? restoreButton : archiveButton}</Grid>
 			<Dialog open={open} onClose={handleClose} maxWidth="lg">
 				{showComponent()}
+			</Dialog>
+			<Dialog open={openRoleHistoryDialog} onClose={handleClose} maxWidth="lg" fullWidth PaperProps={{ sx: { minHeight: "90vh" }}}>
+				<DialogContent sx={{ display: "flex", flexDirection: "column" }}>
+					<RoleHistoryTable roleHistory={user.roleHistory} />
+				</DialogContent>
+				<DialogActions>
+					<Button variant="contained" color="neutral" onClick={handleClose}>Close</Button>
+				</DialogActions>
 			</Dialog>
 		</Grid>
 	);

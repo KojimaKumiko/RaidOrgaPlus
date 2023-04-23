@@ -110,9 +110,10 @@ async function requestHandler(request: Request) {
 
 try {
 	// Certificate
-	const privateKey = fs.readFileSync("/etc/letsencrypt/live/sv.rising-light.de/privkey.pem", "utf8");
-	const certificate = fs.readFileSync("/etc/letsencrypt/live/sv.rising-light.de/cert.pem", "utf8");
-	const ca = fs.readFileSync("/etc/letsencrypt/live/sv.rising-light.de/chain.pem", "utf8");
+	const certPath = process.env.CERT_PATH;
+	const privateKey = fs.readFileSync(`/etc/letsencrypt/live/${certPath}/privkey.pem`, "utf8");
+	const certificate = fs.readFileSync(`/etc/letsencrypt/live/${certPath}/cert.pem`, "utf8");
+	const ca = fs.readFileSync(`/etc/letsencrypt/live/${certPath}/chain.pem`, "utf8");
 
 	const credentials = {
 		key: privateKey,

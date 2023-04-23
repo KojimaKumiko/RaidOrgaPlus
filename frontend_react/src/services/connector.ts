@@ -5,7 +5,7 @@ import { getCurrentEnvironment } from "../utils/misc";
 
 const instance = axios.create({
 	baseURL: config[getCurrentEnvironment()],
-	headers: { "authentication": getCookie("session") }
+	headers: { authentication: getCookie("session") },
 });
 
 export default async function fetch<T>(
@@ -17,12 +17,11 @@ export default async function fetch<T>(
 	if (authed && !instance.defaults.headers.common["authentication"]) {
 		instance.defaults.headers.common["authentication"] = getCookie("session");
 	}
-	
-	switch(method) {
+
+	switch (method) {
 		case "get":
-			const response = (await instance({ method, url: endpoint, params }));
+			const response = await instance({ method, url: endpoint, params });
 			return response.data;
-			break;
 		case "form":
 			const formData = new FormData();
 			for (const param in params) {
@@ -30,9 +29,7 @@ export default async function fetch<T>(
 			}
 			const headers = { "Content-Type": "multipart/form-data" };
 			return (await instance.post<T>(endpoint, formData, { headers })).data;
-			break;
 		default:
 			return (await instance({ method, url: endpoint, data: params })).data;
-			break;
 	}
 }

@@ -7,11 +7,14 @@ interface Props {
 }
 
 const UserHeader = (props: Props) => {
+	const { user } = props;
+	const nameColor = user.discord ? user.discord.color : "#ff3333";
+
 	return (
 		<Stack direction="row">
 			<ProfileAvatar user={props.user} sx={{ marginRight: 2 }} />
 			<Stack>
-				<Typography>{props.user.accname}</Typography>
+				<Typography sx={{ color: nameColor }}>{props.user.accname}</Typography>
 				<Typography variant="subtitle2" color="gray">{props.user.name}</Typography>
 			</Stack>
 		</Stack>

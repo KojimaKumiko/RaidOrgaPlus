@@ -6,6 +6,7 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogTitle,
+	Divider,
 	IconButton,
 	List,
 	ListItem,
@@ -19,7 +20,7 @@ import { Stack } from "@mui/system";
 import StarIcon from "@mui/icons-material/Star";
 import StarOutlineIcon from "@mui/icons-material/StarOutline";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 // import { FixedSizeList, ListChildComponentProps } from "react-window";
 
 import ProfileAvatar from "../UserProfile/ProfileAvatar";
@@ -163,7 +164,12 @@ const RaidDetails = (props: IProps) => {
 				filterPlayers={filterPlayers}
 				addPlayer={addPlayer}
 			/>
-			<RemoveRaidDialog open={removeRaidDialogOpen} raidName={raid.name} onClose={handleClose} handleRemoveRaid={handleRemoveRaid} />
+			<RemoveRaidDialog
+				open={removeRaidDialogOpen}
+				raidName={raid.name}
+				onClose={handleClose}
+				handleRemoveRaid={handleRemoveRaid}
+			/>
 		</Box>
 	);
 };
@@ -188,23 +194,30 @@ const PlayerList = (props: IPlayerListProps) => {
 	return (
 		<List>
 			{spieler.map((s) => (
-				<ListItem key={s.id}>
-					<ListItemAvatar>
-						<ProfileAvatar
-							user={s as User}
-							sx={{
-								marginRight: 2,
-							}}
+				<Fragment key={s.id}>
+					<ListItem>
+						<ListItemAvatar>
+							<ProfileAvatar
+								user={s as User}
+								sx={{
+									marginRight: 2,
+								}}
+							/>
+						</ListItemAvatar>
+						<ListItemText
+							sx={[s.role === 2 && { color: "warning.main" }]}
+							primary={s.name}
+							secondary={s.accname}
 						/>
-					</ListItemAvatar>
-					<ListItemText primary={s.name} secondary={s.accname} />
-					<ListItemSecondaryAction>
-						<IconButton onClick={() => changePlayerRole(s)}>{promoteDemoteIcon(s)}</IconButton>
-						<IconButton onClick={() => kickPlayer(s)}>
-							<ClearIcon color="error" />
-						</IconButton>
-					</ListItemSecondaryAction>
-				</ListItem>
+						<ListItemSecondaryAction>
+							<IconButton onClick={() => changePlayerRole(s)}>{promoteDemoteIcon(s)}</IconButton>
+							<IconButton onClick={() => kickPlayer(s)}>
+								<ClearIcon color="error" />
+							</IconButton>
+						</ListItemSecondaryAction>
+					</ListItem>
+					<Divider sx={{ "&:last-child": { display: "none" } }} />
+				</Fragment>
 			))}
 		</List>
 	);

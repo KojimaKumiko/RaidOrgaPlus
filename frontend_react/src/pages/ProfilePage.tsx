@@ -12,6 +12,7 @@ import { User } from "../../../models/Types";
 import ProfileName from "../components/UserProfile/ProfileName";
 import ProfileBuilds from "../components/UserProfile/ProfileBuilds";
 import { getWithID, hasProgressShared } from "../services/endpoints/user";
+import ProgressOverview from "../components/UserProfile/ProgressOverview";
 
 const ProfilePage = () => {
 	const [user, setUser] = useState<User>({} as User);
@@ -53,18 +54,16 @@ const ProfilePage = () => {
 	};
 
 	return (
-		<span>
-			<h2>Profile</h2>
-			<Stack>
-				<Stack direction="row">
-					<ProfileAvatar user={user} size={avatarSize()} />
-					<ProfileName user={user} ownProfile={ownProfile} />
-				</Stack>
-				<Stack direction="row" sx={{ marginTop: 2 }}>
-					<ProfileBuilds user={user} ownProfile={ownProfile} />
-				</Stack>
+		<Stack>
+			<Stack direction="column">
+				<ProfileAvatar user={user} size={avatarSize()} />
+				<ProfileName user={user} ownProfile={ownProfile} />
 			</Stack>
-		</span>
+			<Stack direction="column">
+				<ProfileBuilds user={user} ownProfile={ownProfile} />
+				<ProgressOverview user={user} ownProfile={ownProfile} />
+			</Stack>
+		</Stack>
 	);
 };
 

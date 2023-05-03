@@ -73,7 +73,7 @@ const ProfileName = (props: IProps) => {
 		);
 	};
 
-	return <Box sx={{ marginLeft: 3 }}>{!edit ? <Name /> : <Form />}</Box>;
+	return <Box>{!edit ? <Name /> : <Form />}</Box>;
 };
 
 export default ProfileName;

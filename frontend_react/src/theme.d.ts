@@ -9,6 +9,10 @@ declare module "@mui/material/styles" {
 	interface PaletteOptions {
 		neutral: PaletteOptions["primary"];
 	}
+
+	interface TypeBackground {
+		main?: string;
+	}
 }
 
 // Update the Button's color prop options

@@ -1,34 +1,16 @@
-import { useEffect, useState } from "react";
 import { Avatar, Box, Stack, Tooltip } from "@mui/material";
-import { listEncounterGrouped } from "../../services/endpoints/gamedata";
 import { Encounter } from "models/Encounter";
-import { Spieler } from "models/Spieler";
-import { getProgress } from "../../services/endpoints/progress";
 import { encIcon, miscIcon } from "../../services/icons";
 
 interface IWeeklyProgressProps {
-	user: Spieler;
-	ownProfile: boolean;
+	encounters: Encounter[][];
+	progress: any[];
 }
-export const WeeklyProgress = (props: IWeeklyProgressProps) => {
-	const { user, ownProfile } = props;
+const WeeklyProgress = (props: IWeeklyProgressProps) => {
+	const { encounters, progress } = props;
 
 	const emboldenedTimeRef = Number(new Date("2022-10-03T00:00:10"));
 	const buffTimeRef = Number(new Date("2022-09-26T00:00:10"));
-
-	const [encounters, setEncounters] = useState<Encounter[][]>([]);
-	const [progress, setProgress] = useState<any>([]);
-	useEffect(() => {
-		const getData = async () => {
-			const result = await listEncounterGrouped();
-			setEncounters(result);
-
-			const prog = await getProgress(ownProfile ? null : user.id);
-			setProgress(prog);
-		};
-
-		getData().catch(console.error);
-	}, []);
 
 	const progressColor = (boss: Encounter): string => {
 		const color: string = progress != null && progress.indexOf(boss.apiname) !== -1 ? "success.main" : "error.main";
@@ -105,3 +87,5 @@ export const WeeklyProgress = (props: IWeeklyProgressProps) => {
 		</Box>
 	);
 };
+
+export default WeeklyProgress;

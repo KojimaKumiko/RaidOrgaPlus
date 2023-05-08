@@ -36,6 +36,6 @@ export async function getWingsAndStrikes(): Promise<wingStrike[]> {
 	return await fetch("gamedata/wingsStrikes", "get", {}, false);
 }
 
-export async function getAchievements(): Promise<any> {
+export async function getAchievementList(): Promise<any> {
 	return await fetch("gamedata/achievements", "get", {}, false);
 }

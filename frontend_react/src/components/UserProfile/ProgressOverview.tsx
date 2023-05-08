@@ -5,10 +5,12 @@ import TabPanel from "../Misc/TabPanel";
 import WeeklyProgress from "./WeeklyProgress";
 import Trophies from "./Trophies";
 
-import { listEncounterGrouped } from "../../services/endpoints/gamedata";
-import { getInsights, getProgress } from "../../services/endpoints/progress";
+import { getAchievementList, listEncounterGrouped } from "../../services/endpoints/gamedata";
+import { getAchievements, getInsights, getProgress } from "../../services/endpoints/progress";
 import { Spieler } from "models/Spieler";
 import { Encounter } from "models/Encounter";
+import Achievements from "./Achievements";
+import userEvent from "@testing-library/user-event";
 
 interface IProgressOverviewProps {
 	user: Spieler;
@@ -26,16 +28,25 @@ const ProgressOverview = (props: IProgressOverviewProps) => {
 	const [encounters, setEncounters] = useState<Encounter[][]>([]);
 	const [progress, setProgress] = useState<any[]>([]);
 	const [insights, setInsights] = useState<any[]>([]);
+	const [achievementList, setAchievementList] = useState<any[]>([]);
+	const [achievementsDone, setAchievementsDone] = useState<any[]>([]);
 	useEffect(() => {
 		const getData = async () => {
 			const result = await listEncounterGrouped();
 			setEncounters(result);
 
-			const prog = await getProgress(ownProfile ? null : user.id);
+			const userId = ownProfile ? null : user.id;
+			const prog = await getProgress(userId);
 			setProgress(prog);
 
-			const ins = await getInsights(ownProfile ? null : user.id);
+			const ins = await getInsights(userId);
 			setInsights(ins);
+
+			const achievs = await getAchievementList();
+			setAchievementList(achievs);
+
+			const done = await getAchievements(userId);
+			setAchievementsDone(done);
 		};
 
 		getData().catch(console.error);
@@ -55,7 +66,7 @@ const ProgressOverview = (props: IProgressOverviewProps) => {
 				<Trophies insights={insights} />
 			</TabPanel>
 			<TabPanel value={value} index={2} label="progress-tab-2">
-				<h3>Erfolge</h3>
+				<Achievements achievementList={achievementList} achievementsDone={achievementsDone} />
 			</TabPanel>
 		</Box>
 	);

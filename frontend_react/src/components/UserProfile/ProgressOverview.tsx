@@ -10,7 +10,7 @@ import { getAchievements, getInsights, getProgress } from "../../services/endpoi
 import { Spieler } from "models/Spieler";
 import { Encounter } from "models/Encounter";
 import Achievements from "./Achievements";
-import userEvent from "@testing-library/user-event";
+import axios from "axios";
 
 interface IProgressOverviewProps {
 	user: Spieler;
@@ -31,25 +31,36 @@ const ProgressOverview = (props: IProgressOverviewProps) => {
 	const [achievementList, setAchievementList] = useState<any[]>([]);
 	const [achievementsDone, setAchievementsDone] = useState<any[]>([]);
 	useEffect(() => {
+		const abortController = new AbortController();
+
 		const getData = async () => {
-			const result = await listEncounterGrouped();
-			setEncounters(result);
+			try {
+				const userId = ownProfile ? null : user.id;
+				const result = await listEncounterGrouped(abortController.signal);
+				const prog = await getProgress(userId, abortController.signal);
+				const ins = await getInsights(userId, abortController.signal);
+				const achievs = await getAchievementList(abortController.signal);
+				const done = await getAchievements(userId, abortController.signal);
 
-			const userId = ownProfile ? null : user.id;
-			const prog = await getProgress(userId);
-			setProgress(prog);
-
-			const ins = await getInsights(userId);
-			setInsights(ins);
-
-			const achievs = await getAchievementList();
-			setAchievementList(achievs);
-
-			const done = await getAchievements(userId);
-			setAchievementsDone(done);
+				setEncounters(result);
+				setProgress(prog);
+				setInsights(ins);
+				setAchievementList(achievs);
+				setAchievementsDone(done);
+			} catch (error) {
+				if (axios.isCancel(error)) {
+					console.log(error);
+				} else {
+					throw error;
+				}
+			}
 		};
 
 		getData().catch(console.error);
+
+		return () => {
+			abortController.abort();
+		}
 	}, [ownProfile, user.id]);
 
 	return (

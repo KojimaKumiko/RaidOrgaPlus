@@ -37,10 +37,10 @@ const achievementsCss = {
 	raidIconCss: css({
 		height: 48,
 		width: 48,
-		marginRight: 12
+		marginRight: 12,
 	}),
 	containerCss: css({
-		padding: 4
+		padding: 4,
 	}),
 };
 
@@ -58,6 +58,10 @@ const Achievements = (props: IAchievementsProps) => {
 
 	const encounterIcon = (achievement: any) => {
 		return achievement.boss ? <Avatar src={encIcon(achievement.boss)} css={iconCss} /> : null;
+	};
+
+	const complete = (achievements: any) => {
+		return achievements.length === doneCount(achievements);
 	};
 
 	const conditionIcon = (achievement: any) => {
@@ -99,7 +103,7 @@ const Achievements = (props: IAchievementsProps) => {
 					<AccordionSummary expandIcon={<ExpandMoreIcon />}>
 						<Stack direction="row" alignItems="center">
 							<Avatar src={wingIcon(raidAchievements.wing)} css={raidIconCss} />
-							<Typography>
+							<Typography sx={[complete(raidAchievements.achievements) && { color: "success.main" }]}>
 								{raidAchievements.name} - {doneCount(raidAchievements.achievements)} /{" "}
 								{raidAchievements.achievements.length}
 							</Typography>

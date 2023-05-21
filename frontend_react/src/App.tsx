@@ -15,12 +15,13 @@ import "./App.css";
 const drawerWidth = 240;
 
 function App() {
-	const [open, setOpen] = useState(true);
-	const [showContent, setShowContent] = useState(false);
-	const [loading, setLoading] = useState(true);
 	const dispatch = useDispatch();
 	const loginState = useSelector(selectLoginState);
 	const loadingStatus = useSelector(selectLoadingStatus);
+
+	const [open, setOpen] = useState(true);
+	const loading = Boolean(loadingStatus !== "finished");
+	const showContent = Boolean(loginState === 1);
 	const theme = useTheme();
 	const breakpoint = useMediaQuery(theme.breakpoints.up("lg"));
 	const matches = useMatches();
@@ -46,20 +47,7 @@ function App() {
 		})
 	};
 
-	useEffect(() => {
-		switch (loadingStatus) {
-			case "idle":
-				dispatch(getUser());
-				break;
-			case "finished":
-				setLoading(false);
-				break;
-		}
-
-		if (loginState === 1) {
-			setShowContent(true);
-		}
-	}, [loadingStatus, loginState, dispatch]);
+	dispatch(getUser());
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -80,7 +68,7 @@ function App() {
 		return () => {
 			window.removeEventListener("resize", handleResize);
 		};
-	}, [dispatch, showContent]);
+	}, []);
 
 	const handleDrawer = () => {
 		setOpen(!open);

@@ -11,13 +11,14 @@ import ProfileAvatar from "../components/UserProfile/ProfileAvatar";
 import { User } from "../../../models/Types";
 import ProfileName from "../components/UserProfile/ProfileName";
 import ProfileBuilds from "../components/UserProfile/ProfileBuilds";
-import { getWithID, hasProgressShared } from "../services/endpoints/user";
+import { getWithID } from "../services/endpoints/user";
 import ProgressOverview from "../components/UserProfile/ProgressOverview";
+import ExtraAccounts from "../components/UserProfile/ExtraAccounts";
+import ProgressShare from "../components/UserProfile/ProgressShare";
 
 const ProfilePage = () => {
 	const [user, setUser] = useState<User>({} as User);
 	const [ownProfile, setOwnProfile] = useState<boolean>(true);
-	const [shared, setShared] = useState<boolean>(true);
 
 	const { id } = useParams();
 
@@ -27,11 +28,9 @@ const ProfilePage = () => {
 	useEffect(() => {
 		const getUser = async (userId: number) => {
 			const u = await getWithID(userId);
-			const share = await hasProgressShared(userId);
 
 			setUser(u as User);
 			setOwnProfile(userId === loggedInUser.id);
-			setShared(share);
 		};
 
 		if (id != null) {
@@ -39,9 +38,10 @@ const ProfilePage = () => {
 		} else {
 			setUser(loggedInUser);
 			setOwnProfile(true);
-			setShared(true);
 		}
 	}, [id, loggedInUser]);
+
+	console.log([id, loggedInUser]);
 
 	const avatarSize = () => {
 		if (windowWidth > 1510) {
@@ -61,6 +61,8 @@ const ProfilePage = () => {
 			</Stack>
 			<Stack direction="column">
 				<ProfileBuilds user={user} ownProfile={ownProfile} />
+				<ExtraAccounts />
+				<ProgressShare />
 				<ProgressOverview user={user} ownProfile={ownProfile} />
 			</Stack>
 		</Stack>

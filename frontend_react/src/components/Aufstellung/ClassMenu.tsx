@@ -33,7 +33,7 @@ const ClassMenu = (props: ClassProps) => {
 		const specs = CLASSES.filter((c) => c.fk_base === baseId);
 
 		return specs.map((s) => (
-			<Tooltip title={s.name} arrow key={s.name} TransitionComponent={Zoom}>
+			<Tooltip title={s.name} arrow key={s.name} TransitionComponent={Zoom} disableInteractive>
 				<MenuItem>
 					<CustomIcon src={classIcon(s.abbr)} onClick={() => handleSpecClick(s)} />
 				</MenuItem>
@@ -72,6 +72,7 @@ const ClassMenu = (props: ClassProps) => {
 					<CustomIcon
 						src={classIcon(baseClass.abbr)}
 						onClick={(e) => handleBaseClick(e.currentTarget, baseClass.id)}
+						disableInteractive
 					/>
 				);
 			} else {
@@ -80,6 +81,7 @@ const ClassMenu = (props: ClassProps) => {
 						src={classIcon(baseClass.abbr)}
 						onMouseEnter={(e) => debouncedHandler(e.currentTarget, baseClass.id)}
 						onMouseLeave={handleLeave}
+						disableInteractive
 					/>
 				);
 			}

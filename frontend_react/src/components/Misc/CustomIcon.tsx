@@ -5,10 +5,11 @@ interface IconProps extends AvatarProps {
 	imgProps?: { width: number; height: number };
 	sx?: SxProps<Theme> | undefined;
 	tooltip?: string;
+	disableInteractive?: boolean;
 }
 
 const CustomIcon = (props: IconProps) => {
-	const { src, imgProps, sx, tooltip, ...rest } = props;
+	const { src, imgProps, sx, tooltip, disableInteractive, ...rest } = props;
 
 	let imgAttr: any;
 	if (!imgProps) {
@@ -22,7 +23,7 @@ const CustomIcon = (props: IconProps) => {
 
 	if (tooltip) {
 		return (
-			<Tooltip title={tooltip} arrow>
+			<Tooltip title={tooltip} arrow disableInteractive={disableInteractive}>
 				{avatar}
 			</Tooltip>
 		);

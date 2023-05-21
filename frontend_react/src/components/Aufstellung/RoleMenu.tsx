@@ -18,7 +18,15 @@ const RoleMenu = (props: RoleProps) => {
 		for (let i = 0; i < 3; i++) {
 			const role = roles[i + offset];
 			if (role) {
-				rows.push(<CustomIcon key={role.id} src={roleIcon(role.abbr)} tooltip={role.name} onClick={() => props.onRolePick(role)} />);
+				rows.push(
+					<CustomIcon
+						key={role.id}
+						src={roleIcon(role.abbr)}
+						tooltip={role.name}
+						disableInteractive
+						onClick={() => props.onRolePick(role)}
+					/>
+				);
 			}
 		}
 

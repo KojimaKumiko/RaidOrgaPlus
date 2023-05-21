@@ -31,7 +31,7 @@ const ProfileName = (props: IProps) => {
 					{user.name} ({user.accname})
 				</p>
 				{ownProfile ? (
-					<IconButton onClick={handleEdit}>
+					<IconButton onClick={handleEdit} sx={{ height: "fit-content", mt: "auto", mb: "auto", ml: 1 }}>
 						<EditIcon />
 					</IconButton>
 				) : null}
@@ -53,7 +53,7 @@ const ProfileName = (props: IProps) => {
 		};
 
 		return (
-			<Stack>
+			<Stack sx={{ mt: 2 }}>
 				<TextField
 					label="Anzeigename"
 					inputProps={{ maxLength: 50 }}

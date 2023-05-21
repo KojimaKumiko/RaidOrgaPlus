@@ -10,6 +10,7 @@ import { Provider } from "react-redux";
 
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import type {} from "@mui/lab/themeAugmentation";
 import "@fontsource/roboto";
 import "@fontsource/material-icons";
 
@@ -89,14 +90,14 @@ const router = createBrowserRouter(
 
 const root = createRoot(container!);
 root.render(
-	<React.StrictMode>
+	// <React.StrictMode>
 		<Provider store={store}>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
 				<RouterProvider router={router} />
 			</ThemeProvider>
 		</Provider>
-	</React.StrictMode>
+	// </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

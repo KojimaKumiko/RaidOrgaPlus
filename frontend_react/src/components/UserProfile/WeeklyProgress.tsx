@@ -1,6 +1,7 @@
 import { Avatar, Box, Stack, Tooltip } from "@mui/material";
 import { Encounter } from "models/Encounter";
 import { encIcon, miscIcon } from "../../services/icons";
+import { useEffect } from "react";
 
 interface IWeeklyProgressProps {
 	encounters: Encounter[][];
@@ -61,7 +62,7 @@ const WeeklyProgress = (props: IWeeklyProgressProps) => {
 						},
 					]}
 					key={encounter[0].wing}>
-					<Box sx={{ float: "left", ml: 1, mr: 2, height: "56px", width: "56px" }}>
+					<Box sx={{ float: "left", ml: 1, mr: 1, height: "56px", width: "56px" }}>
 						{getBuffAvatar(encounter[0].wing)}
 					</Box>
 					{encounter.map((boss) => (

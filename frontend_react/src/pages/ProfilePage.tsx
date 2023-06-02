@@ -11,14 +11,16 @@ import ProfileAvatar from "../components/UserProfile/ProfileAvatar";
 import { User } from "../../../models/Types";
 import ProfileName from "../components/UserProfile/ProfileName";
 import ProfileBuilds from "../components/UserProfile/ProfileBuilds";
-import { getWithID } from "../services/endpoints/user";
+import { getWithID, hasProgressShared } from "../services/endpoints/user";
 import ProgressOverview from "../components/UserProfile/ProgressOverview";
 import ExtraAccounts from "../components/UserProfile/ExtraAccounts";
 import ProgressShare from "../components/UserProfile/ProgressShare";
+import axios from "axios";
 
 const ProfilePage = () => {
 	const [user, setUser] = useState<User>({} as User);
-	const [ownProfile, setOwnProfile] = useState<boolean>(true);
+	const [ownProfile, setOwnProfile] = useState(false);
+	const [sharedProgress, setSharedProgress] = useState(false);
 
 	const { id } = useParams();
 
@@ -26,11 +28,23 @@ const ProfilePage = () => {
 	const windowWidth = useSelector(selectWindowWidth);
 
 	useEffect(() => {
-		const getUser = async (userId: number) => {
-			const u = await getWithID(userId);
+		const abortController = new AbortController();
 
-			setUser(u as User);
-			setOwnProfile(userId === loggedInUser.id);
+		const getUser = async (userId: number) => {
+			try {
+				const user = await getWithID(userId, abortController.signal);
+				const shared = await hasProgressShared(userId, abortController.signal);
+
+				setUser(user as User);
+				setOwnProfile(userId === loggedInUser.id);
+				setSharedProgress(shared);
+			} catch (error) {
+				if (axios.isCancel(error)) {
+					console.log(error);
+				} else {
+					throw error;
+				}
+			}
 		};
 
 		if (id != null) {
@@ -38,7 +52,12 @@ const ProfilePage = () => {
 		} else {
 			setUser(loggedInUser);
 			setOwnProfile(true);
+			setSharedProgress(true);
 		}
+
+		return () => {
+			abortController.abort();
+		};
 	}, [id, loggedInUser]);
 
 	console.log([id, loggedInUser]);
@@ -61,9 +80,13 @@ const ProfilePage = () => {
 			</Stack>
 			<Stack direction="column">
 				<ProfileBuilds user={user} ownProfile={ownProfile} />
-				<ExtraAccounts />
-				<ProgressShare />
-				<ProgressOverview user={user} ownProfile={ownProfile} />
+				{ownProfile ? (
+					<>
+						<ExtraAccounts />
+						<ProgressShare />
+					</>
+				) : null}
+				{sharedProgress ? <ProgressOverview user={user} ownProfile={ownProfile} /> : null}
 			</Stack>
 		</Stack>
 	);

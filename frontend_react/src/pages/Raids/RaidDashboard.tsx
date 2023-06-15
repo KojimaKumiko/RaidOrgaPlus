@@ -16,13 +16,13 @@ const RaidDashboard = () => {
 			<Card>
 				<CardContent>
 					<List>
-						{items.map(i => (
-							<ListItem>
-								<ListItemButton component={Link} to={i.route}>
+						{items.map(item => (
+							<ListItem key={item.id}>
+								<ListItemButton component={Link} to={item.route}>
 									<ListItemIcon>
-										<Icon>{i.icon}</Icon>
+										<Icon>{item.icon}</Icon>
 									</ListItemIcon>
-									<ListItemText primary={i.title} />
+									<ListItemText primary={item.title} />
 								</ListItemButton>
 							</ListItem>
 						))}

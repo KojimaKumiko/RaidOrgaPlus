@@ -41,7 +41,7 @@ const MyRaidPage = () => {
 		const icons = ["check_circle", "check_circle_outline", "cancel", "warning"];
 		let icon = "";
 
-		let anmeldung = anmeldungen.find((a) => a.raid === raid.id);
+		const anmeldung = anmeldungen.find((a) => a.raid === raid.id);
 		if (anmeldung) {
 			icon = icons.slice(anmeldung.type)[0];
 		}
@@ -50,21 +50,17 @@ const MyRaidPage = () => {
 	};
 
 	return (
-		<Box>
-			<h2>Meine Raids</h2>
+		<Box sx={{ maxWidth: "25%" }}>
 			<Card>
 				<CardContent>
 					<List>
-						{raids.map((r) => (
-							<ListItem
-								key={r.id}
-								secondaryAction={
+						{raids.map((raid) => (
+							<ListItem key={raid.id}>
+								<ListItemButton component={Link} to={raid.id.toString()}>
+									<ListItemText primary={raid.name} secondary={getRole(raid.role)} />
 									<IconButton edge="end">
-										<Icon>{getAnmeldung(r)}</Icon>
+										<Icon>{getAnmeldung(raid)}</Icon>
 									</IconButton>
-								}>
-								<ListItemButton component={Link} to={r.id.toString()}>
-									<ListItemText primary={r.name} secondary={getRole(r.role)} />
 								</ListItemButton>
 							</ListItem>
 						))}

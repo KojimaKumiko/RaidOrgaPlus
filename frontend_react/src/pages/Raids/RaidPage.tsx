@@ -3,10 +3,10 @@ import { AppBar, Breadcrumbs, Toolbar, IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-import { Raid } from "models/Raid";
+import { userRaid } from "models/Types";
 
 const RaidPage = () =>  {
-	const raid = useLoaderData() as Raid;
+	const raid = useLoaderData() as userRaid;
 	// const matches = useMatches();
 
 	// console.log(matches);

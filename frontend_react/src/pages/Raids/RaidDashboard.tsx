@@ -4,11 +4,11 @@ import { Link } from "react-router-dom";
 
 const RaidDashboard = () => {
 	const items = [
-		{ id: 1, title: 'Spielerliste', route: 'spielerliste', icon: 'people' },
-		{ id: 2, title: 'Termine', route: 'termine', icon: 'calendar_today'},
-		{ id: 3, title: 'Archiv', route: 'archiv', icon: 'book' },
-		{ id: 4, title: 'Blankos', route: 'blankos', icon: 'border_clear' },
-		{ id: 5, title: 'Einstellungen', route: 'settings', icon: 'settings' },
+		{ id: 1, title: "Spielerliste", route: "spielerliste", icon: "people" },
+		{ id: 2, title: "Termine", route: "termine", icon: "calendar_today" },
+		{ id: 3, title: "Archiv", route: "archiv", icon: "book" },
+		{ id: 4, title: "Blankos", route: "blankos", icon: "border_clear" },
+		{ id: 5, title: "Einstellungen", route: "settings", icon: "settings" },
 	];
 
 	return (
@@ -16,7 +16,7 @@ const RaidDashboard = () => {
 			<Card>
 				<CardContent>
 					<List>
-						{items.map(item => (
+						{items.map((item) => (
 							<ListItem key={item.id}>
 								<ListItemButton component={Link} to={item.route}>
 									<ListItemIcon>
@@ -31,6 +31,6 @@ const RaidDashboard = () => {
 			</Card>
 		</Box>
 	);
-}
+};
 
 export default RaidDashboard;

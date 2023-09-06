@@ -3,13 +3,15 @@ import counterReducer from "../components/Counter/counterSlice";
 import userReducer from "./slices/userSlice";
 import baseReducer from "./slices/baseSlice";
 import moderationReducer from "./slices/moderationSlice";
+import terminReducer from "./slices/terminSlice";
 
 export const store = configureStore({
 	reducer: {
 		counter: counterReducer,
 		user: userReducer,
 		base: baseReducer,
-		moderation: moderationReducer
+		moderation: moderationReducer,
+		termin: terminReducer
 	},
 });
 

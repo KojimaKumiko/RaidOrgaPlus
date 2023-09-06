@@ -1,4 +1,4 @@
-import { Link, Outlet, useLoaderData, useLocation, useMatches } from "react-router-dom";
+import { Link, Outlet, useLoaderData, useLocation, useMatches, useRouteLoaderData } from "react-router-dom";
 import { AppBar, Breadcrumbs, Toolbar, IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -6,7 +6,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { userRaid } from "models/Types";
 
 const RaidPage = () =>  {
-	const raid = useLoaderData() as userRaid;
+	const raid = useRouteLoaderData("raidPage") as userRaid;
 	// const matches = useMatches();
 
 	// console.log(matches);

@@ -40,9 +40,10 @@ export default endpoints;
 async function getTermine(
 	req: Request,
 	authentication: Authentication
-): Promise<Termin[] | (Termin & SpielerTermin)[] | homepageTermin[]> {
+): Promise<Termin[] | (Termin & SpielerTermin)[] | Termin | homepageTermin[]> {
 	const raid = Number(req.query.raid);
 	const archive = Number(req.query.archive);
+	const id = Number(req.query.id);
 	if (raid) {
 		const role = _roles.forRaid(authentication, raid);
 		if (role != null) {
@@ -52,6 +53,8 @@ async function getTermine(
 				return await _termin.listActive(authentication.user, raid);
 			}
 		}
+	} else if (id) {
+		return await _termin.getTermin(id);
 	} else {
 		return await _homepage.getHomepageTermine(authentication.user);
 	}

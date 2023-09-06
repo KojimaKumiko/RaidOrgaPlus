@@ -23,6 +23,7 @@ export {
 	getText,
 	saveText,
 	doesTerminExist,
+	getTermin,
 };
 
 async function isArchived(terminId: number): Promise<boolean> {
@@ -188,4 +189,14 @@ async function doesTerminExist(termin: number): Promise<boolean> {
 	const stmt = "SELECT count(*) AS count FROM Termin WHERE id = ?";
 	const terminExists: { count: number }[] = await queryV(stmt, [termin]);
 	return !(terminExists[0].count === 0);
+}
+
+async function getTermin(id: number): Promise<Termin> {
+	const stmt = "SELECT id, date, time, endtime FROM Termin WHERE id = ?";
+	try {
+		const result: Termin[] = await queryV(stmt, [id]);
+		return result.map(dateMapper.map)[0];
+	} catch (e) {
+		throw e;
+	}
 }

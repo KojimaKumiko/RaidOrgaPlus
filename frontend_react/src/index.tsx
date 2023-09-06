@@ -3,9 +3,8 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-import type {} from "@mui/lab/themeAugmentation";
 import "@fontsource/roboto";
 import "@fontsource/material-icons";
 
@@ -15,29 +14,7 @@ import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import routes from "./routes";
 
-// import "./theme";
-
-const theme = createTheme({
-	palette: {
-		mode: "dark",
-		neutral: {
-			main: "#272727",
-			contrastText: "#fff",
-		},
-		background: {
-			main: "#1e1e1e",
-		},
-	},
-	components: {
-		MuiTooltip: {
-			styleOverrides: {
-				tooltip: {
-					fontSize: 14,
-				},
-			},
-		},
-	},
-});
+import theme from "./theme";
 
 const container = document.getElementById("root");
 
@@ -45,14 +22,14 @@ const router = createBrowserRouter(routes());
 
 const root = createRoot(container!);
 root.render(
-	// <React.StrictMode>
-	<Provider store={store}>
-		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			<RouterProvider router={router} />
-		</ThemeProvider>
-	</Provider>
-	// </React.StrictMode>
+	<React.StrictMode>
+		<Provider store={store}>
+			<ThemeProvider theme={theme}>
+				<CssBaseline />
+				<RouterProvider router={router} />
+			</ThemeProvider>
+		</Provider>
+	</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

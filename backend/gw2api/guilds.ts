@@ -7,7 +7,15 @@ const API_KEY = apiKey.keyRL;
 const RL_ID = '7D6A1444-3C91-E911-81A8-CD1049069AE5';
 
 export async function getUsers(): Promise<any> {
-    return await api.authenticate(API_KEY).guild(RL_ID).members().get();
+    let members = [];
+
+	try {
+		members = await api.authenticate(API_KEY).guild(RL_ID).members().get();
+	} catch (e) {
+		console.error(e);
+	}
+	
+	return members;
 }
 
 export function findUser(roUser, guildUsers) {
@@ -16,8 +24,16 @@ export function findUser(roUser, guildUsers) {
 
 export async function getGuildLog() {
     const relevantLogTypes = ['joined', 'invited', 'kick', 'rank_change', 'stash'];
-    const response = await api.authenticate(API_KEY).guild(RL_ID).log().get();
-    return await Promise.all(response.filter(l => relevantLogTypes.includes(l.type)).map(mapStashEntries));
+	let result = [];
+
+    try {
+		const response = await api.authenticate(API_KEY).guild(RL_ID).log().get();
+		result = await Promise.all(response.filter(l => relevantLogTypes.includes(l.type)).map(mapStashEntries));
+	} catch (e) {
+		console.error(e);
+	}
+
+	return result;
 }
 
 export function filterLogByUser(roUser, guildLog) {

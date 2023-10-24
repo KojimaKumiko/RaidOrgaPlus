@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, MessageReaction, PartialMessageReaction, User } from "discord.js";
+import { ChannelType, EmbedBuilder, Message, MessageReaction, PartialMessageReaction, User } from "discord.js";
 import {
 	getAnmeldungenForTermin,
 	getAufstellungen,
@@ -91,14 +91,14 @@ async function sendTicket(reaction: MessageReaction | PartialMessageReaction, us
 	} while (reply != null && reply.stickers.size > 0);
 
 	if (reply == null) {
-		await dmChannel.send("Der Bot erwatet keine Nachricht mehr, da die Zeit ausgelaufen ist.");
+		await dmChannel.send("Der Bot erwatet keine Nachricht mehr, da die Zeit abgelaufen ist.");
 		return;
 	}
 
 	const userId = encrypt(reply.author.id);
 
 	// send an embed with the message of the user to the channel named "shoutbox", with the encrypted user id in the footer.
-	const embed = new MessageEmbed()
+	const embed = new EmbedBuilder()
 		.setColor("#0099ff")
 		.setTitle("Ticket")
 		.setDescription(reply.content)
@@ -108,7 +108,7 @@ async function sendTicket(reaction: MessageReaction | PartialMessageReaction, us
 
 	const guild = reaction.message.guild;
 	const channel = guild.channels.cache.find((channel) => channel.name === "shoutbox");
-	if (channel && channel.isText()) {
+	if (channel && channel.type === ChannelType.GuildText) {
 		await channel.send({ embeds: [embed] });
 		await dmChannel.send("Die Nachricht wurde dem Leitungsteam erfolgreich zugeschickt!");
 	} else {
@@ -140,6 +140,14 @@ async function handleAnmeldung(reaction: MessageReaction | PartialMessageReactio
 
 	const type = getAnmeldungType(reaction.emoji.name);
 	const discordTermin = await getTerminFromMessage(reaction.message.id);
+
+	if (discordTermin == null) {
+		const errorMessage = await reaction.message.channel.send({
+			content: `Der Termin konnte nicht gefunden werden. Falls dieser aktuell sein sollte, muss der embed im Discord mit dem Befehl '/termin show' neu gepostet werden.`,
+		});
+		setTimeout(async () => await errorMessage.delete(), 60000);
+		return;
+	}
 
 	await updateAnmeldung(player.id, discordTermin.fk_termin, type);
 	const { termin, anmeldungen, aufstellungen, raid } = await getTerminData(discordTermin.fk_termin);

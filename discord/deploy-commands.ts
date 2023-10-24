@@ -1,7 +1,7 @@
+import { REST, RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord.js";
 import fs from "fs";
 import path from "path";
-import { REST } from "@discordjs/rest";
-import { RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord-api-types/v9";
+
 import { Command } from "models/Commands";
 import { defaultExport } from "../models/Types";
 
@@ -37,7 +37,7 @@ async function getCommands(): Promise<RESTPostAPIApplicationCommandsJSONBody[]> 
 	console.log("getting commands");
 	const commands = await getCommands();
 
-	const rest = new REST({ version: "9" }).setToken(process.env.DISCORD_TOKEN);
+	const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 
 	const clientId = process.env.CLIENT_ID;
 	const guildId = process.env.GUILD_ID;

@@ -1,5 +1,6 @@
-import { GuildEmoji, MessageEmbed } from "discord.js";
-import * as _icons from "../services/icons";
+import { EmbedBuilder, GuildEmoji } from "discord.js";
+// import * as _icons from "../services/icons";
+import { miscIcon } from "../services/icons";
 import { DiscordClient } from "../models/DiscordClient";
 import { Spieler, SpielerTermin } from "models/Spieler";
 import { Termin } from "models/Termin";
@@ -8,11 +9,9 @@ import { Encounter } from "models/Encounter";
 import { getCalenderTermine } from "./queries";
 import { Raid } from "../../models/Raid";
 
-export function defaultEmbed(): MessageEmbed {
-	return new MessageEmbed()
-		.setColor("#F55535")
-		.setTimestamp()
-		.setFooter({ text: "RaidOrga+", iconURL: _icons.miscIcon("raid") });
+export function defaultEmbed(): EmbedBuilder {
+	const iconUrl = miscIcon("raid");
+	return new EmbedBuilder().setColor("#F55535").setTimestamp().setFooter({ text: "RaidOrga+", iconURL: iconUrl });
 }
 
 export function terminEmbed(
@@ -21,7 +20,7 @@ export function terminEmbed(
 	termin: Termin,
 	aufstellungen: (Aufstellung & Encounter)[],
 	anmeldungen: (Spieler & SpielerTermin)[]
-): MessageEmbed {
+): EmbedBuilder {
 	const emojis = getAnmeldeEmojis(client);
 	let allBosses = aufstellungen.map((a, index) => `(${index + 1}) ${a.name}${a.is_cm ? " CM" : ""}`).join("\n");
 	if (allBosses === "") {
@@ -38,13 +37,22 @@ export function terminEmbed(
 
 	const gesamtString = gesamtAnmeldungen(anmeldungen, emojis);
 
+	let time = termin.time;
+	if (termin.endtime) {
+		time += " - " + termin.endtime;
+	}
+
+	time += " Uhr";
+
 	return defaultEmbed()
 		.setTitle(`${raidName} - Kommender Termin`)
-		.addField("Datum", termin.dateString)
-		.addField("Uhrzeit", `${termin.time} - ${termin.endtime}`)
-		.addField("Geplante Bosse", allBosses)
-		.addField("Anmeldungen", anmeldungenString)
-		.addField("Gesamt Anmeldungen", gesamtString);
+		.addFields([
+			{ name: "Datum", value: termin.dateString },
+			{ name: "Uhrzeit", value: time },
+			{ name: "Geplante Bosse", value: allBosses },
+			{ name: "Anmeldungen", value: anmeldungenString },
+			{ name: "Gesamt Anmeldungen", value: gesamtString },
+		]);
 }
 
 function getAnmeldeEmojis(client: DiscordClient) {
@@ -54,9 +62,9 @@ function getAnmeldeEmojis(client: DiscordClient) {
 	return [emojiYes, emojiMaybe, emojiNo];
 }
 
-export async function kalenderEmbed(): Promise<MessageEmbed> {
+export async function kalenderEmbed(): Promise<EmbedBuilder> {
 	const week = await getTermine();
-	const embed = defaultEmbed().setTitle(`Rising Light Kalender`).setThumbnail(_icons.miscIcon("raid"));
+	const embed = defaultEmbed().setTitle(`Rising Light Kalender`).setThumbnail(miscIcon("raid"));
 	for (const day of week) {
 		let dayString = "";
 		for (const termin of day.termine) {
@@ -68,7 +76,7 @@ export async function kalenderEmbed(): Promise<MessageEmbed> {
 		}
 
 		dayString = `\`\`\`${dayString}\`\`\``;
-		embed.addField(day.date, dayString);
+		embed.addFields([{ name: day.date, value: dayString }]);
 	}
 	return embed;
 }

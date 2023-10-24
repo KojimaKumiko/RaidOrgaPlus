@@ -28,5 +28,8 @@
 	"references": [
 		{ "path": "../models" },
 		{ "path": "../database" }
-	]
+	],
+	"ts-node": {
+		"require": ["tsconfig-paths/register"]
+	}
 }

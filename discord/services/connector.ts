@@ -3,9 +3,9 @@ import axios, { Method } from "axios";
 import config from "./config.json";
 
 export default async function fetch(endpoint: string, method: Method, params: any, auth?) {
-	let env = process.env.NODE_ENV || 'development';
+	const env = process.env.NODE_ENV || 'development';
     try {
-        let url = config[env] + endpoint;
+        const url = config[env] + endpoint;
         if (auth) {
             params.auth = auth;
         }

@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CacheType, CommandInteraction } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from "discord.js";
 import { listRaidsForMod, removeChannelFromRaid, setChannelForRaid } from "../Utils/queries";
 import { defaultEmbed } from "../Utils/embedProvider";
 import { Raid } from "../../models/Raid";
@@ -8,7 +7,9 @@ import { equalsIgnoreCase } from "../Utils/misc";
 const command = new SlashCommandBuilder()
 	.setName("moderation")
 	.setDescription("Befehle für das Leitungsteam")
-	.setDefaultPermission(false)
+	// .setDefaultPermission(false)
+	.setDefaultMemberPermissions(PermissionsBitField.Flags.ManageRoles)
+	.setDMPermission(false)
 	.addSubcommand((sub) =>
 		sub.setName("shoutbox").setDescription("Generiert eine Nachricht mit Reaction für die Shoutbox.")
 	)
@@ -53,7 +54,7 @@ export default {
 	global: false
 };
 
-async function executeCommand(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function executeCommand(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	const subCommand = interaction.options.getSubcommand();
 	const subCommandGroup = interaction.options.getSubcommandGroup(false);
 	console.log(`group: ${subCommandGroup}; command: ${subCommand}`);
@@ -88,7 +89,7 @@ async function executeCommand(interaction: CommandInteraction<CacheType>): Promi
 	}
 }
 
-async function sendShoutboxMessage(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function sendShoutboxMessage(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	const embedMessage =
 		"Mit der Shoutbox ist es euch möglich, dem Leitungsteam eine anonyme Nachricht zukommen zu lassen. " +
 		"Dafür müsst ihr lediglich mit dem 🎫-Emote auf diese Nachricht reagieren und der Bot schreibt euch an. " +
@@ -104,7 +105,7 @@ async function sendShoutboxMessage(interaction: CommandInteraction<CacheType>): 
 	await interaction.reply({ content: "Nachricht generiert.", ephemeral: true });
 }
 
-async function listRaids(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function listRaids(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	await interaction.deferReply();
 
 	const raids = await listRaidsForMod();
@@ -112,7 +113,7 @@ async function listRaids(interaction: CommandInteraction<CacheType>): Promise<vo
 	if (raids != null) {
 		const embed = defaultEmbed()
 			.setTitle("Verknüpfbare Raids")
-			.addField("Raids", raids.map((r) => r.name).join("\n"));
+			.addFields({ name: "Raids", value: raids.map((r) => r.name).join("\n") });
 
 		await interaction.editReply({ embeds: [embed] });
 	} else {
@@ -120,7 +121,7 @@ async function listRaids(interaction: CommandInteraction<CacheType>): Promise<vo
 	}
 }
 
-async function setRaid(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function setRaid(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	await interaction.deferReply();
 
 	const raidName = interaction.options.getString("raid");
@@ -143,7 +144,7 @@ async function setRaid(interaction: CommandInteraction<CacheType>): Promise<void
 	await interaction.editReply("Der Channel wurde erfolgreich mit dem Raid verknüpft.");
 }
 
-async function removeRaid(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function removeRaid(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	await interaction.deferReply();
 
 	const raids = await listRaidsForMod();
@@ -173,7 +174,7 @@ async function removeRaid(interaction: CommandInteraction<CacheType>): Promise<v
 	await interaction.editReply("Der Verknüpfung mit dem Channel wurde aufgehoben.");
 }
 
-async function getRaid(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function getRaid(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	await interaction.deferReply();
 
 	const raids = await listRaidsForMod();

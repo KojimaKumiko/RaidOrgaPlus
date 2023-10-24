@@ -12,12 +12,9 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"@discordjs/builders": "^0.8.2",
-		"@discordjs/rest": "^0.1.0-canary.0",
 		"cors": "^2.8.5",
 		"dayjs": "^1.11.2",
-		"discord-api-types": "^0.24.0",
-		"discord.js": "^13.6.0",
+		"discord.js": "^14.13.0",
 		"express": "^4.17.1",
 		"express-busboy": "^7.0.1",
 		"express-fileupload": "^1.1.6",
@@ -32,6 +29,7 @@
 		"password-hash": "^1.2.2",
 		"request": "^2.88.0",
 		"simple-node-logger": "^18.12.22",
+		"tsconfig-paths": "^4.2.0",
 		"uuid": "^3.3.2",
 		"websocket": "^1.0.31"
 	},
@@ -50,8 +48,7 @@
 		"jest-extended": "^0.11.5",
 		"ts-jest": "^27.0.3",
 		"ts-node": "^10.9.1",
-		"ts-node-dev": "^2.0.0",
-		"tsconfig-paths": "^4.2.0"
+		"ts-node-dev": "^2.0.0"
 	},
 	"description": ""
 }

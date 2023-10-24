@@ -1,6 +1,6 @@
 import fs from "fs";
 import consoleStamp from "console-stamp";
-import { Intents, Collection, PartialTypes } from "discord.js";
+import { Collection, IntentsBitField, Partials } from "discord.js";
 import { DiscordClient } from "./models/DiscordClient";
 import { Command } from "./models/Commands";
 import { defaultExport } from "models/Types";
@@ -13,16 +13,16 @@ consoleStamp(console, {
 });
 
 const intents = [
-	Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-	Intents.FLAGS.GUILD_MESSAGES,
-	Intents.FLAGS.GUILD_MEMBERS,
-	Intents.FLAGS.GUILDS,
-	Intents.FLAGS.DIRECT_MESSAGES,
+	IntentsBitField.Flags.GuildMessageReactions,
+	IntentsBitField.Flags.GuildMessages,
+	IntentsBitField.Flags.GuildMembers,
+	IntentsBitField.Flags.Guilds,
+	IntentsBitField.Flags.DirectMessages,
 ];
 
-const partials: PartialTypes[] = [];
+const partials: Partials[] = [];
 if (!process.env.BACKEND) {
-	partials.push("MESSAGE", "REACTION", "CHANNEL", "USER", "GUILD_MEMBER");
+	partials.push(Partials.Message, Partials.Reaction, Partials.Channel, Partials.User, Partials.GuildMember);
 }
 
 const client = new DiscordClient({

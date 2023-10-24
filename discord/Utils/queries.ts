@@ -9,6 +9,7 @@ import { Encounter } from "../../models/Encounter";
 import { OkPacket } from "mysql";
 import { element } from "../../models/Types";
 import { Role, ROLES } from "../../models/Rolle";
+import { getAccountName } from "./misc";
 
 export async function listRaidsForUser(nickname: string, leader?: RaidRole): Promise<(Raid & SpielerRaid)[]> {
 	const stmt = `
@@ -18,9 +19,9 @@ export async function listRaidsForUser(nickname: string, leader?: RaidRole): Pro
 		WHERE INSTR(?, s.accname) > 0
 	`;
 	try {
-		let accountName = /[a-zA-Z]+[a-zA-Z\s]*\.\d{4}/.exec(nickname)[0];
-		if (accountName == null || accountName.trim() === "") {
-			accountName = nickname;
+		const accountName = getAccountName(nickname);
+		if (accountName == null) {
+			return [];
 		}
 
 		let result = await queryV<(Raid & SpielerRaid)[]>(stmt, [accountName]);
@@ -129,12 +130,15 @@ export async function getAufstellungen(termin: number): Promise<(Aufstellung & E
 	}
 }
 
-export async function getAufstellungForTermin(raidId: number, offset: number): Promise<(Aufstellung & Encounter)[]> {
+export async function getAufstellungForTermin(
+	raidId: number,
+	offset: number
+): Promise<(Aufstellung & Encounter & { terminId: number })[]> {
 	const stmt = `
-		SELECT a.id, e.name, e.abbr
-		FROM aufstellung a, encounter e, (
+		SELECT a.id, e.name, e.abbr, t1.id as terminId
+		FROM Aufstellung a, Encounter e, (
 			SELECT id
-			FROM termin
+			FROM Termin
 			WHERE fk_raid = ?
 			AND isArchived = 0
 			LIMIT 1 OFFSET ?
@@ -239,13 +243,18 @@ export async function checkRoleHistory(playerId: number, role: string): Promise<
 	`;
 	try {
 		const result: { Type: "ADD" | "REMOVE" }[] = await queryV(stmt, [playerId, role]);
-		return result.map(r => r.Type)[0];
+		return result.map((r) => r.Type)[0];
 	} catch (e) {
 		throw e;
 	}
 }
 
-export async function updateRoleHistory(id: number, role: string, type: "ADD" | "REMOVE", changer: string): Promise<OkPacket> {
+export async function updateRoleHistory(
+	id: number,
+	role: string,
+	type: "ADD" | "REMOVE",
+	changer: string
+): Promise<OkPacket> {
 	const stmt = "INSERT INTO RoleHistory (SpielerId, Name, Type, Changer) VALUES (?, ?, ?, ?)";
 	try {
 		return await queryV(stmt, [id, role, type, changer]);
@@ -255,15 +264,25 @@ export async function updateRoleHistory(id: number, role: string, type: "ADD" | 
 }
 
 export async function getPlayer(nickname: string): Promise<{ id: number; accname: string }> {
-	const stmt = "SELECT id, accname FROM Spieler WHERE id > 9 AND INSTR(?, accname)";
+	/* using the binary-keyword in the query, to make the search case-sensitive. */
+	const stmt = "SELECT id, accname FROM Spieler WHERE id > 9 AND binary accname = ?";
 	try {
-		let accountName = /[a-zA-Z]+[a-zA-Z\s]*\.\d{4}/.exec(nickname)[0];
-		if (accountName == null || accountName.trim() === "") {
-			accountName = nickname;
+		const accountName = getAccountName(nickname);
+		if (accountName == null) {
+			return undefined;
 		}
 
 		const response = await queryV(stmt, [accountName]);
 		return response[0];
+	} catch (e) {
+		throw e;
+	}
+}
+
+export async function upgradePlayer(playerId: number): Promise<void> {
+	const stmt = "UPDATE Spieler SET role = 1 WHERE id = ?";
+	try {
+		await queryV(stmt, [playerId]);
 	} catch (e) {
 		throw e;
 	}

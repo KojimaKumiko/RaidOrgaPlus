@@ -7,7 +7,7 @@
 			mandatory rounded v-model="role" class="btnGroup" @change="change">
 			<v-tooltip bottom>
 				<template v-slot:activator="{ on}">
-					<v-btn :disabled="disabled" v-on="on">
+					<v-btn v-on="on">
 						Normal
 					</v-btn>
 				</template>
@@ -15,7 +15,7 @@
 			</v-tooltip>
 			<v-tooltip bottom>
 				<template v-slot:activator="{on}">
-					<v-btn :disabled="disabled" v-on="on">
+					<v-btn v-on="on">
 						Raider
 					</v-btn>
 				</template>

@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CacheType, CommandInteraction } from "discord.js";
+import { CacheType, CommandInteraction, SlashCommandBuilder } from "discord.js";
 
 const command = new SlashCommandBuilder().setName("user").setDescription("Replies with user info!");
 

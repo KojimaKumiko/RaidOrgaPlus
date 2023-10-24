@@ -1,3 +1,4 @@
+import { ChannelType } from "discord.js";
 import { kalenderEmbed } from "./Utils/embedProvider";
 import { client } from "./bot";
 
@@ -18,7 +19,7 @@ function calenderTimer(): void {
 export async function updateCalender() {
 	const guild = await client.guilds.fetch(process.env.GUILD_ID);
 	const channel = await guild.channels.fetch(process.env.CALENDER_CHANNEL_ID);
-	if (channel.isText()) {
+	if (channel.type === ChannelType.GuildText) {
 		const messages = await channel.messages.fetch();
 		const message = messages.last();
 		const embed = await kalenderEmbed();

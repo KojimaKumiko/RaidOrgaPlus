@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { ChannelType, Embed, EmbedBuilder, Message, MessageType } from "discord.js";
 import { DiscordEvent } from "../models/DiscordEvent";
 import { decrypt, encrypt } from "../Utils/encyrption";
 
@@ -6,15 +6,15 @@ export default {
 	name: "messageCreate",
 	once: false,
 	execute: async (message: Message<boolean>): Promise<void> => {
-		if (message.type !== "REPLY") {
+		if (message.type !== MessageType.Reply) {
 			return;
 		}
 
-		if (message.channel.type === "GUILD_TEXT" && message.channel.name === "shoutbox") {
+		if (message.channel.type === ChannelType.GuildText && message.channel.name === "shoutbox") {
 			await sendMessage(message);
 		}
 
-		if (message.channel.type === "DM") {
+		if (message.channel.type === ChannelType.DM) {
 			await sendReply(message);
 		}
 	}
@@ -36,11 +36,11 @@ async function sendMessage(message: Message<boolean>): Promise<void> {
 	const user = await message.guild.members.fetch(userId);
 	const dmChannel = await user.createDM();
 
-	const embed = new MessageEmbed()
+	const embed = new EmbedBuilder()
 		.setColor("#0099ff")
 		.setTitle("RE: Nachricht")
 		.setDescription(message.content)
-		.addField("Antworten", "Antworte auf diese Nachricht mit Rechtsklick -> Antworten um eine weitere Nachricht ans Leitungsteam zu schicken.")
+		.addFields([{ name: "Antworten", value: "Antworte auf diese Nachricht mit Rechtsklick -> Antworten um eine weitere Nachricht ans Leitungsteam zu schicken."}])
 		.setFooter({ text: ref.id })
 		.setTimestamp();
 
@@ -69,12 +69,12 @@ async function sendReply(message: Message<boolean>): Promise<void> {
 		channel = channels.find(ch => ch.name === "shoutbox");
 	}
 
-	if (channel.isText()) {
+	if (channel.type === ChannelType.GuildText) {
 		const orgMessage = await channel.messages.fetch(messageId);
 		const userId = encrypt(message.author.id);
 
 		// send an embed with the message of the user to the channel named "shoutbox", with the encrypted user id in the footer.
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setColor("#0099ff")
 			.setTitle("RE: Nachricht")
 			.setDescription(message.content)

@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CacheType, CommandInteraction, MessageEmbed } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 
 import { RaidRole } from "../../models/Enums";
 import { Raid } from "models/Raid";
@@ -9,6 +8,7 @@ import { equalsIgnoreCase } from "../Utils/misc";
 const command = new SlashCommandBuilder()
 	.setName("link")
 	.setDescription("Befehle, um einen Channel mit einem Raid zu verknüpfen/die Verknüpfung aufzuheben.")
+	.setDMPermission(false)
 	.addSubcommand((sub) =>
 		sub.setName("list").setDescription("Listet die Raids auf, die mit dem Channel verknüpft werden können.")
 	)
@@ -42,7 +42,7 @@ export default {
 	global: false
 };
 
-async function executeCommand(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function executeCommand(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	const subCommand = interaction.options.getSubcommand();
 
 	switch (subCommand) {
@@ -61,16 +61,16 @@ async function executeCommand(interaction: CommandInteraction<CacheType>): Promi
 	}
 }
 
-async function listRaids(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function listRaids(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	await interaction.deferReply();
 	const guildUser = await interaction.guild.members.fetch(interaction.user);
 
 	const raids = await listRaidsForUser(guildUser.nickname, RaidRole.Lieutenant);
 	if (raids != null && raids.length > 0) {
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setColor("#0099ff")
 			.setTitle("Verknüpfbare Raids")
-			.addField("Raids", raids.map((r) => r.name).join("\n"))
+			.addFields({ name: "Raids", value: raids.map((r) => r.name).join("\n")})
 			.setTimestamp();
 
 		await interaction.editReply({ embeds: [embed] });
@@ -79,7 +79,7 @@ async function listRaids(interaction: CommandInteraction<CacheType>): Promise<vo
 	}
 }
 
-async function setRaid(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function setRaid(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	await interaction.deferReply();
 
 	const guildUser = await interaction.guild.members.fetch(interaction.user);
@@ -105,7 +105,7 @@ async function setRaid(interaction: CommandInteraction<CacheType>): Promise<void
 	await interaction.editReply("Der Channel wurde erfolgreich mit dem Raid verknüpft.");
 }
 
-async function removeRaid(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function removeRaid(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	await interaction.deferReply();
 
 	const guildUser = await interaction.guild.members.fetch(interaction.user);
@@ -136,7 +136,7 @@ async function removeRaid(interaction: CommandInteraction<CacheType>): Promise<v
 	await interaction.editReply("Der Verknüpfung mit dem Channel wurde aufgehoben.");
 }
 
-async function getRaid(interaction: CommandInteraction<CacheType>): Promise<void> {
+async function getRaid(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
 	await interaction.deferReply();
 
 	const guildUser = await interaction.guild.members.fetch(interaction.user);

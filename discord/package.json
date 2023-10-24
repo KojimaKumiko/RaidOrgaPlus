@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "npx tsnd -r dotenv/config ./bot.ts dotenv_config_path=config/.env.dev",
+		"prod": "npx ts-node -r dotenv/config ./bot.ts dotenv_config_path=config/.env",
 		"commands": "npx tsnd -r dotenv/config ./deploy-commands.ts dotenv_config_path=config/.env.dev",
 		"commands:global": "npx tsnd -r dotenv/config ./deployGlobalCommands.ts dotenv_config_path=config/.env.dev",
 		"commands:permission": "npx tsnd -r dotenv/config ./setCommandPermission.ts dotenv_config_path=config/.env.dev",
@@ -19,15 +20,15 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"@discordjs/rest": "^0.2.0-canary.0",
 		"@types/mysql": "^2.15.20",
-		"discord-api-types": "^0.26.0",
-		"discord.js": "^13.6.0",
-		"enmap": "^4.4.2",
+		"discord.js": "^14.13.0",
+		"enmap": "^5.9.5",
 		"fs": "0.0.1-security",
 		"mysql": "^2.16.0",
-		"ts-node": "^10.0.0",
-		"ts-node-dev": "^1.1.6"
+		"ts-node": "^10.9.1",
+		"ts-node-dev": "^2.0.0",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.2.2"
 	},
 	"devDependencies": {
 		"@types/jest": "^27.4.0",

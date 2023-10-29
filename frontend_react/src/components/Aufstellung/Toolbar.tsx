@@ -22,6 +22,8 @@ import SignUpList from "./SignUpList";
 import { Encounter } from "models/Encounter";
 import { listEncounterGrouped, listEncounterGroupedStrikes } from "../../services/endpoints/gamedata";
 import WingMenu from "./WingMenu";
+import { useSelector } from "react-redux";
+import { selectLoggedInUser } from "../../store/slices/userSlice";
 
 const style = {
 	headline: css({
@@ -43,8 +45,9 @@ const style = {
 };
 
 const Toolbar = () => {
-	const { termin, signUpPlayer } = useRouteLoaderData("compPage") as CompPageLoader;
+	const { termin, signUpPlayer, signUps } = useRouteLoaderData("compPage") as CompPageLoader;
 	const revalidator = useRevalidator();
+	const loggedInUser = useSelector(selectLoggedInUser);
 
 	const [signUpValue, setSignUpValue] = useState<number | null>(signUpPlayer);
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -73,6 +76,12 @@ const Toolbar = () => {
 	const handleSignUpValueChange = async (newValue: number | null) => {
 		if (newValue != null) {
 			setSignUpValue(newValue);
+			
+			let signUp = signUps.find(s => s.id === loggedInUser?.id)
+			if (signUp) {
+				signUp.type = newValue;
+			}
+
 			await anmelden(termin.id, newValue);
 		}
 	};
@@ -96,7 +105,7 @@ const Toolbar = () => {
 					<span css={style.headline}>{getHeadline()}</span>
 					<SignUp value={signUpValue} onValueChange={handleSignUpValueChange} />
 				</Stack>
-				<SignUpList terminId={termin.id} />
+				<SignUpList signInList={signUps} />
 			</Stack>
 			<Stack direction="row">
 				<Tooltip title="Refresh">

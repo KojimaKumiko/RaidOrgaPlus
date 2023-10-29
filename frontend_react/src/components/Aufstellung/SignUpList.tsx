@@ -19,44 +19,47 @@ const style = {
 	}),
 	signUpList: css({
 		borderRadius: 0,
+		marginRight: "8px"
 	}),
+	signUpListCard: css({
+		borderRadius: 0,
+	})
 };
 
 interface SignUpListProps {
-	terminId: number;
+	signInList: (Spieler & SpielerTermin)[];
 }
 
 const SignUpList = (props: SignUpListProps) => {
-	const { terminId } = props;
+	const { signInList } = props;
 
-	const [signUps, setSignUps] = useState<(Spieler & SpielerTermin)[]>([]);
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 	const [popperWidth, setPopperWidth] = useState(0);
 
 	const open = Boolean(anchorEl);
 
-	useEffect(() => {
-		const abortController = new AbortController();
+	// useEffect(() => {
+	// 	const abortController = new AbortController();
 
-		const getData = async () => {
-			try {
-				const data = await getAnmeldungenForTermin(terminId);
-				setSignUps(data);
-			} catch (error) {
-				if (axios.isCancel(error)) {
-					console.log(error);
-				} else {
-					throw error;
-				}
-			}
-		};
+	// 	const getData = async () => {
+	// 		try {
+	// 			const data = await getAnmeldungenForTermin(terminId);
+	// 			setSignUps(data);
+	// 		} catch (error) {
+	// 			if (axios.isCancel(error)) {
+	// 				console.log(error);
+	// 			} else {
+	// 				throw error;
+	// 			}
+	// 		}
+	// 	};
 
-		getData().catch(console.error);
+	// 	getData().catch(console.error);
 
-		return () => {
-			abortController.abort();
-		};
-	}, []);
+	// 	return () => {
+	// 		abortController.abort();
+	// 	};
+	// }, []);
 
 	const signUpIcon = (type: number) => {
 		const icons = ["check_circle", "check_circle_outline", "cancel", "help"];
@@ -69,9 +72,9 @@ const SignUpList = (props: SignUpListProps) => {
 	};
 
 	const signUpCount = () => {
-		const yes = signUps.filter((s) => s.type === 0);
-		const maybe = signUps.filter((s) => s.type === 1);
-		const no = signUps.filter((s) => s.type === 2);
+		const yes = signInList.filter((s) => s.type === 0);
+		const maybe = signInList.filter((s) => s.type === 1);
+		const no = signInList.filter((s) => s.type === 2);
 		return [yes, maybe, no];
 	};
 
@@ -103,9 +106,9 @@ const SignUpList = (props: SignUpListProps) => {
 			<Popper open={open} anchorEl={anchorEl} placement="bottom-start" transition sx={{ width: popperWidth }}>
 				{({ TransitionProps }) => (
 					<Fade {...TransitionProps}>
-						<Card css={style.signUpList}>
+						<Card css={style.signUpListCard}>
 							<List>
-								{signUps.map((s) => (
+								{signInList.map((s) => (
 									<ListItem
 										key={s.id}
 										secondaryAction={

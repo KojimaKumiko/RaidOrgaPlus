@@ -39,13 +39,14 @@ const raidLoader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 const compLoader = async ({ params }: LoaderFunctionArgs) => {
-	const termin = await getTermin(Number(params.terminId))
-	const composition = await getForTermin(Number(params.terminId));
-	const elements = await getElements(Number(params.terminId));
-	const signUps = await getAnmeldungenForTermin(params.terminId);
-	const signUpPlayer = await getAnmeldungForSpieler(params.terminId);
+	const termin = await getTermin(Number(params.terminId));
+	// const composition = await getForTermin(Number(params.terminId));
+	// const elements = await getElements(Number(params.terminId));
+	// const signUps = await getAnmeldungenForTermin(params.terminId);
+	// const signUpPlayer = await getAnmeldungForSpieler(params.terminId);
 
-	return { termin, composition, elements, signUps, signUpPlayer } as CompPageLoader;
+	// return { termin, composition, elements, signUps, signUpPlayer } as CompPageLoader;
+	return { termin } as CompPageLoader;
 };
 
 const Routes = () => {

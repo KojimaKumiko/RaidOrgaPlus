@@ -3,15 +3,29 @@ import { useState } from "react";
 import { Menu, MenuItem } from "@mui/material";
 import { Encounter } from "models/Encounter";
 
+const wingNames = [
+	"W1 | Spirit Vale",
+	"W2 | Salvation Pass",
+	"W3 | Stronghold of the Faithful",
+	"W4 | Bastion of the Penitent",
+	"W5 | Hall of Chains",
+	"W6 | Mythwright Gambit",
+	"W7 | The Key of Ahdashim",
+	"Strike 1 | Icebrood Saga",
+	"Strike 2 | End of Dragons",
+	"Strike 3 | Secrets of the Obscure"
+];
+
 export type WingMenuProps = {
 	anchorEl: HTMLElement | null;
 	onClose: () => void;
 	wings: Encounter[][];
 	strikes: Encounter[][];
+	onClick: (encounter: Encounter) => void;
 };
 
 const WingMenu = (props: WingMenuProps) => {
-	const { anchorEl, onClose, wings, strikes } = props;
+	const { anchorEl, onClose, wings, strikes, onClick } = props;
 	const open = Boolean(anchorEl);
 
 	const [innerAnchorEl, setInnerAnchorEl] = useState<HTMLElement | null>(null);
@@ -30,13 +44,13 @@ const WingMenu = (props: WingMenuProps) => {
 	const getWingMenuItems = () => {
 		const wingElements = wings.map((w, i) => (
 			<MenuItem key={w[0].id} onClick={handleClick(i)}>
-				Wing {i + 1}
+				{wingNames[i]}
 			</MenuItem>
 		));
 
 		const strikeElements = strikes.map((s, i) => (
 			<MenuItem key={s[0].id} onClick={handleClick(i + wings.length)}>
-				Strike {i + 1}
+				{wingNames[i + wings.length]}
 			</MenuItem>
 		));
 
@@ -55,10 +69,10 @@ const WingMenu = (props: WingMenuProps) => {
 					open={openElem === i}
 					anchorEl={innerAnchorEl}
 					onClose={handleClose}
+					onClick={onClick}
 					showFullClear
 				/>
 			))}
-			{/* Maybe use only one Menu and generate the MenuItems dynamically based on which item was clicked... */}
 		</>
 	);
 };
@@ -69,10 +83,11 @@ export type BossMenuProps = {
 	anchorEl: HTMLElement | null;
 	open: boolean;
 	onClose: () => void;
+	onClick: (encounter: Encounter) => void;
 };
 
 const BossMenu = (props: BossMenuProps) => {
-	const { encounters, showFullClear, anchorEl, open, onClose } = props;
+	const { encounters, showFullClear, anchorEl, open, onClose, onClick } = props;
 
 	const getBosses = () => {
 		if (showFullClear) {
@@ -92,7 +107,7 @@ const BossMenu = (props: BossMenuProps) => {
 
 	const getBossMenuItems = () => {
 		const enc = getBosses();
-		const result = enc.map((b, i) => <MenuItem key={i}>{b.name}</MenuItem>);
+		const result = enc.map((b, i) => <MenuItem key={i} onClick={() => onClick(b)}>{b.name}</MenuItem>);
 
 		return result;
 	};

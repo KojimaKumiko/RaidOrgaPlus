@@ -24,10 +24,13 @@ import { listEncounterGrouped, listEncounterGroupedStrikes } from "../../service
 import WingMenu from "./WingMenu";
 import { useSelector } from "react-redux";
 import { selectLoggedInUser } from "../../store/slices/userSlice";
+import { Spieler, SpielerTermin } from "models/Spieler";
+import { useAppSelector } from "../../store/hooks";
+import { selectTermin } from "../../store/slices/terminSlice";
 
 const style = {
 	headline: css({
-		marginRight: "12px",
+		marginRight: 12,
 		fontSize: 20,
 		fontWeight: "bold",
 	}),
@@ -42,14 +45,25 @@ const style = {
 	container: css({
 		margin: 16,
 	}),
+	actionRow: css({
+		marginTop: 8
+	}),
 };
 
-const Toolbar = () => {
-	const { termin, signUpPlayer, signUps } = useRouteLoaderData("compPage") as CompPageLoader;
+interface ToolbarProps {
+	onEncounterClick: (encounter: Encounter) => void;
+	onRefresh: () => void;
+};
+
+const Toolbar = (props: ToolbarProps) => {
+	const { onEncounterClick, onRefresh } = props;
+
+	const termin = useAppSelector(selectTermin)!;
+	const signUps: (Spieler & SpielerTermin)[] = [];
 	const revalidator = useRevalidator();
 	const loggedInUser = useSelector(selectLoggedInUser);
 
-	const [signUpValue, setSignUpValue] = useState<number | null>(signUpPlayer);
+	const [signUpValue, setSignUpValue] = useState<number | null>(null);
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
 	const [wings, setWings] = useState<Encounter[][]>([]);
@@ -65,6 +79,10 @@ const Toolbar = () => {
 	}, []);
 
 	const getHeadline = () => {
+		if (termin == null) {
+			return "";
+		}
+
 		let headline = termin.dateString + " " + termin.time;
 		if (termin.endtime) {
 			headline += " - " + termin.endtime;
@@ -107,9 +125,9 @@ const Toolbar = () => {
 				</Stack>
 				<SignUpList signInList={signUps} />
 			</Stack>
-			<Stack direction="row">
+			<Stack direction="row" css={style.actionRow}>
 				<Tooltip title="Refresh">
-					<IconButton onClick={handleRefresh}>
+					<IconButton onClick={onRefresh}>
 						<RefreshIcon />
 					</IconButton>
 				</Tooltip>
@@ -139,7 +157,7 @@ const Toolbar = () => {
 					</IconButton>
 				</Tooltip>
 			</Stack>
-			<WingMenu anchorEl={anchorEl} wings={wings} strikes={strikes} onClose={handleClose} />
+			<WingMenu anchorEl={anchorEl} wings={wings} strikes={strikes} onClose={handleClose} onClick={onEncounterClick} />
 		</Box>
 	);
 };

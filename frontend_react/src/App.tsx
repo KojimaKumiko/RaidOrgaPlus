@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
 import { Outlet, useMatches } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 
 import { getUser, selectLoadingStatus, selectLoginState } from "./store/slices/userSlice";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { saveWindowWidth } from "./store/slices/baseSlice";
 import AppToolbar from "./components/AppToolbar";
 import MenuDrawer from "./components/MenuDrawer";
-import LoginPage from "./pages/LoginPage";
 import Spinner from "./components/Spinner";
+import LoginPage from "./pages/LoginPage";
 import "./App.css";
 
 const drawerWidth = 240;
 
 function App() {
-	const dispatch = useDispatch();
-	const loginState = useSelector(selectLoginState);
-	const loadingStatus = useSelector(selectLoadingStatus);
+	const dispatch = useAppDispatch();
+	const loginState = useAppSelector(selectLoginState);
+	const loadingStatus = useAppSelector(selectLoadingStatus);
 
 	const [open, setOpen] = useState(true);
 	const loading = Boolean(loadingStatus !== "finished");
@@ -47,8 +47,6 @@ function App() {
 		})
 	};
 
-	dispatch(getUser());
-
 	useEffect(() => {
 		const handleResize = () => {
 			dispatch(saveWindowWidth(window.innerWidth));
@@ -59,6 +57,8 @@ function App() {
 				setOpen(false);
 			}
 		};
+
+		dispatch(getUser());
 
 		// initialize the window width.
 		dispatch(saveWindowWidth(window.innerWidth));

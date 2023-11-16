@@ -15,7 +15,17 @@
 		"isolatedModules": true,
 		"noEmit": true,
 		"jsx": "react-jsx",
-		"sourceMap": true
+		"sourceMap": true,
+		"types": ["vite/client"],
+		"paths": {
+			"models/*": [
+				"../models/build/*"
+			]
+		},
+		"jsxImportSource": "@emotion/react"
 	},
-	"include": ["src"]
+	"include": ["src"],
+	"references": [
+		{ "path": "../models" }
+	]
 }

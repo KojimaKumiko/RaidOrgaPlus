@@ -12,3 +12,9 @@ export interface CompPageLoader {
 	signUps: (Spieler & SpielerTermin)[];
 	signUpPlayer: number | null;
 }
+
+export interface CompPlayer {
+	id: number;
+	accname: string;
+	name: string;
+}

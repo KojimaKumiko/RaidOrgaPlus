@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouteLoaderData } from "react-router-dom";
 
-import { Box, Menu, MenuItem } from "@mui/material";
+import { Box, Menu, MenuItem, Stack } from "@mui/material";
 
 import { CompPageLoader, CompPlayer } from "../../models/types";
 import PlayerName from "../Misc/PlayerName";
@@ -11,7 +11,15 @@ import { Aufstellung } from "models/Aufstellung";
 import { Encounter } from "models/Encounter";
 import { setClass, setName, setRole } from "../../services/endpoints/aufstellungen";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { addElement, selectElements, selectSignUps, setName as pickName, clearName, setClass as pickClass, setRole as pickRole } from "../../store/slices/terminSlice";
+import {
+	addElement,
+	selectElements,
+	selectSignUps,
+	setName as pickName,
+	clearName,
+	setClass as pickClass,
+	setRole as pickRole,
+} from "../../store/slices/terminSlice";
 import { classIcon, miscIcon, roleIcon } from "../../services/icons";
 import CustomIcon from "../Misc/CustomIcon";
 import ClassMenu from "./ClassMenu";
@@ -33,7 +41,7 @@ const CompElement = (props: CompElementProps) => {
 	const elements = useAppSelector(selectElements);
 
 	const getElement = (): element => {
-		const element = elements.find(e => e.aufstellung === composition.id && e.pos === position);
+		const element = elements.find((e) => e.aufstellung === composition.id && e.pos === position);
 		if (element) {
 			return element;
 		}
@@ -54,7 +62,7 @@ const CompElement = (props: CompElementProps) => {
 	const getElementClass = () => {
 		const element = getElement();
 		return element.class;
-	}
+	};
 
 	const getElementRoles = () => {
 		const element = getElement();
@@ -62,7 +70,7 @@ const CompElement = (props: CompElementProps) => {
 			return element.roles;
 		}
 		return [{ id: 0 }] as Role[];
-	}
+	};
 
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const open = Boolean(anchorEl);
@@ -115,26 +123,32 @@ const CompElement = (props: CompElementProps) => {
 		event.preventDefault();
 		dispatch(clearName({ compId: composition.id, position }));
 		await setName(composition.id, position, 0);
-	}
+	};
 
 	return (
-		<Box>
-			{edit ? (
-				<span onClick={handlePickPlayer} onContextMenu={onClearName}>
-					{/* <PlayerName user={getUser()} /> */}
-					<span>{getUser().name}</span>
-				</span>
-			) : <PlayerName user={getUser()} clickable />}
-			<ClassSelection compId={composition.id} position={position} classAbbr={getElementClass()} />
-			<RoleSelection compId={composition.id} position={position} roles={getElementRoles()} />
+		<Stack direction="column">
+			<Box width={240}>
+				{edit ? (
+					<span onClick={handlePickPlayer} onContextMenu={onClearName}>
+						{/* <PlayerName user={getUser()} /> */}
+						<span>{getUser().name}</span>
+					</span>
+				) : (
+					<PlayerName user={getUser()} clickable />
+				)}
+			</Box>
+			<Box width={160} display="flex">
+				<ClassSelection compId={composition.id} position={position} classAbbr={getElementClass()} />
+				<RoleSelection compId={composition.id} position={position} roles={getElementRoles()} />
+			</Box>
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
 				{getMenuItems()}
 			</Menu>
-		</Box>
+		</Stack>
 	);
 };
 
-const ClassSelection = ({ compId, position, classAbbr }: { compId: number, position: number, classAbbr: string }) => {
+const ClassSelection = ({ compId, position, classAbbr }: { compId: number; position: number; classAbbr: string }) => {
 	const dispatch = useAppDispatch();
 
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -145,27 +159,27 @@ const ClassSelection = ({ compId, position, classAbbr }: { compId: number, posit
 			return classIcon(classAbbr);
 		}
 		return miscIcon("empty");
-	}
+	};
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
-	}
+	};
 
 	const handleClearClass = async (event: React.MouseEvent<HTMLElement>) => {
 		event.preventDefault();
 		dispatch(pickClass({ compId, position, cls: { name: "", id: 0, abbr: "" } as Class }));
 		await setClass(compId, position, 0);
-	}
+	};
 
 	const handleClose = () => {
 		setAnchorEl(null);
-	}
+	};
 
 	const handleClassPick = async (specilization: Class) => {
 		handleClose();
 		dispatch(pickClass({ compId, position, cls: specilization }));
 		await setClass(compId, position, specilization.id);
-	}
+	};
 
 	return (
 		<>
@@ -177,9 +191,9 @@ const ClassSelection = ({ compId, position, classAbbr }: { compId: number, posit
 			</Menu>
 		</>
 	);
-}
+};
 
-const RoleSelection = ({ compId, position, roles }: { compId: number, position: number, roles: Role[] }) => {
+const RoleSelection = ({ compId, position, roles }: { compId: number; position: number; roles: Role[] }) => {
 	const dispatch = useAppDispatch();
 
 	const [index, setIndex] = useState<number | null>(null);
@@ -191,27 +205,27 @@ const RoleSelection = ({ compId, position, roles }: { compId: number, position: 
 			return roleIcon(role.abbr);
 		}
 		return miscIcon("empty");
-	}
+	};
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>, idx: number) => {
 		setAnchorEl(event.currentTarget);
 		setIndex(idx);
-	}
+	};
 
 	const handleClearRole = async (event: React.MouseEvent<HTMLElement>, idx: number) => {
 		event.preventDefault();
 		const role = { id: 0 } as Role;
 
 		dispatch(pickRole({ compId, position, role, index: idx }));
-		const newRoles = roles.map(r => r.id);
+		const newRoles = roles.map((r) => r.id);
 		newRoles[idx] = role.id;
 		await setRole(compId, position, newRoles.join(", "));
-	}
+	};
 
 	const handleClose = () => {
 		setAnchorEl(null);
 		setIndex(null);
-	}
+	};
 
 	const handleRolePick = async (role: Role) => {
 		setAnchorEl(null);
@@ -223,17 +237,22 @@ const RoleSelection = ({ compId, position, roles }: { compId: number, position: 
 		}
 
 		dispatch(pickRole({ compId, position, role, index }));
-		const newRoles = roles.map(r => r.id);
+		const newRoles = roles.map((r) => r.id);
 		newRoles[index] = role.id;
 		await setRole(compId, position, newRoles.join(", "));
 
 		setIndex(null);
-	}
+	};
 
 	return (
 		<>
 			{roles.map((r, idx) => (
-				<CustomIcon src={getSrc(r)} onClick={e => handleClick(e, idx)} onContextMenu={e => handleClearRole(e, idx)} key={idx + '_' + r.id} />
+				<CustomIcon
+					src={getSrc(r)}
+					onClick={(e) => handleClick(e, idx)}
+					onContextMenu={(e) => handleClearRole(e, idx)}
+					key={idx + "_" + r.id}
+				/>
 			))}
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
 				<MenuItem>
@@ -241,7 +260,7 @@ const RoleSelection = ({ compId, position, roles }: { compId: number, position: 
 				</MenuItem>
 			</Menu>
 		</>
-	)
-}
+	);
+};
 
 export default CompElement;

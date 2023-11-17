@@ -78,9 +78,9 @@ const CompositionPage = () => {
 	return (
 		<Box>
 			<Toolbar onEncounterClick={handleEncounterClick} onRefresh={handleRefresh} />
-			<Grid container>
+			<Grid container m={2} spacing={1}>
 				{compositions.map((c) => (
-					<Grid key={c.id}>
+					<Grid key={c.id} xs={12} md={6} xl={3}>
 						<Composition comp={c} />
 					</Grid>
 				))}

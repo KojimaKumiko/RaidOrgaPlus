@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { Fragment, useEffect, useState } from "react";
 import { useRevalidator, useRouteLoaderData } from "react-router-dom";
 

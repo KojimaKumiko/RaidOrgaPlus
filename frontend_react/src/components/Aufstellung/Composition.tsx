@@ -1,6 +1,7 @@
 import { useRouteLoaderData } from "react-router-dom";
 
 import { Avatar, Box, Card, CardContent, SpeedDial, SpeedDialAction, Stack, Typography } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2";
 import SettingsIcon from "@mui/icons-material/Settings";
 import InputIcon from "@mui/icons-material/Input";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -38,22 +39,24 @@ const Composition = (props: CompositionProps) => {
 	return (
 		<Card>
 			<CardContent>
-				<Stack direction="row">
+				<Stack direction="row" mb={2}>
 					<Stack direction="row" alignItems="center">
 						<Avatar src={getAvatarSrc()} sx={{ height: 52, width: 52, mr: 2 }} />
 						<Typography variant="h6">{comp.name}</Typography>
 					</Stack>
-					<SpeedDial
-						icon={<SettingsIcon />}
-						ariaLabel="SpeedDial"
-						direction="down"
-						// sx={{ ml: "auto", position: "absolute", right: 16 }}
-						FabProps={{ sx: { height: 40, width: 40 } }}>
-						<SpeedDialAction tooltipTitle="Einträge hierher kopieren" icon={<InputIcon />} />
-						<SpeedDialAction tooltipTitle="Blanko laden" icon={<RefreshIcon />} />
-						<SpeedDialAction tooltipTitle="CM umschalten" icon={<NewReleasesIcon />} />
-						<SpeedDialAction tooltipTitle="Boss löschen" icon={<DeleteIcon />} onClick={removeBoss} />
-					</SpeedDial>
+					<Box sx={{ transform: "translateZ(0px)", flexGrow: 1 }}>
+						<SpeedDial
+							icon={<SettingsIcon />}
+							ariaLabel="SpeedDial"
+							direction="down"
+							sx={{ position: "absolute", right: 16 }}
+							FabProps={{ sx: { height: 40, width: 40 } }}>
+							<SpeedDialAction tooltipTitle="Einträge hierher kopieren" icon={<InputIcon />} />
+							<SpeedDialAction tooltipTitle="Blanko laden" icon={<RefreshIcon />} />
+							<SpeedDialAction tooltipTitle="CM umschalten" icon={<NewReleasesIcon />} />
+							<SpeedDialAction tooltipTitle="Boss löschen" icon={<DeleteIcon />} onClick={removeBoss} />
+						</SpeedDial>
+					</Box>
 				</Stack>
 				<Body comp={comp} />
 			</CardContent>
@@ -71,16 +74,16 @@ const Body = (props: BodyProps) => {
 	const getElements = () => {
 		const elements: JSX.Element[] = [];
 		for (let i = 1; i <= 10; i++) {
-			elements.push(<CompElement edit position={i} composition={comp} key={i} />);
+			elements.push(
+				<Grid key={i} xs={6}>
+					<CompElement edit position={i} composition={comp} />
+				</Grid>
+			);
 		}
 		return elements;
-	}
+	};
 
-	return (
-		<Stack>
-			{getElements()}
-		</Stack>
-	);
+	return <Grid container>{getElements()}</Grid>;
 };
 
 export default Composition;

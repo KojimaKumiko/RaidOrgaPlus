@@ -75,7 +75,11 @@ export async function getTerminData(terminId: number): Promise<{
 }
 
 async function handleGiveawayReaction(reaction: MessageReaction | PartialMessageReaction, user: User) {
-	const message = "Hallo!\nBitte teile das Bild direkt hier in der Direkt-Nachricht!";
+	const message = `Hallo! Danke für deine Hilfe bei der Suche nach den gestohlenen Geschenken!
+
+Bitte schicke in dieser Direkt-Nachricht das Bild von dem Ort, an dem die Geschenke vergraben sind, und nenne dabei die nächstgelegene Wegmarke!
+	
+Viel Glück!`;
 
 	// create a DM Channel with the user and send the message
 	const dmChannel = await user.createDM();
@@ -87,8 +91,9 @@ async function handleGiveawayReaction(reaction: MessageReaction | PartialMessage
 		if (reply != null) {
 			if (reply.attachments.size > 1) {
 				await dmChannel.send("Es wird nur ein Bild pro einsendung unterstützt.");
-			} else {
-				await dmChannel.send("Es werden nur Bild einsendungen unterstützt.");
+			}
+			if (reply.content == null || reply.content.trim() === "") {
+				await dmChannel.send("Bitte geb auch die Wegmarke mit an.");
 			}
 		}
 
@@ -102,7 +107,7 @@ async function handleGiveawayReaction(reaction: MessageReaction | PartialMessage
 		});
 
 		reply = replyCollection.first();
-	} while (reply != null && (reply.attachments.size <= 0 || reply.attachments.size > 1));
+	} while (reply != null && ((reply.attachments.size <= 0 || reply.attachments.size > 1) || (reply.content == null || reply.content === "")));
 
 	if (reply == null) {
 		await dmChannel.send("Der Bot erwatet keine Nachricht mehr, da die Zeit abgelaufen ist.");

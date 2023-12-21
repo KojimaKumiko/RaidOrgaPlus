@@ -1,4 +1,11 @@
-import { CacheType, ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from "discord.js";
+import {
+	CacheType,
+	ChannelType,
+	ChatInputCommandInteraction,
+	EmbedBuilder,
+	PermissionsBitField,
+	SlashCommandBuilder,
+} from "discord.js";
 import { listRaidsForMod, removeChannelFromRaid, setChannelForRaid } from "../Utils/queries";
 import { defaultEmbed } from "../Utils/embedProvider";
 import { Raid } from "../../models/Raid";
@@ -12,6 +19,15 @@ const command = new SlashCommandBuilder()
 	.setDMPermission(false)
 	.addSubcommand((sub) =>
 		sub.setName("shoutbox").setDescription("Generiert eine Nachricht mit Reaction für die Shoutbox.")
+	)
+	.addSubcommand((sub) =>
+		sub
+			.setName("giveaway")
+			.setDescription("Generiert eine Nachricht mit einer Reaction für ein giveaway.")
+			.addChannelOption(option => option.setName("channel").setDescription("Der Channel in dem die Nachricht vorkommt.").setRequired(true))
+			.addStringOption((option) =>
+				option.setName("message").setDescription("Die ID der Message für das Giveaway.").setRequired(true)
+			)
 	)
 	.addSubcommandGroup((group) =>
 		group
@@ -51,7 +67,7 @@ export default {
 	data: command,
 	execute: executeCommand,
 	production: true,
-	global: false
+	global: false,
 };
 
 async function executeCommand(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
@@ -86,7 +102,31 @@ async function executeCommand(interaction: ChatInputCommandInteraction<CacheType
 		case "shoutbox":
 			await sendShoutboxMessage(interaction);
 			break;
+		case "giveaway":
+			await handleGiveawayMessage(interaction);
 	}
+}
+
+async function handleGiveawayMessage(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+	// const embedMessage = "Reagiere auf diese Nachricht mit dem 🎄-Emoji um am giveaway teilzunehmen!";
+	// // const embed = defaultEmbed().setTitle("Weihnachts giveaway").setDescription(embedMessage);
+	// const embed = new EmbedBuilder()
+	// 	.setColor("#07ad1d")
+	// 	.setTitle("Weihnachts giveaway")
+	// 	.setDescription(embedMessage)
+	// 	.setTimestamp();
+	// const message = await interaction.channel.send({ embeds: [embed] });
+	// await message.react("🎄");
+	// await interaction.reply({ content: "Nachricht generiert.", ephemeral: true });
+
+	const messageId = interaction.options.getString("message");
+	const channel = interaction.options.getChannel("channel", true, [ChannelType.GuildText, ChannelType.GuildAnnouncement]);
+	
+	const message = await channel.messages.fetch(messageId);
+
+	message.react("☃");
+
+	await interaction.reply({ content: "Auf die Nachricht wurde reagiert!", ephemeral: true });
 }
 
 async function sendShoutboxMessage(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {

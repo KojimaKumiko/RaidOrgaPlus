@@ -34,9 +34,20 @@ export default {
 			return;
 		}
 
-		if (reaction.emoji.name === "🎫") {
+		const channel = reaction.message.channel;
+		if (channel.type !== ChannelType.GuildText) {
+			return;
+		}
+
+		if (reaction.emoji.name === "🎫" && channel.name === "shoutbox-bot") {
 			await reaction.users.remove(user);
 			await sendTicket(reaction, user);
+			return;
+		}
+
+		if (reaction.emoji.name === "☃" && channel.name === "bot-channel") {
+			await reaction.users.remove(user);
+			await handleGiveawayReaction(reaction, user);
 			return;
 		}
 
@@ -61,6 +72,61 @@ export async function getTerminData(terminId: number): Promise<{
 	const raid = await getRaidFromId(termin.fk_raid);
 
 	return { termin, anmeldungen, aufstellungen, raid };
+}
+
+async function handleGiveawayReaction(reaction: MessageReaction | PartialMessageReaction, user: User) {
+	const message = "Hallo!\nBitte teile das Bild direkt hier in der Direkt-Nachricht!";
+
+	// create a DM Channel with the user and send the message
+	const dmChannel = await user.createDM();
+	await dmChannel.send(message);
+
+	let reply: Message<boolean> = null;
+
+	do {
+		if (reply != null) {
+			if (reply.attachments.size > 1) {
+				await dmChannel.send("Es wird nur ein Bild pro einsendung unterstützt.");
+			} else {
+				await dmChannel.send("Es werden nur Bild einsendungen unterstützt.");
+			}
+		}
+
+		reply = null;
+
+		// await a reply from the user and encrypt the user id.
+		const replyCollection = await dmChannel.awaitMessages({
+			filter: (m) => !m.author.bot,
+			max: 1,
+			time: 300_000, // 300.000 ms = 5 Minutes.
+		});
+
+		reply = replyCollection.first();
+	} while (reply != null && (reply.attachments.size <= 0 || reply.attachments.size > 1));
+
+	if (reply == null) {
+		await dmChannel.send("Der Bot erwatet keine Nachricht mehr, da die Zeit abgelaufen ist.");
+		return;
+	}
+
+	// send an embed with the image the user provided
+	const image = reply.attachments.first();
+	const embed = new EmbedBuilder()
+		.setColor("#0099ff")
+		.setTitle("Einsendung")
+		.setDescription(user.tag)
+		.setImage(image.proxyURL);
+
+	const guild = reaction.message.guild;
+	const channel = guild.channels.cache.find((channel) => channel.id === process.env.GIVEAWAY_CHANNEL);
+	if (channel && channel.type === ChannelType.GuildText) {
+		await channel.send({ embeds: [embed] });
+		await dmChannel.send("Die Einsendung wurde dem Leitungsteam erfolgreich zugeschickt!");
+	} else {
+		await dmChannel.send(
+			"Es gab ein Problem bei der Zustellung der Einsendung. Bitte probiere es später noch einmal."
+		);
+	}
 }
 
 async function sendTicket(reaction: MessageReaction | PartialMessageReaction, user: User) {

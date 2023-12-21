@@ -92,6 +92,9 @@ Viel Glück!`;
 			if (reply.attachments.size > 1) {
 				await dmChannel.send("Es wird nur ein Bild pro einsendung unterstützt.");
 			}
+			if (reply.attachments.size <= 0) {
+				await dmChannel.send("Bitte schicke auch das Bild in dieser Direkt-Nachricht.")
+			}
 			if (reply.content == null || reply.content.trim() === "") {
 				await dmChannel.send("Bitte geb auch die Wegmarke mit an.");
 			}

@@ -35,7 +35,7 @@ export default {
 		}
 
 		const channel = reaction.message.channel;
-		if (channel.type !== ChannelType.GuildText) {
+		if (!(channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildAnnouncement)) {
 			return;
 		}
 

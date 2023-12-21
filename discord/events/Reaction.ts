@@ -45,7 +45,7 @@ export default {
 			return;
 		}
 
-		if (reaction.emoji.name === "☃" && channel.name === "bot-channel") {
+		if (reaction.emoji.name === "☃" && channel.id === process.env.GIVEAWAY_REACTION_CHANNEL) {
 			await reaction.users.remove(user);
 			await handleGiveawayReaction(reaction, user);
 			return;
@@ -111,10 +111,15 @@ async function handleGiveawayReaction(reaction: MessageReaction | PartialMessage
 
 	// send an embed with the image the user provided
 	const image = reply.attachments.first();
+	let msg = reply.content;
+	if (msg == null || msg.trim() === "") {
+		msg = "-";
+	}
 	const embed = new EmbedBuilder()
 		.setColor("#0099ff")
 		.setTitle("Einsendung")
-		.setDescription(user.tag)
+		.setDescription(`<@${user.id}>`)
+		.addFields({ name: "Text einsendung", value: msg })
 		.setImage(image.proxyURL);
 
 	const guild = reaction.message.guild;

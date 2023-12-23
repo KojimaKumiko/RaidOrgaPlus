@@ -77,7 +77,7 @@ export async function getTerminData(terminId: number): Promise<{
 async function handleGiveawayReaction(reaction: MessageReaction | PartialMessageReaction, user: User) {
 	const message = `Hallo! Danke für deine Hilfe bei der Suche nach den gestohlenen Geschenken!
 
-Bitte schicke in dieser Direkt-Nachricht das Bild von dem Ort, an dem die Geschenke vergraben sind, und nenne dabei die nächstgelegene Wegmarke!
+Bitte schicke in dieser Direkt-Nachricht das Bild von dem Ort, an dem die Geschenke vergraben sind, und nenne dabei die nächstgelegene Wegmarke (in einer Nachricht)!
 	
 Viel Glück!`;
 
@@ -90,13 +90,13 @@ Viel Glück!`;
 	do {
 		if (reply != null) {
 			if (reply.attachments.size > 1) {
-				await dmChannel.send("Es wird nur ein Bild pro einsendung unterstützt.");
+				await dmChannel.send("Deine Einsendung wurde noch nicht abgeschickt, da nur ein Bild pro einsendung unterstützt. Bitte versuche es erneut und gib neben der Wegmarke nur ein Bild an.");
 			}
 			if (reply.attachments.size <= 0) {
-				await dmChannel.send("Bitte schicke auch das Bild in dieser Direkt-Nachricht.")
+				await dmChannel.send("Deine Einsendung wurde noch nicht abgeschickt, da auch das Bild benötigt wird. Bitte versuche es erneut und gib mit der Wegmarke auch das Bild an.");
 			}
 			if (reply.content == null || reply.content.trim() === "") {
-				await dmChannel.send("Bitte geb auch die Wegmarke mit an.");
+				await dmChannel.send("Deine Einsendung wurde noch nicht abgeschickt, da auch die Wegmarke benötigt wird. Bitte versuche es erneut und gib mit dem Bild auch die Wegmarke mit an.");
 			}
 		}
 

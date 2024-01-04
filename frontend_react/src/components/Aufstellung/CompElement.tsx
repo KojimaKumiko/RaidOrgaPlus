@@ -26,6 +26,7 @@ import ClassMenu from "./ClassMenu";
 import { Class } from "models/Klasse";
 import RoleMenu from "./RoleMenu";
 import { Role } from "models/Rolle";
+import { selectLoggedInUser } from "../../store/slices/userSlice";
 
 interface CompElementProps {
 	edit: boolean;
@@ -39,6 +40,7 @@ const CompElement = (props: CompElementProps) => {
 	const dispatch = useAppDispatch();
 	const signUps = useAppSelector(selectSignUps);
 	const elements = useAppSelector(selectElements);
+	const loggedInUser = useAppSelector(selectLoggedInUser);
 
 	const getElement = (): element => {
 		const element = elements.find((e) => e.aufstellung === composition.id && e.pos === position);
@@ -125,19 +127,45 @@ const CompElement = (props: CompElementProps) => {
 		await setName(composition.id, position, 0);
 	};
 
+	const highlightSelf = () => {
+		const element = getElement();
+		if (element.id == 0 || !loggedInUser) {
+			return false;
+		}
+		return element.accname === loggedInUser.accname;
+	};
+
+	const doublePlayer = () => {
+		const element = getElement();
+		if (element.id <= 1 || !element.name) {
+			return false;
+		}
+		return elements.filter((e) => e.aufstellung == composition.id && e.accname == element.accname).length > 1;
+	};
+
 	return (
-		<Stack direction="column">
-			<Box width={240}>
+		<Stack
+			direction="column"
+			sx={[
+				highlightSelf() && { borderRadius: "10px", backgroundColor: "#444444" },
+				doublePlayer() && {
+					borderStyle: "solid",
+					borderRadius: "10px",
+					borderWidth: "1px",
+					borderColor: "red",
+					margin: "-1px",
+				},
+			]}>
+			<Box width={240} sx={{ paddingLeft: "5px" }}>
 				{edit ? (
-					<span onClick={handlePickPlayer} onContextMenu={onClearName}>
-						{/* <PlayerName user={getUser()} /> */}
+					<span onClick={handlePickPlayer} onContextMenu={onClearName} style={{ cursor: "pointer" }}>
 						<span>{getUser().name}</span>
 					</span>
 				) : (
 					<PlayerName user={getUser()} clickable />
 				)}
 			</Box>
-			<Box width={160} display="flex">
+			<Box width={160} display="flex" sx={{ paddingLeft: "5px" }}>
 				<ClassSelection compId={composition.id} position={position} classAbbr={getElementClass()} />
 				<RoleSelection compId={composition.id} position={position} roles={getElementRoles()} />
 			</Box>
@@ -183,7 +211,13 @@ const ClassSelection = ({ compId, position, classAbbr }: { compId: number; posit
 
 	return (
 		<>
-			<CustomIcon src={getSrc()} onClick={handleClick} onContextMenu={handleClearClass} />
+			<CustomIcon
+				src={getSrc()}
+				onClick={handleClick}
+				onContextMenu={handleClearClass}
+				imgProps={{ width: 20, height: 20 }}
+				sx={{ width: 20, height: 20, mb: 1, mr: 0.5, cursor: "pointer" }}
+			/>
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
 				<MenuItem>
 					<ClassMenu onClassPick={handleClassPick} />
@@ -252,6 +286,8 @@ const RoleSelection = ({ compId, position, roles }: { compId: number; position: 
 					onClick={(e) => handleClick(e, idx)}
 					onContextMenu={(e) => handleClearRole(e, idx)}
 					key={idx + "_" + r.id}
+					imgProps={{ width: 20, height: 20 }}
+					sx={{ width: 20, height: 20, cursor: "pointer" }}
 				/>
 			))}
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>

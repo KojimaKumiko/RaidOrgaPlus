@@ -49,7 +49,7 @@ const Composition = (props: CompositionProps) => {
 							icon={<SettingsIcon />}
 							ariaLabel="SpeedDial"
 							direction="down"
-							sx={{ position: "absolute", right: 16 }}
+							sx={{ position: "absolute", right: 0 }}
 							FabProps={{ sx: { height: 40, width: 40 } }}>
 							<SpeedDialAction tooltipTitle="Einträge hierher kopieren" icon={<InputIcon />} />
 							<SpeedDialAction tooltipTitle="Blanko laden" icon={<RefreshIcon />} />
@@ -75,7 +75,7 @@ const Body = (props: BodyProps) => {
 		const elements: JSX.Element[] = [];
 		for (let i = 1; i <= 10; i++) {
 			elements.push(
-				<Grid key={i} xs={6}>
+				<Grid key={i} xs={6} sx={{ padding: "4px" }}>
 					<CompElement edit position={i} composition={comp} />
 				</Grid>
 			);

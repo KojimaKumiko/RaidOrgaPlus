@@ -1,12 +1,9 @@
-/** @jsxImportSource @emotion/react */
 import { useState, useEffect } from "react";
-import axios from "axios";
 
 import { ExpandLess } from "@mui/icons-material";
 import { Button, Icon, Popper, Fade, Card, List, ListItem, ListItemText, css, Theme } from "@mui/material";
 
 import { Spieler, SpielerTermin } from "models/Spieler";
-import { getAnmeldungenForTermin } from "../../services/endpoints/termine";
 
 const style = {
 	spanContainer: css({
@@ -19,11 +16,11 @@ const style = {
 	}),
 	signUpList: css({
 		borderRadius: 0,
-		marginRight: "8px"
+		marginRight: "8px",
 	}),
 	signUpListCard: css({
 		borderRadius: 0,
-	})
+	}),
 };
 
 interface SignUpListProps {
@@ -37,29 +34,6 @@ const SignUpList = (props: SignUpListProps) => {
 	const [popperWidth, setPopperWidth] = useState(0);
 
 	const open = Boolean(anchorEl);
-
-	// useEffect(() => {
-	// 	const abortController = new AbortController();
-
-	// 	const getData = async () => {
-	// 		try {
-	// 			const data = await getAnmeldungenForTermin(terminId);
-	// 			setSignUps(data);
-	// 		} catch (error) {
-	// 			if (axios.isCancel(error)) {
-	// 				console.log(error);
-	// 			} else {
-	// 				throw error;
-	// 			}
-	// 		}
-	// 	};
-
-	// 	getData().catch(console.error);
-
-	// 	return () => {
-	// 		abortController.abort();
-	// 	};
-	// }, []);
 
 	const signUpIcon = (type: number) => {
 		const icons = ["check_circle", "check_circle_outline", "cancel", "help"];

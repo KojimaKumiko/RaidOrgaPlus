@@ -21,11 +21,8 @@ import SignUpList from "./SignUpList";
 import { Encounter } from "models/Encounter";
 import { listEncounterGrouped, listEncounterGroupedStrikes } from "../../services/endpoints/gamedata";
 import WingMenu from "./WingMenu";
-import { useSelector } from "react-redux";
-import { selectLoggedInUser } from "../../store/slices/userSlice";
-import { Spieler, SpielerTermin } from "models/Spieler";
-import { useAppSelector } from "../../store/hooks";
-import { selectTermin } from "../../store/slices/terminSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectSignUpPlayer, selectSignUps, selectTermin, setSignUpPlayer } from "../../store/slices/terminSlice";
 
 const style = {
 	headline: css({
@@ -57,12 +54,13 @@ interface ToolbarProps {
 const Toolbar = (props: ToolbarProps) => {
 	const { onEncounterClick, onRefresh } = props;
 
-	const termin = useAppSelector(selectTermin)!;
-	const signUps: (Spieler & SpielerTermin)[] = [];
-	const revalidator = useRevalidator();
-	const loggedInUser = useSelector(selectLoggedInUser);
+	const dispatch = useAppDispatch();
 
-	const [signUpValue, setSignUpValue] = useState<number | null>(null);
+	const termin = useAppSelector(selectTermin)!;
+	const signUps = useAppSelector(selectSignUps);
+	const signUpPlayer = useAppSelector(selectSignUpPlayer);
+	const revalidator = useRevalidator();
+
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
 	const [wings, setWings] = useState<Encounter[][]>([]);
@@ -92,12 +90,7 @@ const Toolbar = (props: ToolbarProps) => {
 
 	const handleSignUpValueChange = async (newValue: number | null) => {
 		if (newValue != null) {
-			setSignUpValue(newValue);
-			
-			let signUp = signUps.find(s => s.id === loggedInUser?.id)
-			if (signUp) {
-				signUp.type = newValue;
-			}
+			dispatch(setSignUpPlayer(newValue));
 
 			await anmelden(termin.id, newValue);
 		}
@@ -120,7 +113,7 @@ const Toolbar = (props: ToolbarProps) => {
 			<Stack direction="row" justifyContent="space-between">
 				<Stack direction="row" alignItems="center">
 					<span css={style.headline}>{getHeadline()}</span>
-					<SignUp value={signUpValue} onValueChange={handleSignUpValueChange} />
+					<SignUp value={signUpPlayer} onValueChange={handleSignUpValueChange} />
 				</Stack>
 				<SignUpList signInList={signUps} />
 			</Stack>

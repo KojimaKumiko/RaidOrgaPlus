@@ -22,7 +22,7 @@ const initialState: TerminState = {
 	composition: [],
 	elements: [],
 	signUps: [],
-	signUpPlayer: null
+	signUpPlayer: null,
 };
 
 export const terminSlice = createSlice({
@@ -44,51 +44,65 @@ export const terminSlice = createSlice({
 		setSignUpPlayer(state, action: PayloadAction<number | null>) {
 			state.signUpPlayer = action.payload;
 		},
-		setName(state, action: PayloadAction<{ compId: number, position: number, user: CompPlayer }>) {
+		updateSignUps(state, action: PayloadAction<Spieler & SpielerTermin>) {
+			const signUps = state.signUps.filter((s) => s.id !== action.payload.id);
+			signUps.push(action.payload);
+			signUps.sort((a, b) => a.name.localeCompare(b.name));
+			state.signUps = signUps;
+		},
+		setName(state, action: PayloadAction<{ compId: number; position: number; user: CompPlayer }>) {
 			const { compId, position, user } = action.payload;
 			const element = getElement(state.elements, compId, position);
 			element.id = user.id;
 			element.accname = user.accname;
 			element.name = user.name;
-			state.elements = state.elements.filter(e => e.aufstellung !== element.aufstellung || e.pos !== element.pos);
+			state.elements = state.elements.filter(
+				(e) => e.aufstellung !== element.aufstellung || e.pos !== element.pos
+			);
 			state.elements.push(element);
 		},
-		clearName(state, action: PayloadAction<{ compId: number, position: number }>) {
+		clearName(state, action: PayloadAction<{ compId: number; position: number }>) {
 			const { compId, position } = action.payload;
 			const element = getElement(state.elements, compId, position);
 			element.id = 0;
 			element.accname = "???";
 			element.name = "???";
-			state.elements = state.elements.filter(e => e.aufstellung !== element.aufstellung || e.pos !== element.pos);
+			state.elements = state.elements.filter(
+				(e) => e.aufstellung !== element.aufstellung || e.pos !== element.pos
+			);
 			state.elements.push(element);
 		},
-		setClass(state, action: PayloadAction<{ compId: number, position: number, cls: Class }>) {
+		setClass(state, action: PayloadAction<{ compId: number; position: number; cls: Class }>) {
 			const { compId, position, cls } = action.payload;
 			const element = getElement(state.elements, compId, position);
 			element.class = cls.abbr;
-			state.elements = state.elements.filter(e => e.aufstellung !== element.aufstellung || e.pos !== element.pos);
+			state.elements = state.elements.filter(
+				(e) => e.aufstellung !== element.aufstellung || e.pos !== element.pos
+			);
 			state.elements.push(element);
 		},
-		addRole(state, action: PayloadAction<{}>) {
-
-		},
-		setRole(state, action: PayloadAction<{ compId: number, position: number, role: Role, index: number }>) {
+		addRole(state, action: PayloadAction<{}>) {},
+		setRole(state, action: PayloadAction<{ compId: number; position: number; role: Role; index: number }>) {
 			const { compId, position, role, index } = action.payload;
 			const element = getElement(state.elements, compId, position);
 			element.roles[index] = role;
-			state.elements = state.elements.filter(e => e.aufstellung !== element.aufstellung || e.pos !== element.pos);
+			state.elements = state.elements.filter(
+				(e) => e.aufstellung !== element.aufstellung || e.pos !== element.pos
+			);
 			state.elements.push(element);
 		},
 		addElement(state, action: PayloadAction<element>) {
 			const element = action.payload;
-			state.elements = state.elements.filter(e => e.aufstellung !== element.aufstellung || e.pos !== element.pos);
+			state.elements = state.elements.filter(
+				(e) => e.aufstellung !== element.aufstellung || e.pos !== element.pos
+			);
 			state.elements.push(element);
-		}
-	}
+		},
+	},
 });
 
 const getElement = (elements: element[], compId: number, position: number): element => {
-	const element = elements.find(e => e.aufstellung === compId && e.pos === position);
+	const element = elements.find((e) => e.aufstellung === compId && e.pos === position);
 	if (element) {
 		return element;
 	}
@@ -111,5 +125,18 @@ export const selectElements = (state: RootState) => state.termin.elements;
 export const selectSignUps = (state: RootState) => state.termin.signUps;
 export const selectSignUpPlayer = (state: RootState) => state.termin.signUpPlayer;
 
-export const { setTermin, setComposition, setElements, setSignUps, setSignUpPlayer, setName, clearName, setClass, setRole, addRole, addElement } = terminSlice.actions;
+export const {
+	setTermin,
+	setComposition,
+	setElements,
+	setSignUps,
+	setSignUpPlayer,
+	updateSignUps,
+	setName,
+	clearName,
+	setClass,
+	setRole,
+	addRole,
+	addElement,
+} = terminSlice.actions;
 export default terminSlice.reducer;

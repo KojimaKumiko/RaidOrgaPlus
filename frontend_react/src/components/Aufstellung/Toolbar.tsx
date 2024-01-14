@@ -1,55 +1,50 @@
 import { Fragment, useEffect, useState } from "react";
 import { useRevalidator, useRouteLoaderData } from "react-router-dom";
 
-import { Box, IconButton, Menu, MenuItem, Stack, ToggleButton, ToggleButtonGroup, Tooltip, css } from "@mui/material";
-import { Theme } from "@emotion/react";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { Box, IconButton, Stack, Tooltip, css } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import AddIcon from "@mui/icons-material/Add";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
-import LockIcon from "@mui/icons-material/Lock";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import ShareIcon from "@mui/icons-material/Share";
 import SendIcon from "@mui/icons-material/Send";
 import ClearIcon from "@mui/icons-material/Clear";
 
 import { CompPageLoader } from "../../models/types";
-import { anmelden } from "../../services/endpoints/termine";
+import { anmelden, anmeldenLead } from "../../services/endpoints/termine";
 import SignUpList from "./SignUpList";
 import { Encounter } from "models/Encounter";
 import { listEncounterGrouped, listEncounterGroupedStrikes } from "../../services/endpoints/gamedata";
 import WingMenu from "./WingMenu";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectSignUpPlayer, selectSignUps, selectTermin, setSignUpPlayer } from "../../store/slices/terminSlice";
+import {
+	selectSignUpPlayer,
+	selectSignUps,
+	selectTermin,
+	setSignUpPlayer,
+	updateSignUps,
+} from "../../store/slices/terminSlice";
+import { selectLoggedInUser } from "../../store/slices/userSlice";
+import { Spieler, SpielerTermin } from "models/Spieler";
+import { SignUp } from "./SignUp";
 
-const style = {
+export const style = {
 	headline: css({
 		marginRight: 12,
 		fontSize: 20,
 		fontWeight: "bold",
 	}),
-	toggleButtonBorderRadius: css({
-		borderRadius: 24,
-	}),
-	toggleButton: (theme: Theme) =>
-		css({
-			borderColor: "hsla(0,0%,100%,.12) !important",
-			backgroundColor: theme.palette.neutral.main,
-		}),
 	container: css({
 		margin: 16,
 	}),
 	actionRow: css({
-		marginTop: 8
+		marginTop: 8,
 	}),
 };
 
 interface ToolbarProps {
 	onEncounterClick: (encounter: Encounter) => void;
 	onRefresh: () => void;
-};
+}
 
 const Toolbar = (props: ToolbarProps) => {
 	const { onEncounterClick, onRefresh } = props;
@@ -59,6 +54,7 @@ const Toolbar = (props: ToolbarProps) => {
 	const termin = useAppSelector(selectTermin)!;
 	const signUps = useAppSelector(selectSignUps);
 	const signUpPlayer = useAppSelector(selectSignUpPlayer);
+	const loggedInUser = useAppSelector(selectLoggedInUser);
 	const revalidator = useRevalidator();
 
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -91,14 +87,25 @@ const Toolbar = (props: ToolbarProps) => {
 	const handleSignUpValueChange = async (newValue: number | null) => {
 		if (newValue != null) {
 			dispatch(setSignUpPlayer(newValue));
+			const signUp = { ...loggedInUser, type: newValue } as Spieler & SpielerTermin;
+			dispatch(updateSignUps(signUp));
 
 			await anmelden(termin.id, newValue);
 		}
 	};
 
-	const handleRefresh = () => {
-		revalidator.revalidate(); // a fancy way of refreshing aka the loader of the route gets re-triggered.
+	const handleSignUpListValueChange = async (newValue: number | null, player: Spieler & SpielerTermin) => {
+		if (newValue != null) {
+			const signUp = { ...player, type: newValue };
+			dispatch(updateSignUps(signUp));
+
+			await anmeldenLead(player.id, termin.id, newValue);
+		}
 	};
+
+	// const handleRefresh = () => {
+	// 	revalidator.revalidate(); // a fancy way of refreshing aka the loader of the route gets re-triggered.
+	// };
 
 	const handleAddBoss = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -115,7 +122,7 @@ const Toolbar = (props: ToolbarProps) => {
 					<span css={style.headline}>{getHeadline()}</span>
 					<SignUp value={signUpPlayer} onValueChange={handleSignUpValueChange} />
 				</Stack>
-				<SignUpList signInList={signUps} />
+				<SignUpList signInList={signUps} onValueChange={handleSignUpListValueChange} />
 			</Stack>
 			<Stack direction="row" css={style.actionRow}>
 				<Tooltip title="Refresh">
@@ -149,31 +156,14 @@ const Toolbar = (props: ToolbarProps) => {
 					</IconButton>
 				</Tooltip>
 			</Stack>
-			<WingMenu anchorEl={anchorEl} wings={wings} strikes={strikes} onClose={handleClose} onClick={onEncounterClick} />
+			<WingMenu
+				anchorEl={anchorEl}
+				wings={wings}
+				strikes={strikes}
+				onClose={handleClose}
+				onClick={onEncounterClick}
+			/>
 		</Box>
-	);
-};
-
-export type SignUpProps = {
-	value: number | null;
-	onValueChange: (newValue: number | null) => void;
-};
-
-const SignUp = (props: SignUpProps) => {
-	const { value, onValueChange } = props;
-
-	return (
-		<ToggleButtonGroup value={value} exclusive onChange={(e, v) => onValueChange(v)}>
-			<ToggleButton value={0} css={[style.toggleButton, style.toggleButtonBorderRadius]}>
-				<CheckCircleIcon color="success" />
-			</ToggleButton>
-			<ToggleButton value={1} css={style.toggleButton}>
-				<CheckCircleOutlineIcon color="warning" />
-			</ToggleButton>
-			<ToggleButton value={2} css={[style.toggleButton, style.toggleButtonBorderRadius]}>
-				<CancelIcon color="error" />
-			</ToggleButton>
-		</ToggleButtonGroup>
 	);
 };
 

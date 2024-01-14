@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 
 import { ExpandLess } from "@mui/icons-material";
-import { Button, Icon, Popper, Fade, Card, List, ListItem, ListItemText, css, Theme } from "@mui/material";
+import { Button, Icon, Popper, Fade, Card, List, ListItem, ListItemText, css, Theme, IconButton, Stack } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 
 import { Spieler, SpielerTermin } from "models/Spieler";
+import { useRouteLoaderData } from "react-router-dom";
+import { userRaid } from "models/Types";
+import { SignUp } from "./SignUp";
 
 const style = {
 	spanContainer: css({
@@ -25,10 +29,13 @@ const style = {
 
 interface SignUpListProps {
 	signInList: (Spieler & SpielerTermin)[];
+	onValueChange: (newValue: number | null, player: Spieler & SpielerTermin) => void;
 }
 
 const SignUpList = (props: SignUpListProps) => {
-	const { signInList } = props;
+	const { signInList, onValueChange } = props;
+
+	const { role } = useRouteLoaderData("raidPage") as userRaid;
 
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 	const [popperWidth, setPopperWidth] = useState(0);
@@ -52,7 +59,7 @@ const SignUpList = (props: SignUpListProps) => {
 		return [yes, maybe, no];
 	};
 
-	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+	const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		if (open) {
 			setAnchorEl(null);
 		} else {
@@ -68,7 +75,12 @@ const SignUpList = (props: SignUpListProps) => {
 
 	return (
 		<>
-			<Button color="neutral" variant="contained" onClick={handleClick} disableRipple css={style.signUpList}>
+			<Button
+				color="neutral"
+				variant="contained"
+				onClick={handleButtonClick}
+				disableRipple
+				css={style.signUpList}>
 				{signUpCount().map((s, i) => (
 					<span key={i} css={style.spanContainer}>
 						<span css={style.signUpCount}>{s.length}</span>
@@ -83,13 +95,14 @@ const SignUpList = (props: SignUpListProps) => {
 						<Card css={style.signUpListCard}>
 							<List>
 								{signInList.map((s) => (
-									<ListItem
+									<SignUpElements
 										key={s.id}
-										secondaryAction={
-											<Icon color={signUpColor(s.type) as any}>{signUpIcon(s.type)}</Icon>
-										}>
-										<ListItemText primary={s.name} />
-									</ListItem>
+										playerDate={s}
+										role={role}
+										color={signUpColor}
+										icon={signUpIcon}
+										onValueChange={onValueChange}
+									/>
 								))}
 							</List>
 						</Card>
@@ -97,6 +110,50 @@ const SignUpList = (props: SignUpListProps) => {
 				)}
 			</Popper>
 		</>
+	);
+};
+
+interface SignUpElementsProps {
+	playerDate: Spieler & SpielerTermin;
+	role: number;
+	color: (type: number) => string;
+	icon: (type: number) => string;
+	onValueChange: (newValue: number | null, player: Spieler & SpielerTermin) => void;
+}
+
+const SignUpElements = (props: SignUpElementsProps) => {
+	const { playerDate, role, color, icon, onValueChange } = props;
+	const [edit, setEdit] = useState(false);
+
+	const handleAnmeldungClick = () => {
+		setEdit(true);
+	};
+
+	const handleValueChange = (newValue: number | null) => {
+		onValueChange(newValue, playerDate);
+		setEdit(false);
+	}
+
+	return edit ? (
+		<Stack direction="row">
+			<SignUp value={playerDate.type} onValueChange={handleValueChange} />
+			<IconButton onClick={() => setEdit(false)}>
+				<CloseIcon />
+			</IconButton>
+		</Stack>
+	) : (
+		<ListItem
+			secondaryAction={
+				role > 0 ? (
+					<IconButton onClick={handleAnmeldungClick}>
+						<Icon color={color(playerDate.type) as any}>{icon(playerDate.type)}</Icon>
+					</IconButton>
+				) : (
+					<Icon color={color(playerDate.type) as any}>{icon(playerDate.type)}</Icon>
+				)
+			}>
+			<ListItemText primary={playerDate.name} />
+		</ListItem>
 	);
 };
 

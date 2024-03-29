@@ -39,7 +39,7 @@ export function setElement(aufstellung: any, position: any, value: any, type: an
 	return con("aufstellungen/elements", "post", { aufstellung, position, value, type }, true, signal);
 }
 
-export function copyElements(from: any, to: any, signal?: AbortSignal): Promise<any> {
+export function copyElements(from: any, to: any, signal?: AbortSignal): Promise<element[]> {
 	return con("aufstellungen/copyElements", "post", { from, to }, true, signal);
 }
 

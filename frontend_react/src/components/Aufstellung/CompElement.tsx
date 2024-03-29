@@ -216,7 +216,7 @@ const ClassSelection = ({ compId, position, classAbbr }: { compId: number; posit
 				onClick={handleClick}
 				onContextMenu={handleClearClass}
 				imgProps={{ width: 20, height: 20 }}
-				sx={{ width: 20, height: 20, mb: 1, mr: 0.5, cursor: "pointer" }}
+				sx={{ width: 20, height: 20, mb: 1, mr: 1, cursor: "pointer", borderRadius: "inherit" }}
 			/>
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
 				<MenuItem>
@@ -287,7 +287,7 @@ const RoleSelection = ({ compId, position, roles }: { compId: number; position: 
 					onContextMenu={(e) => handleClearRole(e, idx)}
 					key={idx + "_" + r.id}
 					imgProps={{ width: 20, height: 20 }}
-					sx={{ width: 20, height: 20, cursor: "pointer" }}
+					sx={{ width: 20, height: 20, cursor: "pointer", borderRadius: "inherit", mr: 1 }}
 				/>
 			))}
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>

@@ -57,6 +57,11 @@ const WingMenu = (props: WingMenuProps) => {
 		return [...wingElements, ...strikeElements];
 	};
 
+	const handleEncounterClick = (encounter: Encounter) => {
+		handleClose();
+		onClick(encounter);
+	}
+
 	return (
 		<>
 			<Menu anchorEl={anchorEl} open={open} onClose={onClose}>
@@ -69,7 +74,7 @@ const WingMenu = (props: WingMenuProps) => {
 					open={openElem === i}
 					anchorEl={innerAnchorEl}
 					onClose={handleClose}
-					onClick={onClick}
+					onClick={handleEncounterClick}
 					showFullClear
 				/>
 			))}

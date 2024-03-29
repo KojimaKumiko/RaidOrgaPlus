@@ -120,13 +120,14 @@ async function postElement(req: Request, authentication: Authentication): Promis
 	return;
 }
 
-async function copyElements(req: Request, authentication: Authentication): Promise<OkPacket> {
+async function copyElements(req: Request, authentication: Authentication): Promise<element[]> {
 	const from = Number(req.body.from);
 	const to = Number(req.body.to);
 	if (from && to) {
 		const role = await _roles.forAufstellung(authentication, to);
 		if (role > 0) {
-			return _aufstellung.copyElements(from, to);
+			await _aufstellung.copyElements(from, to);
+			return await _element.getForAufstellung(to);
 		}
 	}
 }

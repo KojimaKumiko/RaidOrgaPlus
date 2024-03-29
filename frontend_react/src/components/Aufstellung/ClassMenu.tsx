@@ -35,7 +35,7 @@ const ClassMenu = (props: ClassProps) => {
 		return specs.map((s) => (
 			<Tooltip title={s.name} arrow key={s.name} TransitionComponent={Zoom} disableInteractive>
 				<MenuItem>
-					<CustomIcon src={classIcon(s.abbr)} onClick={() => handleSpecClick(s)} />
+					<CustomIcon src={classIcon(s.abbr)} onClick={() => handleSpecClick(s)} sx={{ borderRadius: "inherit" }} />
 				</MenuItem>
 			</Tooltip>
 		));

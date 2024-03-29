@@ -98,6 +98,11 @@ export const terminSlice = createSlice({
 			);
 			state.elements.push(element);
 		},
+		addElements(state, action: PayloadAction<element[]>) {
+			const elements = action.payload;
+			state.elements = state.elements.filter(e => e.aufstellung !== elements[0].aufstellung);
+			state.elements = state.elements.concat(elements)
+		}
 	},
 });
 
@@ -138,5 +143,6 @@ export const {
 	setRole,
 	addRole,
 	addElement,
+	addElements,
 } = terminSlice.actions;
 export default terminSlice.reducer;

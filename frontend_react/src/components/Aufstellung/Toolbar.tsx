@@ -115,6 +115,11 @@ const Toolbar = (props: ToolbarProps) => {
 		setAnchorEl(null);
 	};
 
+	const handleEncounterClick = (encounter: Encounter) => {
+		handleClose();
+		onEncounterClick(encounter);
+	}
+
 	return (
 		<Box css={style.container}>
 			<Stack direction="row" justifyContent="space-between">
@@ -161,7 +166,7 @@ const Toolbar = (props: ToolbarProps) => {
 				wings={wings}
 				strikes={strikes}
 				onClose={handleClose}
-				onClick={onEncounterClick}
+				onClick={handleEncounterClick}
 			/>
 		</Box>
 	);

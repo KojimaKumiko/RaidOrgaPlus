@@ -25,6 +25,7 @@ const RoleMenu = (props: RoleProps) => {
 						tooltip={role.name}
 						disableInteractive
 						onClick={() => props.onRolePick(role)}
+						sx={{ borderRadius: "inherit" }}
 					/>
 				);
 			}

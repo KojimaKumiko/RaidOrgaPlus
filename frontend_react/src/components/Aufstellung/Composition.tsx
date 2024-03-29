@@ -29,6 +29,7 @@ import { CompPageLoader } from "../../models/types";
 import { copyElements, deleteBoss, getElements } from "../../services/endpoints/aufstellungen";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { addElements, selectComposition, selectElements, setComposition } from "../../store/slices/terminSlice";
+import { ROLES, Role } from "models/Rolle";
 
 interface CompositionProps {
 	comp: Aufstellung & Encounter;
@@ -44,6 +45,10 @@ const Composition = (props: CompositionProps) => {
 		return encIcon(comp?.abbr);
 	};
 
+	const hasCm = () => {
+		return comp?.has_cm;
+	};
+
 	const [copyActive, setCopyActive] = useState(false);
 	const toggleCopyActive = () => {
 		setCopyActive(!copyActive);
@@ -52,6 +57,13 @@ const Composition = (props: CompositionProps) => {
 	const copyComposition = async (copyComp: Aufstellung & Encounter) => {
 		const copiedElements = await copyElements(copyComp.id, comp.id);
 		setCopyActive(false);
+		copiedElements.forEach(e => {
+			let roles = [] as Role[];
+			e.roleIds.split(", ").forEach(r => {
+				roles.push(ROLES.find(g => g.id === Number(r)) ?? { id: 0 } as Role);
+			});
+			e.roles = roles;
+		});
 		dispatch(addElements(copiedElements));
 	};
 
@@ -83,13 +95,25 @@ const Composition = (props: CompositionProps) => {
 									tooltipTitle="Einträge hierher kopieren"
 									icon={<InputIcon />}
 									onClick={toggleCopyActive}
+									FabProps={{ sx: { bgcolor: "primary.dark", color: "white" } }}
 								/>
-								<SpeedDialAction tooltipTitle="Blanko laden" icon={<RefreshIcon />} />
-								<SpeedDialAction tooltipTitle="CM umschalten" icon={<NewReleasesIcon />} />
+								<SpeedDialAction
+									tooltipTitle="Blanko laden"
+									icon={<RefreshIcon />}
+									FabProps={{ sx: { bgcolor: "success.main", color: "white" } }}
+								/>
+								<SpeedDialAction
+									tooltipTitle="CM umschalten"
+									icon={<NewReleasesIcon />}
+									FabProps={{
+										sx: [{ bgcolor: "#e91e63", color: "white" }, !hasCm() && { display: "none" }],
+									}}
+								/>
 								<SpeedDialAction
 									tooltipTitle="Boss löschen"
 									icon={<DeleteIcon />}
 									onClick={removeBoss}
+									FabProps={{sx: { bgcolor: "error.main", color: "white" }}}
 								/>
 							</SpeedDial>
 						)}
@@ -139,7 +163,14 @@ const CompositionCopy = (props: CopyProps) => {
 
 	const getAvatars = () => {
 		const elements = filtered.map((c) => {
-			return <Avatar key={c.id} src={getAvatarSrc(c.abbr)} sx={{ cursor: "pointer", margin: "5px" }} onClick={() => copy(c)} />;
+			return (
+				<Avatar
+					key={c.id}
+					src={getAvatarSrc(c.abbr)}
+					sx={{ cursor: "pointer", margin: "5px" }}
+					onClick={() => copy(c)}
+				/>
+			);
 		});
 
 		return elements;
@@ -148,7 +179,9 @@ const CompositionCopy = (props: CopyProps) => {
 	return (
 		<Box>
 			<Typography sx={{ textAlign: "center" }}>Kopieren von:</Typography>
-			<Stack direction="row" justifyContent="center">{getAvatars()}</Stack>
+			<Stack direction="row" justifyContent="center">
+				{getAvatars()}
+			</Stack>
 		</Box>
 	);
 };

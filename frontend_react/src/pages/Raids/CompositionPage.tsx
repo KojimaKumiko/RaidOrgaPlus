@@ -62,7 +62,7 @@ const CompositionPage = () => {
 	const handleEncounterClick = async (encounter: Encounter) => {
 		let result: (Aufstellung & Encounter)[];
 		if (encounter.id === 0) {
-			if (encounter.wing != null) {
+			if (encounter.wing != null && encounter.wing > 0) {
 				result = await addWing(termin.id, encounter.wing);
 			} else {
 				result = await addStrike(termin.id, encounter.strike);

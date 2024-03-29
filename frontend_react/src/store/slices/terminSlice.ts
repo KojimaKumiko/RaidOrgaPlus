@@ -8,6 +8,7 @@ import { element } from "models/Types";
 import { CompPlayer } from "../../models/types";
 import { Class } from "models/Klasse";
 import { Role } from "models/Rolle";
+import { StaticDatePicker } from "@mui/lab";
 
 export interface TerminState {
 	termin?: Termin;
@@ -15,6 +16,7 @@ export interface TerminState {
 	elements: element[];
 	signUps: (Spieler & SpielerTermin)[];
 	signUpPlayer: number | null;
+	showExtraRoles: boolean;
 }
 
 const initialState: TerminState = {
@@ -23,6 +25,7 @@ const initialState: TerminState = {
 	elements: [],
 	signUps: [],
 	signUpPlayer: null,
+	showExtraRoles: false,
 };
 
 export const terminSlice = createSlice({
@@ -81,7 +84,24 @@ export const terminSlice = createSlice({
 			);
 			state.elements.push(element);
 		},
-		addRole(state, action: PayloadAction<{}>) {},
+		addRole(state, action: PayloadAction<{ compId: number; position: number; }>) {
+			const { compId, position } = action.payload;
+			const element = getElement(state.elements, compId, position);
+			element.roles.push({ id: 0 } as Role);
+			state.elements = state.elements.filter(
+				(e) => e.aufstellung !== element.aufstellung || e.pos !== element.pos
+			);
+			state.elements.push(element);
+		},
+		removeRole(state, action: PayloadAction<{ compId: number; position: number; }>) {
+			const { compId, position } = action.payload;
+			const element = getElement(state.elements, compId, position);
+			element.roles.pop();
+			state.elements = state.elements.filter(
+				(e) => e.aufstellung !== element.aufstellung || e.pos !== element.pos
+			);
+			state.elements.push(element);
+		},
 		setRole(state, action: PayloadAction<{ compId: number; position: number; role: Role; index: number }>) {
 			const { compId, position, role, index } = action.payload;
 			const element = getElement(state.elements, compId, position);
@@ -102,6 +122,9 @@ export const terminSlice = createSlice({
 			const elements = action.payload;
 			state.elements = state.elements.filter(e => e.aufstellung !== elements[0].aufstellung);
 			state.elements = state.elements.concat(elements)
+		},
+		setShowExtraRoles(state, action: PayloadAction<boolean>) {
+			state.showExtraRoles = action.payload;
 		}
 	},
 });
@@ -129,6 +152,7 @@ export const selectComposition = (state: RootState) => state.termin.composition;
 export const selectElements = (state: RootState) => state.termin.elements;
 export const selectSignUps = (state: RootState) => state.termin.signUps;
 export const selectSignUpPlayer = (state: RootState) => state.termin.signUpPlayer;
+export const selectShowExtraRoles = (state: RootState) => state.termin.showExtraRoles;
 
 export const {
 	setTermin,
@@ -142,7 +166,9 @@ export const {
 	setClass,
 	setRole,
 	addRole,
+	removeRole,
 	addElement,
 	addElements,
+	setShowExtraRoles,
 } = terminSlice.actions;
 export default terminSlice.reducer;

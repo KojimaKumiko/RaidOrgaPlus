@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { useRevalidator, useRouteLoaderData } from "react-router-dom";
 
-import { Box, IconButton, Stack, Tooltip, css } from "@mui/material";
+import { Box, FormControlLabel, IconButton, Stack, Switch, Tooltip, css } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import AddIcon from "@mui/icons-material/Add";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
@@ -20,6 +20,7 @@ import {
 	selectSignUpPlayer,
 	selectSignUps,
 	selectTermin,
+	setShowExtraRoles,
 	setSignUpPlayer,
 	updateSignUps,
 } from "../../store/slices/terminSlice";
@@ -120,6 +121,10 @@ const Toolbar = (props: ToolbarProps) => {
 		onEncounterClick(encounter);
 	}
 
+	const handleExtraRolesChanged = (value: boolean) => {
+		dispatch(setShowExtraRoles(value));
+	}
+
 	return (
 		<Box css={style.container}>
 			<Stack direction="row" justifyContent="space-between">
@@ -159,6 +164,9 @@ const Toolbar = (props: ToolbarProps) => {
 					<IconButton color="error">
 						<ClearIcon />
 					</IconButton>
+				</Tooltip>
+				<Tooltip title="Buttons zum Hinzufügen bzw. Entfernen von extra Rollen Ein-/Auschalten">
+					<FormControlLabel control={<Switch onChange={(e) => handleExtraRolesChanged(e.target.checked)} />} label="Extra Rollen" />
 				</Tooltip>
 			</Stack>
 			<WingMenu

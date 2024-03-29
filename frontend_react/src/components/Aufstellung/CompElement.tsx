@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useRouteLoaderData } from "react-router-dom";
 
-import { Box, Menu, MenuItem, Stack } from "@mui/material";
+import { Box, Fab, IconButton, Menu, MenuItem, Stack } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 
 import { CompPageLoader, CompPlayer } from "../../models/types";
 import PlayerName from "../Misc/PlayerName";
@@ -19,6 +21,9 @@ import {
 	clearName,
 	setClass as pickClass,
 	setRole as pickRole,
+	addRole,
+	removeRole,
+	selectShowExtraRoles,
 } from "../../store/slices/terminSlice";
 import { classIcon, miscIcon, roleIcon } from "../../services/icons";
 import CustomIcon from "../Misc/CustomIcon";
@@ -41,6 +46,7 @@ const CompElement = (props: CompElementProps) => {
 	const signUps = useAppSelector(selectSignUps);
 	const elements = useAppSelector(selectElements);
 	const loggedInUser = useAppSelector(selectLoggedInUser);
+	const showExtraRoles = useAppSelector(selectShowExtraRoles);
 
 	const getElement = (): element => {
 		const element = elements.find((e) => e.aufstellung === composition.id && e.pos === position);
@@ -168,6 +174,7 @@ const CompElement = (props: CompElementProps) => {
 			<Box width={160} display="flex" sx={{ paddingLeft: "5px" }}>
 				<ClassSelection compId={composition.id} position={position} classAbbr={getElementClass()} />
 				<RoleSelection compId={composition.id} position={position} roles={getElementRoles()} />
+				<ExtraRoles visible={showExtraRoles} compId={composition.id} position={position} roles={getElementRoles()} />
 			</Box>
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
 				{getMenuItems()}
@@ -296,6 +303,61 @@ const RoleSelection = ({ compId, position, roles }: { compId: number; position: 
 				</MenuItem>
 			</Menu>
 		</>
+	);
+};
+
+const ExtraRoles = ({
+	visible,
+	compId,
+	position,
+	roles,
+}: {
+	visible: boolean;
+	compId: number;
+	position: number;
+	roles: Role[];
+}) => {
+	const dispatch = useAppDispatch();
+
+	const showAddButton = roles.length <= 3;
+	const showRemoveButton = roles.length >= 2;
+
+	const handleAddRole = async () => {
+		dispatch(addRole({ compId, position }));
+		const newRoles = roles.map((r) => r.id);
+		newRoles.push(0);
+		await setRole(compId, position, newRoles.join(", "));
+	};
+
+	const handleRemoveRole = async () => {
+		dispatch(removeRole({ compId, position }));
+		const newRoles = roles.map((r) => r.id);
+		newRoles.pop();
+		await setRole(compId, position, newRoles.join(", "));
+	};
+
+	return (
+		<Stack direction="row" sx={[!visible && { display: "none" }]}>
+			<Fab
+				size="small"
+				sx={[
+					{ width: 20, minWidth: 20, height: 20, minHeight: 20, mr: 1 },
+					!showAddButton && { display: "none" },
+				]}
+				color="success"
+				onClick={handleAddRole}>
+				<AddIcon sx={{ color: "white" }} />
+			</Fab>
+			<Fab
+				sx={[
+					{ width: 20, minWidth: 20, height: 20, minHeight: 20, mr: 1 },
+					!showRemoveButton && { display: "none" },
+				]}
+				color="error"
+				onClick={handleRemoveRole}>
+				<RemoveIcon />
+			</Fab>
+		</Stack>
 	);
 };
 

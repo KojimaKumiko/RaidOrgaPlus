@@ -6,6 +6,7 @@ import {
 	Box,
 	Card,
 	CardContent,
+	CloseReason,
 	IconButton,
 	SpeedDial,
 	SpeedDialAction,
@@ -24,12 +25,11 @@ import { Aufstellung } from "models/Aufstellung";
 import { Encounter } from "models/Encounter";
 import { encIcon } from "../../services/icons";
 import CompElement from "./CompElement";
-import { element } from "models/Types";
 import { CompPageLoader } from "../../models/types";
-import { copyElements, deleteBoss, getElements } from "../../services/endpoints/aufstellungen";
+import { copyElements, deleteBoss, reloadBlanko, setCM } from "../../services/endpoints/aufstellungen";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { addElements, selectComposition, selectElements, setComposition } from "../../store/slices/terminSlice";
-import { ROLES, Role } from "models/Rolle";
+import { addElements, selectComposition, setComposition } from "../../store/slices/terminSlice";
+import { fixRoles } from "../../utils/misc";
 
 interface CompositionProps {
 	comp: Aufstellung & Encounter;
@@ -40,6 +40,17 @@ const Composition = (props: CompositionProps) => {
 	const { comp } = props;
 
 	const dispatch = useAppDispatch();
+
+	const [openSpeedDial, setOpenSpeedDial] = useState(false);
+	const onSpeedDialClick = () => {
+		setOpenSpeedDial(!openSpeedDial);
+	}
+
+	const onCloseSpeedDial = (reason: CloseReason) => {
+		if (reason !== "mouseLeave") {
+			setOpenSpeedDial(false);
+		}
+	}
 
 	const getAvatarSrc = () => {
 		return encIcon(comp?.abbr);
@@ -57,14 +68,20 @@ const Composition = (props: CompositionProps) => {
 	const copyComposition = async (copyComp: Aufstellung & Encounter) => {
 		const copiedElements = await copyElements(copyComp.id, comp.id);
 		setCopyActive(false);
-		copiedElements.forEach(e => {
-			let roles = [] as Role[];
-			e.roleIds.split(", ").forEach(r => {
-				roles.push(ROLES.find(g => g.id === Number(r)) ?? { id: 0 } as Role);
-			});
-			e.roles = roles;
-		});
+		fixRoles(copiedElements);
 		dispatch(addElements(copiedElements));
+	};
+
+	const loadTemplate = async () => {
+		const tempElements = await reloadBlanko(comp.id);
+		fixRoles(tempElements);
+		dispatch(addElements(tempElements));
+	};
+
+	const [isCM, setIsCM] = useState(comp.is_cm);
+	const toggleCM = async () => {
+		await setCM(comp.id, !isCM);
+		setIsCM(!isCM);
 	};
 
 	const removeBoss = async () => {
@@ -77,7 +94,9 @@ const Composition = (props: CompositionProps) => {
 				<Stack direction="row" mb={2}>
 					<Stack direction="row" alignItems="center">
 						<Avatar src={getAvatarSrc()} sx={{ height: 52, width: 52, mr: 2 }} />
-						<Typography variant="h6">{comp.name}</Typography>
+						<Typography variant="h6" sx={[isCM && { color: "#E91E63" }]}>
+							{comp.name} {isCM ? "CM" : ""}
+						</Typography>
 					</Stack>
 					<Box sx={{ transform: "translateZ(0px)", flexGrow: 1 }}>
 						{copyActive ? (
@@ -87,10 +106,13 @@ const Composition = (props: CompositionProps) => {
 						) : (
 							<SpeedDial
 								icon={<SettingsIcon />}
+								onClick={onSpeedDialClick}
+								onClose={(e, r) => onCloseSpeedDial(r)}
+								open={openSpeedDial}
 								ariaLabel="SpeedDial"
 								direction="down"
 								sx={{ position: "absolute", right: 0 }}
-								FabProps={{ sx: { height: 40, width: 40 } }}>
+								FabProps={{ sx: { height: 40, width: 40, backgroundColor: "#272727", color: "white" } }}>
 								<SpeedDialAction
 									tooltipTitle="Einträge hierher kopieren"
 									icon={<InputIcon />}
@@ -100,11 +122,13 @@ const Composition = (props: CompositionProps) => {
 								<SpeedDialAction
 									tooltipTitle="Blanko laden"
 									icon={<RefreshIcon />}
+									onClick={loadTemplate}
 									FabProps={{ sx: { bgcolor: "success.main", color: "white" } }}
 								/>
 								<SpeedDialAction
 									tooltipTitle="CM umschalten"
 									icon={<NewReleasesIcon />}
+									onClick={toggleCM}
 									FabProps={{
 										sx: [{ bgcolor: "#e91e63", color: "white" }, !hasCm() && { display: "none" }],
 									}}
@@ -113,7 +137,7 @@ const Composition = (props: CompositionProps) => {
 									tooltipTitle="Boss löschen"
 									icon={<DeleteIcon />}
 									onClick={removeBoss}
-									FabProps={{sx: { bgcolor: "error.main", color: "white" }}}
+									FabProps={{ sx: { bgcolor: "error.main", color: "white" } }}
 								/>
 							</SpeedDial>
 						)}

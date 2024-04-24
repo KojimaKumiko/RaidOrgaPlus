@@ -166,7 +166,7 @@ const Toolbar = (props: ToolbarProps) => {
 					</IconButton>
 				</Tooltip>
 				<Tooltip title="Buttons zum Hinzufügen bzw. Entfernen von extra Rollen Ein-/Auschalten">
-					<FormControlLabel control={<Switch onChange={(e) => handleExtraRolesChanged(e.target.checked)} />} label="Extra Rollen" />
+					<FormControlLabel control={<Switch onChange={(e) => handleExtraRolesChanged(e.target.checked)} sx={{ ml: 1 }} />} label="Extra Rollen" />
 				</Tooltip>
 			</Stack>
 			<WingMenu

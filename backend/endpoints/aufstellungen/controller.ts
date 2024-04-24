@@ -132,12 +132,13 @@ async function copyElements(req: Request, authentication: Authentication): Promi
 	}
 }
 
-async function reloadBlanko(req: Request, authentication: Authentication): Promise<OkPacket> {
+async function reloadBlanko(req: Request, authentication: Authentication): Promise<element[]> {
 	const aufstellung = Number(req.body.aufstellung);
 	if (aufstellung) {
 		const role = await _roles.forAufstellung(authentication, aufstellung);
 		if (role > 0) {
-			return await _aufstellung.reloadBlanko(aufstellung);
+			await _aufstellung.reloadBlanko(aufstellung);
+			return await _element.getForAufstellung(aufstellung);
 		}
 	}
 }

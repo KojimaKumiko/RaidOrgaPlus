@@ -43,6 +43,6 @@ export function copyElements(from: any, to: any, signal?: AbortSignal): Promise<
 	return con("aufstellungen/copyElements", "post", { from, to }, true, signal);
 }
 
-export async function reloadBlanko(aufstellung: number, signal?: AbortSignal): Promise<void> {
+export async function reloadBlanko(aufstellung: number, signal?: AbortSignal): Promise<element[]> {
 	return await con("aufstellungen/reloadBlanko", "post", { aufstellung }, true, signal);
 }

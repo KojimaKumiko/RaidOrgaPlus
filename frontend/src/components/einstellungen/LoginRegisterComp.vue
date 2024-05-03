@@ -80,7 +80,8 @@
 			name: "",
 			nameRules: [
 				(v: string) => !!v || "Bitte gib deinen Anzeigenamen an",
-				(v: string) => v.length <= 10 || "Bitte wähle einen kürzeren Namen",
+				(v: string) => v.length <= 50 || "Bitte wähle einen kürzeren Namen",
+				(v: string) => !/^[\W_]+$/.test(v) || "Der Name darf nicht nur aus sonderzeichen bestehen"
 			],
 			password: "",
 			passwordRules: [(v: string) => !!v || "Bitte gib dein Passwort an"],

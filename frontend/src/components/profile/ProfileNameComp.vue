@@ -36,7 +36,8 @@
 			edit: false,
 			nameRules: [
 				(v: string) => !!v || "Bitte gib einen Namen an",
-				(v: string) => v.length <= 50 || "Bitte wähle einen kürzeren Namen"
+				(v: string) => v.length <= 50 || "Bitte wähle einen kürzeren Namen",
+				(v: string) => !/^[\W_]+$/.test(v) || "Der Name darf nicht nur aus sonderzeichen bestehen"
 			]
 		}),
 		computed: {

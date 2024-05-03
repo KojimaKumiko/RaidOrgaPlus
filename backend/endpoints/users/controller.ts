@@ -120,7 +120,8 @@ async function hasApi(req: Request, authentication: Authentication): Promise<boo
 
 async function setName(req: Request, authentication: Authentication): Promise<OkPacket> {
 	const name = req.body.name;
-	if (name) {
+	const isNameOk = !/^[\W_]+$/.test(name);
+	if (name && isNameOk) {
 		await _user.changeName(authentication.user, name);
 	}
 	return;

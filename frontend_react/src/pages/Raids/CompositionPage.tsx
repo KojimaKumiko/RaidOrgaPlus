@@ -16,7 +16,7 @@ import { selectComposition, setComposition, setElements, setSignUpPlayer, setSig
 import { CompPageLoader } from "../../models/types";
 
 const CompositionPage = () => {
-	const { termin } = useRouteLoaderData("compPage") as CompPageLoader;
+	const { termin } = useRouteLoaderData("compPage") as CompPageLoader || useRouteLoaderData("archivePage") as CompPageLoader;
 
 	const dispatch = useAppDispatch();
 	const compositions = useAppSelector(selectComposition);
@@ -77,7 +77,7 @@ const CompositionPage = () => {
 
 	return (
 		<Box>
-			<Toolbar onEncounterClick={handleEncounterClick} onRefresh={handleRefresh} />
+			<Toolbar onEncounterClick={handleEncounterClick} onRefresh={handleRefresh} isArchived={termin.isArchived} />
 			<Grid container m={2} spacing={1}>
 				{compositions.map((c) => (
 					<Grid key={c.id} xs={12} md={6} xl={3}>

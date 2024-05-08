@@ -8,6 +8,7 @@ import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import ShareIcon from "@mui/icons-material/Share";
 import SendIcon from "@mui/icons-material/Send";
 import ClearIcon from "@mui/icons-material/Clear";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 import { CompPageLoader } from "../../models/types";
 import { anmelden, anmeldenLead } from "../../services/endpoints/termine";
@@ -45,10 +46,11 @@ export const style = {
 interface ToolbarProps {
 	onEncounterClick: (encounter: Encounter) => void;
 	onRefresh: () => void;
+	isArchived?: boolean;
 }
 
 const Toolbar = (props: ToolbarProps) => {
-	const { onEncounterClick, onRefresh } = props;
+	const { onEncounterClick, onRefresh, isArchived } = props;
 
 	const dispatch = useAppDispatch();
 
@@ -119,55 +121,76 @@ const Toolbar = (props: ToolbarProps) => {
 	const handleEncounterClick = (encounter: Encounter) => {
 		handleClose();
 		onEncounterClick(encounter);
-	}
+	};
 
 	const handleExtraRolesChanged = (value: boolean) => {
 		dispatch(setShowExtraRoles(value));
-	}
+	};
 
 	return (
 		<Box css={style.container}>
 			<Stack direction="row" justifyContent="space-between">
-				<Stack direction="row" alignItems="center">
+				<Stack direction="row" alignItems="center" sx={{ height: "50px" }}>
 					<span css={style.headline}>{getHeadline()}</span>
-					<SignUp value={signUpPlayer} onValueChange={handleSignUpValueChange} />
+					{/* <SignUp value={signUpPlayer} onValueChange={handleSignUpValueChange} /> */}
+					{!isArchived ? <SignUp value={signUpPlayer} onValueChange={handleSignUpValueChange} /> : null}
 				</Stack>
 				<SignUpList signInList={signUps} onValueChange={handleSignUpListValueChange} />
 			</Stack>
 			<Stack direction="row" css={style.actionRow}>
-				<Tooltip title="Refresh">
-					<IconButton onClick={onRefresh}>
-						<RefreshIcon />
-					</IconButton>
-				</Tooltip>
-				<Tooltip title="Bosse hinzufügen">
-					<IconButton onClick={handleAddBoss}>
-						<AddIcon />
-					</IconButton>
-				</Tooltip>
-				<Tooltip title="Ersatzspieler">
-					<IconButton>
-						<PermIdentityIcon />
-					</IconButton>
-				</Tooltip>
-				<Tooltip title="Aufstellung teilen">
-					<IconButton>
-						<ShareIcon />
-					</IconButton>
-				</Tooltip>
-				<Tooltip title="Termin archivieren">
-					<IconButton>
-						<SendIcon />
-					</IconButton>
-				</Tooltip>
-				<Tooltip title="Termin löschen">
-					<IconButton color="error">
-						<ClearIcon />
-					</IconButton>
-				</Tooltip>
-				<Tooltip title="Buttons zum Hinzufügen bzw. Entfernen von extra Rollen Ein-/Auschalten">
-					<FormControlLabel control={<Switch onChange={(e) => handleExtraRolesChanged(e.target.checked)} sx={{ ml: 1 }} />} label="Extra Rollen" />
-				</Tooltip>
+				{!isArchived ? (
+					<>
+						<Tooltip title="Refresh">
+							<IconButton onClick={onRefresh}>
+								<RefreshIcon />
+							</IconButton>
+						</Tooltip>
+						<Tooltip title="Bosse hinzufügen">
+							<IconButton onClick={handleAddBoss}>
+								<AddIcon />
+							</IconButton>
+						</Tooltip>
+						<Tooltip title="Ersatzspieler">
+							<IconButton>
+								<PermIdentityIcon />
+							</IconButton>
+						</Tooltip>
+						<Tooltip title="Aufstellung teilen">
+							<IconButton>
+								<ShareIcon />
+							</IconButton>
+						</Tooltip>
+						<Tooltip title="Termin archivieren">
+							<IconButton>
+								<SendIcon />
+							</IconButton>
+						</Tooltip>
+						<Tooltip title="Termin löschen">
+							<IconButton color="error">
+								<ClearIcon />
+							</IconButton>
+						</Tooltip>
+						<Tooltip title="Buttons zum Hinzufügen bzw. Entfernen von extra Rollen Ein-/Auschalten">
+							<FormControlLabel
+								control={
+									<Switch
+										onChange={(e) => handleExtraRolesChanged(e.target.checked)}
+										sx={{ ml: 1 }}
+									/>
+								}
+								label="Extra Rollen"
+							/>
+						</Tooltip>
+					</>
+				) : (
+					<>
+						<Tooltip title="Logs uploaden">
+							<IconButton>
+								<CloudUploadIcon />
+							</IconButton>
+						</Tooltip>
+					</>
+				)}
 			</Stack>
 			<WingMenu
 				anchorEl={anchorEl}

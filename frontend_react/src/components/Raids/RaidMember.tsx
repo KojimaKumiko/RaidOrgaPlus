@@ -12,6 +12,7 @@ import BuildChip from "../UserProfile/BuildChip";
 import { miscIcon } from "../../services/icons";
 
 import { userRaid } from "models/Types";
+import PlayerName from "../Misc/PlayerName";
 
 interface IProps {
 	member: Spieler;
@@ -120,7 +121,7 @@ const RaidMember = (props: IProps) => {
 		<span>
 			<Card sx={{ height: "100%" }}>
 				<CardHeader
-					title={member.name}
+					title={<PlayerName user={member} clickable />}
 					titleTypographyProps={{ fontSize: "1.2rem", fontWeight: "bold" }}
 					avatar={getAvatar(member)}
 					action={getAction(member)}

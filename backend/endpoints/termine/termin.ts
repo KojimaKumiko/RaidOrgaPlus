@@ -192,7 +192,7 @@ async function doesTerminExist(termin: number): Promise<boolean> {
 }
 
 async function getTermin(id: number): Promise<Termin> {
-	const stmt = "SELECT id, date, time, endtime FROM Termin WHERE id = ?";
+	const stmt = "SELECT id, date, time, endtime, isArchived FROM Termin WHERE id = ?";
 	try {
 		const result: Termin[] = await queryV(stmt, [id]);
 		return result.map(dateMapper.map)[0];

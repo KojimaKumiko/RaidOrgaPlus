@@ -28,7 +28,7 @@ import {
 import { classIcon, miscIcon, roleIcon } from "../../services/icons";
 import CustomIcon from "../Misc/CustomIcon";
 import ClassMenu from "./ClassMenu";
-import { Class } from "models/Klasse";
+import { CLASSES, Class } from "models/Klasse";
 import RoleMenu from "./RoleMenu";
 import { Role } from "models/Rolle";
 import { selectLoggedInUser } from "../../store/slices/userSlice";
@@ -37,6 +37,34 @@ interface CompElementProps {
 	edit: boolean;
 	composition: Aufstellung & Encounter;
 	position: number;
+}
+
+const getClassIcon = (classAbbr: string) => {
+	if (classAbbr && classAbbr.trim() != null) {
+		return classIcon(classAbbr);
+	}
+	return miscIcon("empty");
+};
+
+const getClassTooltip = (classAbbr: string) => {
+	if (classAbbr && classAbbr.trim() != null) {
+		return CLASSES.filter(c => c.abbr == classAbbr)[0].name;
+	}
+	return "";
+}
+
+const getRoleIcon = (role: Role) => {
+	if (role && role.abbr) {
+		return roleIcon(role.abbr);
+	}
+	return miscIcon("empty");
+};
+
+const getRoleTooltip = (role: Role) => {
+	if (role && role.abbr) {
+		return role.name;
+	}
+	return "";
 }
 
 const CompElement = (props: CompElementProps) => {
@@ -171,11 +199,36 @@ const CompElement = (props: CompElementProps) => {
 					<PlayerName user={getUser()} clickable />
 				)}
 			</Box>
-			<Box width={160} display="flex" sx={{ paddingLeft: "5px" }}>
-				<ClassSelection compId={composition.id} position={position} classAbbr={getElementClass()} />
-				<RoleSelection compId={composition.id} position={position} roles={getElementRoles()} />
-				<ExtraRoles visible={showExtraRoles} compId={composition.id} position={position} roles={getElementRoles()} />
-			</Box>
+			{edit ? (
+				<Box width={160} display="flex" sx={{ paddingLeft: "5px" }}>
+					<ClassSelection compId={composition.id} position={position} classAbbr={getElementClass()} />
+					<RoleSelection compId={composition.id} position={position} roles={getElementRoles()} />
+					<ExtraRoles
+						visible={showExtraRoles}
+						compId={composition.id}
+						position={position}
+						roles={getElementRoles()}
+					/>
+				</Box>
+			) : (
+				<Box width={160} display="flex" sx={{ paddingLeft: "5px" }}>
+					<CustomIcon
+						src={getClassIcon(getElementClass())}
+						imgProps={{ width: 20, height: 20 }}
+						sx={{ width: 20, height: 20, mb: 1, mr: 1, borderRadius: "inherit" }}
+						tooltip={getClassTooltip(getElementClass())}
+					/>
+					{getElementRoles().map((r, idx) => (
+						<CustomIcon
+							src={getRoleIcon(r)}
+							key={idx + "_" + r.id}
+							imgProps={{ width: 20, height: 20 }}
+							sx={{ width: 20, height: 20, borderRadius: "inherit", mr: 1 }}
+							tooltip={getRoleTooltip(r)}
+						/>
+					))}
+				</Box>
+			)}
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
 				{getMenuItems()}
 			</Menu>
@@ -188,13 +241,6 @@ const ClassSelection = ({ compId, position, classAbbr }: { compId: number; posit
 
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const open = Boolean(anchorEl);
-
-	const getSrc = () => {
-		if (classAbbr && classAbbr.trim() != null) {
-			return classIcon(classAbbr);
-		}
-		return miscIcon("empty");
-	};
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -219,11 +265,12 @@ const ClassSelection = ({ compId, position, classAbbr }: { compId: number; posit
 	return (
 		<>
 			<CustomIcon
-				src={getSrc()}
+				src={getClassIcon(classAbbr)}
 				onClick={handleClick}
 				onContextMenu={handleClearClass}
 				imgProps={{ width: 20, height: 20 }}
 				sx={{ width: 20, height: 20, mb: 1, mr: 1, cursor: "pointer", borderRadius: "inherit" }}
+				tooltip={getClassTooltip(classAbbr)}
 			/>
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
 				<MenuItem>
@@ -240,13 +287,6 @@ const RoleSelection = ({ compId, position, roles }: { compId: number; position: 
 	const [index, setIndex] = useState<number | null>(null);
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const open = Boolean(anchorEl);
-
-	const getSrc = (role: Role) => {
-		if (role && role.abbr) {
-			return roleIcon(role.abbr);
-		}
-		return miscIcon("empty");
-	};
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>, idx: number) => {
 		setAnchorEl(event.currentTarget);
@@ -289,12 +329,13 @@ const RoleSelection = ({ compId, position, roles }: { compId: number; position: 
 		<>
 			{roles.map((r, idx) => (
 				<CustomIcon
-					src={getSrc(r)}
+					src={getRoleIcon(r)}
 					onClick={(e) => handleClick(e, idx)}
 					onContextMenu={(e) => handleClearRole(e, idx)}
 					key={idx + "_" + r.id}
 					imgProps={{ width: 20, height: 20 }}
 					sx={{ width: 20, height: 20, cursor: "pointer", borderRadius: "inherit", mr: 1 }}
+					tooltip={getRoleTooltip(r)}
 				/>
 			))}
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>

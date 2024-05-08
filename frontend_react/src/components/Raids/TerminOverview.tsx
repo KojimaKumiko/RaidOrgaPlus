@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, Icon, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Card, CardContent, Icon, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Pagination } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 
 import { listActive, listArchived } from "../../services/endpoints/termine";
@@ -14,14 +14,13 @@ import { setTermin } from "../../store/slices/terminSlice";
 
 interface IProps {
 	raid: userRaid;
-	archived?: boolean;
+	archive?: boolean;
 }
 
 const TerminOverview = (props: IProps) => {
-	const { raid, archived } = props;
+	const { raid, archive } = props;
 
 	const [termine, setTermine] = useState<(Termin & SpielerTermin)[]>([]);
-	const [archive, setArchive] = useState<Termin[]>([]);
 
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
@@ -31,9 +30,9 @@ const TerminOverview = (props: IProps) => {
 
 		const getData = async () => {
 			try {
-				if (archived) {
+				if (archive) {
 					const data = await listArchived(raid.id);
-					setArchive(data);
+					setTermine(data as (Termin & SpielerTermin)[]);
 				} else {
 					const data = await listActive(raid.id);
 					setTermine(data);
@@ -69,6 +68,10 @@ const TerminOverview = (props: IProps) => {
 	};
 
 	const getIcon = (termin: SpielerTermin) => {
+		if (archive) {
+			return null;
+		}
+
 		if (termin.type == null) {
 			return "warning";
 		}
@@ -81,11 +84,17 @@ const TerminOverview = (props: IProps) => {
 		navigate(`${termin.id}`);
 	}
 
+	const [page, setPage] = useState(1);
+	const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+		setPage(value);
+	}
+
 	return (
 		<Card>
 			<CardContent>
 				<Grid container>
 					<Grid xs={12} sm={6} md={4} lg={3}>
+						{ archive ? <Pagination count={7} page={page} onChange={handlePageChange} /> : null }
 						<List>
 							{termine.map((t) => (
 								<ListItem key={t.id}>

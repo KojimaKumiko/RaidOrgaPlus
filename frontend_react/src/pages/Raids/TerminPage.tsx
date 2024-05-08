@@ -5,15 +5,22 @@ import TerminOverview from "../../components/Raids/TerminOverview";
 
 import { userRaid } from "models/Types";
 
-const TerminPage = () => {
+interface TerminPageProps {
+	archive?: boolean;
+}
+const TerminPage = (props: TerminPageProps) => {
+	const { archive } = props;
+
 	const raid = useRouteLoaderData("raidPage") as userRaid;
 
 	return (
 		<Box>
-			<TerminOverview raid={raid} />
-			<Button color="success" variant="contained" sx={{ mt: "1rem" }}>
-				Neuer Termin
-			</Button>
+			<TerminOverview raid={raid} archive={archive} />
+			{archive ? null : (
+				<Button color="success" variant="contained" sx={{ mt: "1rem" }}>
+					Neuer Termin
+				</Button>
+			)}
 		</Box>
 	);
 };

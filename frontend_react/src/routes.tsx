@@ -60,7 +60,8 @@ const Routes = () => {
 					<Route path="spielerliste" element={<MembersPage />} />
 					<Route path="termine" element={<TerminPage />} />
 					<Route path="termine/:terminId" element={<CompositionPage />} loader={compLoader} id="compPage" />
-					<Route path="archiv" element={<ArchivePage />} />
+					<Route path="archiv" element={<TerminPage archive />} />
+					<Route path="archiv/:terminId" element={<CompositionPage />} loader={compLoader} id="archivePage"/>
 					<Route path="blankos" element={<BlankoPage />} />
 					<Route path="settings" element={<RaidSettingsPage />} />
 				</Route>

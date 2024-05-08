@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useRouteLoaderData } from "react-router-dom";
 
 import {
 	Avatar,
 	Box,
+	Button,
 	Card,
 	CardContent,
 	CloseReason,
@@ -11,6 +11,7 @@ import {
 	SpeedDial,
 	SpeedDialAction,
 	Stack,
+	ToggleButton,
 	Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
@@ -25,32 +26,34 @@ import { Aufstellung } from "models/Aufstellung";
 import { Encounter } from "models/Encounter";
 import { encIcon } from "../../services/icons";
 import CompElement from "./CompElement";
-import { CompPageLoader } from "../../models/types";
 import { copyElements, deleteBoss, reloadBlanko, setCM } from "../../services/endpoints/aufstellungen";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { addElements, selectComposition, setComposition } from "../../store/slices/terminSlice";
+import { addElements, selectComposition, selectTermin, setComposition } from "../../store/slices/terminSlice";
 import { fixRoles } from "../../utils/misc";
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface CompositionProps {
 	comp: Aufstellung & Encounter;
 }
 
 const Composition = (props: CompositionProps) => {
-	const { termin } = useRouteLoaderData("compPage") as CompPageLoader;
 	const { comp } = props;
 
 	const dispatch = useAppDispatch();
+	const termin = useAppSelector(selectTermin)!;
+	const isArchived = termin.isArchived;
 
 	const [openSpeedDial, setOpenSpeedDial] = useState(false);
 	const onSpeedDialClick = () => {
 		setOpenSpeedDial(!openSpeedDial);
-	}
+	};
 
 	const onCloseSpeedDial = (reason: CloseReason) => {
 		if (reason !== "mouseLeave") {
 			setOpenSpeedDial(false);
 		}
-	}
+	};
 
 	const getAvatarSrc = () => {
 		return encIcon(comp?.abbr);
@@ -88,6 +91,14 @@ const Composition = (props: CompositionProps) => {
 		dispatch(setComposition(await deleteBoss(comp.id, termin.id)));
 	};
 
+	const [successColor, setSuccessColor] = useState("white");
+	const [success, setSuccess] = useState(comp.success);
+	const toggleSuccess = () => {
+		// TODO: call to db to change the value there aswell.
+		setSuccessColor(!success ? "green" : "white");
+		setSuccess(!success);
+	}
+
 	return (
 		<Card sx={{ height: "100%" }}>
 			<CardContent>
@@ -98,52 +109,65 @@ const Composition = (props: CompositionProps) => {
 							{comp.name} {isCM ? "CM" : ""}
 						</Typography>
 					</Stack>
-					<Box sx={{ transform: "translateZ(0px)", flexGrow: 1 }}>
-						{copyActive ? (
-							<IconButton sx={{ position: "absolute", right: 0 }}>
-								<ArrowBackIcon onClick={toggleCopyActive} />
+					{isArchived ? (
+						<Box sx={{ flexGrow: 1, display: "flex", justifyContent: "end", alignItems: "center" }}>
+							<IconButton sx={{ color: successColor }} onClick={toggleSuccess}>
+								{ success ? <CheckCircleIcon /> : <CheckCircleOutlineIcon /> }
 							</IconButton>
-						) : (
-							<SpeedDial
-								icon={<SettingsIcon />}
-								onClick={onSpeedDialClick}
-								onClose={(e, r) => onCloseSpeedDial(r)}
-								open={openSpeedDial}
-								ariaLabel="SpeedDial"
-								direction="down"
-								sx={{ position: "absolute", right: 0 }}
-								FabProps={{ sx: { height: 40, width: 40, backgroundColor: "#272727", color: "white" } }}>
-								<SpeedDialAction
-									tooltipTitle="Einträge hierher kopieren"
-									icon={<InputIcon />}
-									onClick={toggleCopyActive}
-									FabProps={{ sx: { bgcolor: "primary.dark", color: "white" } }}
-								/>
-								<SpeedDialAction
-									tooltipTitle="Blanko laden"
-									icon={<RefreshIcon />}
-									onClick={loadTemplate}
-									FabProps={{ sx: { bgcolor: "success.main", color: "white" } }}
-								/>
-								<SpeedDialAction
-									tooltipTitle="CM umschalten"
-									icon={<NewReleasesIcon />}
-									onClick={toggleCM}
+						</Box>
+					) : (
+						<Box sx={{ transform: "translateZ(0px)", flexGrow: 1 }}>
+							{copyActive ? (
+								<IconButton sx={{ position: "absolute", right: 0 }}>
+									<ArrowBackIcon onClick={toggleCopyActive} />
+								</IconButton>
+							) : (
+								<SpeedDial
+									icon={<SettingsIcon />}
+									onClick={onSpeedDialClick}
+									onClose={(e, r) => onCloseSpeedDial(r)}
+									open={openSpeedDial}
+									ariaLabel="SpeedDial"
+									direction="down"
+									sx={{ position: "absolute", right: 0 }}
 									FabProps={{
-										sx: [{ bgcolor: "#e91e63", color: "white" }, !hasCm() && { display: "none" }],
-									}}
-								/>
-								<SpeedDialAction
-									tooltipTitle="Boss löschen"
-									icon={<DeleteIcon />}
-									onClick={removeBoss}
-									FabProps={{ sx: { bgcolor: "error.main", color: "white" } }}
-								/>
-							</SpeedDial>
-						)}
-					</Box>
+										sx: { height: 40, width: 40, backgroundColor: "#272727", color: "white" },
+									}}>
+									<SpeedDialAction
+										tooltipTitle="Einträge hierher kopieren"
+										icon={<InputIcon />}
+										onClick={toggleCopyActive}
+										FabProps={{ sx: { bgcolor: "primary.dark", color: "white" } }}
+									/>
+									<SpeedDialAction
+										tooltipTitle="Blanko laden"
+										icon={<RefreshIcon />}
+										onClick={loadTemplate}
+										FabProps={{ sx: { bgcolor: "success.main", color: "white" } }}
+									/>
+									<SpeedDialAction
+										tooltipTitle="CM umschalten"
+										icon={<NewReleasesIcon />}
+										onClick={toggleCM}
+										FabProps={{
+											sx: [
+												{ bgcolor: "#e91e63", color: "white" },
+												!hasCm() && { display: "none" },
+											],
+										}}
+									/>
+									<SpeedDialAction
+										tooltipTitle="Boss löschen"
+										icon={<DeleteIcon />}
+										onClick={removeBoss}
+										FabProps={{ sx: { bgcolor: "error.main", color: "white" } }}
+									/>
+								</SpeedDial>
+							)}
+						</Box>
+					)}
 				</Stack>
-				{copyActive ? <CompositionCopy comp={comp} copy={copyComposition} /> : <CompositionBody comp={comp} />}
+				{copyActive ? <CompositionCopy comp={comp} copy={copyComposition} /> : <CompositionBody comp={comp} isArchived={isArchived} />}
 			</CardContent>
 		</Card>
 	);
@@ -151,17 +175,18 @@ const Composition = (props: CompositionProps) => {
 
 interface BodyProps {
 	comp: Aufstellung & Encounter;
+	isArchived: boolean;
 }
 
 const CompositionBody = (props: BodyProps) => {
-	const { comp } = props;
+	const { comp, isArchived } = props;
 
 	const getElements = () => {
 		const elements: JSX.Element[] = [];
 		for (let i = 1; i <= 10; i++) {
 			elements.push(
 				<Grid key={i} xs={6} sx={{ padding: "4px" }}>
-					<CompElement edit position={i} composition={comp} />
+					<CompElement edit={!isArchived} position={i} composition={comp} />
 				</Grid>
 			);
 		}

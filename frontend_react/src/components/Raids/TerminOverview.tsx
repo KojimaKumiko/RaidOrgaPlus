@@ -1,14 +1,8 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, Icon, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Pagination } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2";
-
-import { listActive, listArchived } from "../../services/endpoints/termine";
+import { Icon, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
 import { SpielerTermin } from "models/Spieler";
 import { Termin } from "models/Termin";
-import { userRaid } from "models/Types";
-import axios from "axios";
 import { useAppDispatch } from "../../store/hooks";
 import { setTermin } from "../../store/slices/terminSlice";
 
@@ -52,7 +46,7 @@ const TerminOverview = (props: IProps) => {
 	const handleClick = (termin: Termin) => {
 		dispatch(setTermin(termin));
 		navigate(`${termin.id}`);
-	}
+	};
 
 	return (
 		<List>

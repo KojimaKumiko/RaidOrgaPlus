@@ -1,4 +1,4 @@
-import { useParams, useRouteLoaderData } from "react-router-dom";
+import { useRouteLoaderData } from "react-router-dom";
 import { Box } from "@mui/material";
 
 import Lieutenants from "../../components/Raids/Lieutenants";
@@ -16,6 +16,6 @@ const RaidSettingsPage = () => {
 			<LogUpload raid={raid} />
 		</Box>
 	);
-}
+};
 
 export default RaidSettingsPage;

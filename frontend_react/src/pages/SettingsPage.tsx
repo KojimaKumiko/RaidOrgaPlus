@@ -19,6 +19,6 @@ const SettingsPage = () => {
 			</Stack>
 		</React.Fragment>
 	);
-}
+};
 
 export default SettingsPage;

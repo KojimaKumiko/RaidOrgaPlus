@@ -25,11 +25,11 @@ const MembersPage = () => {
 	const handleKickPlayer = async (member: Spieler) => {
 		const players = await kickPlayer(raidId, member.id);
 		setMembers(players);
-	}
+	};
 
 	const handleClose = () => {
 		setOpen(false);
-	}
+	};
 
 	return (
 		<Box sx={{ padding: 1 }}>

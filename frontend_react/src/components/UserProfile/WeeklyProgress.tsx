@@ -1,7 +1,7 @@
 import { Avatar, Box, Stack, Tooltip } from "@mui/material";
+
 import { Encounter } from "models/Encounter";
 import { encIcon, miscIcon } from "../../services/icons";
-import { useEffect } from "react";
 
 interface IWeeklyProgressProps {
 	encounters: Encounter[][];

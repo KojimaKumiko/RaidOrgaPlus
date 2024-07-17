@@ -143,7 +143,7 @@ const LoginPage = () => {
 
 	const handleClick = async () => {
 		setLoading(true);
-		handleFormSubmit(values => {
+		handleFormSubmit((values) => {
 			if (registerMode) {
 			} else {
 				login(values.accountName, values.password);
@@ -155,7 +155,7 @@ const LoginPage = () => {
 		if (key === "Enter" && formIsValid(registerMode)) {
 			handleClick();
 		}
-	}
+	};
 
 	const login = async (accname: string, password: string) => {
 		const response = await loginUser(accname, password);
@@ -170,16 +170,20 @@ const LoginPage = () => {
 			setCookie("session", response);
 			window.location.href = "/";
 		}
-		
+
 		setLoading(false);
 	};
 
 	const handleClose = () => {
 		setOpen(false);
-	}
+	};
 
 	return (
-		<Box component="form" sx={{ "& .MuiTextField-root": { m: 1 }, padding: (theme) => theme.spacing(3) }} noValidate autoComplete="off">
+		<Box
+			component="form"
+			sx={{ "& .MuiTextField-root": { m: 1 }, padding: (theme) => theme.spacing(3) }}
+			noValidate
+			autoComplete="off">
 			{inputFieldValues.map((value, index) => {
 				const styles = [value.registerMode && !registerMode && { display: "none" }];
 				return (

@@ -76,7 +76,10 @@ const ChipIcons = (props: IChipIconsProps) => {
 				build.prefer > 0 ? (
 					<StarIcon sx={{ marginLeft: 1, color: prefered(build.prefer) }} onClick={handlePrefMenuClick} />
 				) : (
-					<StarOutlineIcon sx={{ marginLeft: 1, color: prefered(build.prefer) }} onClick={handlePrefMenuClick} />
+					<StarOutlineIcon
+						sx={{ marginLeft: 1, color: prefered(build.prefer) }}
+						onClick={handlePrefMenuClick}
+					/>
 				);
 		}
 
@@ -96,7 +99,7 @@ const ChipIcons = (props: IChipIconsProps) => {
 			onPrefChange(star);
 			setAnchorEl(null);
 		}
-	}
+	};
 
 	const handleRoleSelect = (index: number) => {
 		if (edit && onRoleSelect) {
@@ -163,7 +166,15 @@ const BuildChip = (props: IProps) => {
 	if (ownProfile) {
 		buildChip = (
 			<StyledChip
-				avatar={<ChipIcons build={build} showStar={star} edit={edit} onRoleSelect={onRoleSelect} onPrefChange={onPrefChange} />}
+				avatar={
+					<ChipIcons
+						build={build}
+						showStar={star}
+						edit={edit}
+						onRoleSelect={onRoleSelect}
+						onPrefChange={onPrefChange}
+					/>
+				}
 				onDelete={onDelete}
 			/>
 		);

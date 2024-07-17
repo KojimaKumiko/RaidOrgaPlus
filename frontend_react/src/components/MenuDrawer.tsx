@@ -42,15 +42,15 @@ const MenuDrawer = (props: IProps) => {
 			flexShrink: 0,
 			[`& .MuiDrawer-paper`]: { width: props.drawerWidth, boxSizing: "border-box" },
 			...(!props.visible && {
-				display: "none"
-			})
+				display: "none",
+			}),
 		}),
 		box: css({
 			overflow: "auto",
 			backgroundColor: "#363636",
 			height: "100%",
-		})
-	}
+		}),
+	};
 
 	const links = [
 		{ name: "Home", link: "/", icon: "home" },

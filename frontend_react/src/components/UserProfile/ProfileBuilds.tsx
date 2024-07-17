@@ -162,13 +162,13 @@ const ProfileBuilds = (props: IProps) => {
 
 	const handlePrefChange = (build: Build, index: number) => async (star: number) => {
 		build.prefer = star;
-		const newBuilds = builds.map((b, i) => i === index ? build : b);
+		const newBuilds = builds.map((b, i) => (i === index ? build : b));
 		newBuilds.sort(compareBuilds);
 		setBuilds(newBuilds);
 
 		let roles = build.role.map((r) => r.id).join(", ");
 		await putPrefer(build.class.id, roles, star);
-	}
+	};
 
 	return (
 		<span>

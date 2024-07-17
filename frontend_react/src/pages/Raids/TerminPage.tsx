@@ -1,13 +1,14 @@
-import { Box, Button, Card, CardContent, Grid } from "@mui/material";
+import { useState, useEffect } from "react";
 import { useRouteLoaderData } from "react-router-dom";
+import { Box, Button, Card, CardContent } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2";
+import axios from "axios";
 
 import TerminOverview from "../../components/Raids/TerminOverview";
 
 import { userRaid } from "models/Types";
-import axios from "axios";
 import { SpielerTermin } from "models/Spieler";
 import { Termin } from "models/Termin";
-import { useState, useEffect } from "react";
 import { listActive } from "../../services/endpoints/termine";
 
 const TerminPage = () => {
@@ -20,9 +21,6 @@ const TerminPage = () => {
 
 		const getData = async () => {
 			try {
-				// 	const data = await listArchived(raid.id);
-				// 	setTermine(data as (Termin & SpielerTermin)[]);
-
 				const data = await listActive(raid.id);
 				setTermine(data);
 			} catch (error) {
@@ -47,7 +45,6 @@ const TerminPage = () => {
 				<CardContent>
 					<Grid container>
 						<Grid xs={12} sm={6} md={4} lg={3}>
-							{/* { archive ? <Pagination count={7} page={page} onChange={handlePageChange} /> : null } */}
 							<TerminOverview termine={termine} />
 						</Grid>
 					</Grid>

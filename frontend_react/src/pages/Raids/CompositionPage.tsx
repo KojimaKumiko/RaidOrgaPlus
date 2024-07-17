@@ -7,41 +7,58 @@ import Grid from "@mui/material/Unstable_Grid2";
 
 import Toolbar from "../../components/Aufstellung/Toolbar";
 import Composition from "../../components/Aufstellung/Composition";
-import { addBoss, addStrike, addWing, getAnmeldungForSpieler, getAnmeldungenForTermin } from "../../services/endpoints/termine";
+import {
+	addBoss,
+	addStrike,
+	addWing,
+	getAnmeldungForSpieler,
+	getAnmeldungenForTermin,
+} from "../../services/endpoints/termine";
 import { Encounter } from "models/Encounter";
 import { Aufstellung } from "models/Aufstellung";
 import { getElements, getForTermin } from "../../services/endpoints/aufstellungen";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectComposition, setComposition, setElements, setSignUpPlayer, setSignUps, setTermin } from "../../store/slices/terminSlice";
+import {
+	selectComposition,
+	setComposition,
+	setElements,
+	setSignUpPlayer,
+	setSignUps,
+	setTermin,
+} from "../../store/slices/terminSlice";
 import { CompPageLoader } from "../../models/types";
 
 const CompositionPage = () => {
-	const { termin } = useRouteLoaderData("compPage") as CompPageLoader || useRouteLoaderData("archivePage") as CompPageLoader;
+	const { termin } =
+		(useRouteLoaderData("compPage") as CompPageLoader) || (useRouteLoaderData("archivePage") as CompPageLoader);
 
 	const dispatch = useAppDispatch();
 	const compositions = useAppSelector(selectComposition);
 
-	const fetchData = useCallback(async (signal?: AbortSignal) => {
-		try {
-			console.log("fetching data in CompPage");
+	const fetchData = useCallback(
+		async (signal?: AbortSignal) => {
+			try {
+				console.log("fetching data in CompPage");
 
-			const comps = await getForTermin(termin.id, signal);
-			const elements = await getElements(termin.id, signal);
-			const signUps = await getAnmeldungenForTermin(termin.id, signal);
-			const signUpPlayer = await getAnmeldungForSpieler(termin.id, signal);
+				const comps = await getForTermin(termin.id, signal);
+				const elements = await getElements(termin.id, signal);
+				const signUps = await getAnmeldungenForTermin(termin.id, signal);
+				const signUpPlayer = await getAnmeldungForSpieler(termin.id, signal);
 
-			dispatch(setComposition(comps));
-			dispatch(setElements(elements));
-			dispatch(setSignUps(signUps));
-			dispatch(setSignUpPlayer(signUpPlayer));
-		} catch (error) {
-			if (axios.isCancel(error)) {
-				console.log(error);
-			} else {
-				throw error;
+				dispatch(setComposition(comps));
+				dispatch(setElements(elements));
+				dispatch(setSignUps(signUps));
+				dispatch(setSignUpPlayer(signUpPlayer));
+			} catch (error) {
+				if (axios.isCancel(error)) {
+					console.log(error);
+				} else {
+					throw error;
+				}
 			}
-		}
-	}, [dispatch, termin.id]);
+		},
+		[dispatch, termin.id]
+	);
 
 	const handleRefresh = () => {
 		fetchData().catch(console.error);
@@ -51,7 +68,7 @@ const CompositionPage = () => {
 		dispatch(setTermin(termin));
 
 		const abortController = new AbortController();
-		
+
 		fetchData(abortController.signal).catch(console.error);
 
 		return () => {

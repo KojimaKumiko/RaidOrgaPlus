@@ -7,6 +7,6 @@ const HelpPage = () => {
 			<Counter />
 		</span>
 	);
-}
+};
 
 export default HelpPage;

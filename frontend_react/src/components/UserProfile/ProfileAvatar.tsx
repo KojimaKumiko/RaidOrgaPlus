@@ -23,9 +23,10 @@ const ProfileAvatar = (props: IProps) => {
 	const { sx, size } = props;
 	const style = [
 		size != null && {
-			width: size, height: size
+			width: size,
+			height: size,
 		},
-		...(sx != null ? (Array.isArray(sx) ? sx : [sx]) : [])
+		...(sx != null ? (Array.isArray(sx) ? sx : [sx]) : []),
 	];
 
 	return <Avatar src={src} sx={style} onDoubleClick={props.onDoubleClick} />;

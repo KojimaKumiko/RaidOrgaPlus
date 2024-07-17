@@ -26,7 +26,7 @@ const trophiesCss = {
 		width: 26,
 		height: 26,
 	}),
-}
+};
 
 const Trophies = (props: ITrophiesProps) => {
 	const { insights } = props;
@@ -34,7 +34,7 @@ const Trophies = (props: ITrophiesProps) => {
 
 	return (
 		<Box sx={{ width: "fit-content" }}>
-			{insights.map(type => (
+			{insights.map((type) => (
 				<Stack direction="row" alignItems="center" sx={{ mb: 1 }} key={type.name}>
 					<Avatar src={miscIcon(type.name)} css={typeIcon} />
 					<Avatar src={miscIcon("inv")} css={useIcon} />
@@ -47,6 +47,6 @@ const Trophies = (props: ITrophiesProps) => {
 			))}
 		</Box>
 	);
-}
+};
 
 export default Trophies;

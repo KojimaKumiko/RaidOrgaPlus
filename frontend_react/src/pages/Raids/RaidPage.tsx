@@ -1,11 +1,11 @@
-import { Link, Outlet, useLoaderData, useLocation, useMatches, useRouteLoaderData } from "react-router-dom";
-import { AppBar, Breadcrumbs, Toolbar, IconButton } from "@mui/material";
+import { Outlet, useRouteLoaderData } from "react-router-dom";
+import { AppBar, Toolbar, IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { userRaid } from "models/Types";
 
-const RaidPage = () =>  {
+const RaidPage = () => {
 	const raid = useRouteLoaderData("raidPage") as userRaid;
 	// const matches = useMatches();
 
@@ -13,7 +13,7 @@ const RaidPage = () =>  {
 
 	const handleBack = () => {
 		window.history.back();
-	}
+	};
 
 	return (
 		<Box>
@@ -32,6 +32,6 @@ const RaidPage = () =>  {
 			<Outlet />
 		</Box>
 	);
-}
+};
 
 export default RaidPage;

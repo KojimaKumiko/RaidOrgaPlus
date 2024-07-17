@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Container, Tab, Tabs } from "@mui/material";
 
 import TabPanel from "../Misc/TabPanel";
 import WeeklyProgress from "./WeeklyProgress";
@@ -15,10 +15,11 @@ import axios from "axios";
 interface IProgressOverviewProps {
 	user: Spieler;
 	ownProfile: boolean;
+	maxWidth: "xs" | "sm" | "md" | "lg" | "xl" | false;
 }
 
 const ProgressOverview = (props: IProgressOverviewProps) => {
-	const { user, ownProfile } = props;
+	const { user, ownProfile, maxWidth } = props;
 
 	const [value, setValue] = useState(0);
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -60,11 +61,11 @@ const ProgressOverview = (props: IProgressOverviewProps) => {
 
 		return () => {
 			abortController.abort();
-		}
+		};
 	}, [ownProfile, user.id]);
 
 	return (
-		<Box sx={{ bgcolor: "background.main", mt: 2 }}>
+		<Container maxWidth={maxWidth} sx={{ bgcolor: "background.main", mt: 2 }}>
 			<Tabs value={value} onChange={handleChange}>
 				<Tab label="Weekly Progress" />
 				<Tab label="Trophäen" />
@@ -79,7 +80,7 @@ const ProgressOverview = (props: IProgressOverviewProps) => {
 			<TabPanel value={value} index={2} label="progress-tab-2">
 				<Achievements achievementList={achievementList} achievementsDone={achievementsDone} />
 			</TabPanel>
-		</Box>
+		</Container>
 	);
 };
 

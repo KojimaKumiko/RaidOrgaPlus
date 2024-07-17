@@ -1,7 +1,18 @@
-import { Box, Card, CardContent, Icon, IconButton, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
-import { terminState, userRaid } from "models/Types";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+	Card,
+	CardContent,
+	Container,
+	Icon,
+	IconButton,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemText,
+} from "@mui/material";
+
+import { terminState, userRaid } from "models/Types";
 import { getAnmeldungState, listRaidsForPlayer } from "../services/endpoints/raids";
 
 const MyRaidPage = () => {
@@ -50,7 +61,7 @@ const MyRaidPage = () => {
 	};
 
 	return (
-		<Box sx={{ maxWidth: "25%" }}>
+		<Container maxWidth="xs" sx={{ marginLeft: 0 }}>
 			<Card>
 				<CardContent>
 					<List>
@@ -67,7 +78,7 @@ const MyRaidPage = () => {
 					</List>
 				</CardContent>
 			</Card>
-		</Box>
+		</Container>
 	);
 };
 

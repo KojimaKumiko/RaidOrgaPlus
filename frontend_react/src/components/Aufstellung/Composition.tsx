@@ -26,9 +26,9 @@ import { Aufstellung } from "models/Aufstellung";
 import { Encounter } from "models/Encounter";
 import { encIcon } from "../../services/icons";
 import CompElement from "./CompElement";
-import { copyElements, deleteBoss, reloadBlanko, setCM } from "../../services/endpoints/aufstellungen";
+import { copyElements, deleteBoss, reloadBlanko, setCM, setSuccess as setSuccessDB } from "../../services/endpoints/aufstellungen";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { addElements, selectComposition, selectTermin, setComposition } from "../../store/slices/terminSlice";
+import { addElements, selectComposition, selectTermin, setComposition, setCompSuccess } from "../../store/slices/terminSlice";
 import { fixRoles } from "../../utils/misc";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -91,12 +91,13 @@ const Composition = (props: CompositionProps) => {
 		dispatch(setComposition(await deleteBoss(comp.id, termin.id)));
 	};
 
-	const [successColor, setSuccessColor] = useState("white");
+	const [successColor, setSuccessColor] = useState(comp.success ? "green" : "white");
 	const [success, setSuccess] = useState(comp.success);
-	const toggleSuccess = () => {
-		// TODO: call to db to change the value there aswell.
+	const toggleSuccess = async () => {
 		setSuccessColor(!success ? "green" : "white");
 		setSuccess(!success);
+		dispatch(setCompSuccess({ compId: comp.id, success: !success }));
+		await setSuccessDB(comp.id, !success);
 	}
 
 	return (

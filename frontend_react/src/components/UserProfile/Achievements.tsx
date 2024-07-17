@@ -112,7 +112,7 @@ const Achievements = (props: IAchievementsProps) => {
 					<AccordionDetails>
 						<Grid container>
 							{raidAchievements.achievements.map((achievement: any) => (
-								<Grid xs={6} sm={6} md={3} xl={2} key={achievement.id} css={containerCss}>
+								<Grid xs={6} sm={6} md={3} key={achievement.id} css={containerCss}>
 									<Box css={[achievementCss, isDone(achievement) && doneCss]}>
 										<Stack direction="row">
 											<Typography sx={{ m: "auto" }}>{achievement.name}</Typography>

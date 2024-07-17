@@ -125,6 +125,11 @@ export const terminSlice = createSlice({
 		},
 		setShowExtraRoles(state, action: PayloadAction<boolean>) {
 			state.showExtraRoles = action.payload;
+		},
+		setCompSuccess(state, action: PayloadAction<{ compId: number; success: boolean; }>) {
+			const { compId, success } = action.payload;
+			const comp = state.composition.find(c => c.id === compId);
+			comp!.success = success;
 		}
 	},
 });
@@ -170,5 +175,6 @@ export const {
 	addElement,
 	addElements,
 	setShowExtraRoles,
+	setCompSuccess,
 } = terminSlice.actions;
 export default terminSlice.reducer;

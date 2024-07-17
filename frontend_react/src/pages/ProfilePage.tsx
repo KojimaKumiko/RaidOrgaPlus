@@ -86,7 +86,7 @@ const ProfilePage = () => {
 						<ProgressShare />
 					</>
 				) : null}
-				{sharedProgress ? <ProgressOverview user={user} ownProfile={ownProfile} /> : null}
+				{sharedProgress ? <ProgressOverview maxWidth={false} user={user} ownProfile={ownProfile} /> : null}
 			</Stack>
 		</Stack>
 	);

@@ -135,7 +135,7 @@ const Toolbar = (props: ToolbarProps) => {
 					{/* <SignUp value={signUpPlayer} onValueChange={handleSignUpValueChange} /> */}
 					{!isArchived ? <SignUp value={signUpPlayer} onValueChange={handleSignUpValueChange} /> : null}
 				</Stack>
-				<SignUpList signInList={signUps} onValueChange={handleSignUpListValueChange} />
+				<SignUpList signInList={signUps} archived={isArchived} onValueChange={handleSignUpListValueChange} />
 			</Stack>
 			<Stack direction="row" css={style.actionRow}>
 				{!isArchived ? (

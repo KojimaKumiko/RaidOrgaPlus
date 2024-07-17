@@ -29,13 +29,15 @@ const style = {
 
 interface SignUpListProps {
 	signInList: (Spieler & SpielerTermin)[];
+	archived?: boolean;
 	onValueChange: (newValue: number | null, player: Spieler & SpielerTermin) => void;
 }
 
 const SignUpList = (props: SignUpListProps) => {
-	const { signInList, onValueChange } = props;
+	const { signInList, archived, onValueChange } = props;
 
 	const { role } = useRouteLoaderData("raidPage") as userRaid;
+	const editable = role > 0 && !archived;
 
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 	const [popperWidth, setPopperWidth] = useState(0);
@@ -98,7 +100,7 @@ const SignUpList = (props: SignUpListProps) => {
 									<SignUpElements
 										key={s.id}
 										playerDate={s}
-										role={role}
+										editable={editable}
 										color={signUpColor}
 										icon={signUpIcon}
 										onValueChange={onValueChange}
@@ -115,14 +117,14 @@ const SignUpList = (props: SignUpListProps) => {
 
 interface SignUpElementsProps {
 	playerDate: Spieler & SpielerTermin;
-	role: number;
+	editable: boolean;
 	color: (type: number) => string;
 	icon: (type: number) => string;
 	onValueChange: (newValue: number | null, player: Spieler & SpielerTermin) => void;
 }
 
 const SignUpElements = (props: SignUpElementsProps) => {
-	const { playerDate, role, color, icon, onValueChange } = props;
+	const { playerDate, editable, color, icon, onValueChange } = props;
 	const [edit, setEdit] = useState(false);
 
 	const handleAnmeldungClick = () => {
@@ -144,7 +146,7 @@ const SignUpElements = (props: SignUpElementsProps) => {
 	) : (
 		<ListItem
 			secondaryAction={
-				role > 0 ? (
+				editable ? (
 					<IconButton onClick={handleAnmeldungClick}>
 						<Icon color={color(playerDate.type) as any}>{icon(playerDate.type)}</Icon>
 					</IconButton>

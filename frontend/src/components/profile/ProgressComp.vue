@@ -29,7 +29,7 @@
         }),
         computed: {
             maxWing: function(): number {
-                return this.bosses.length;
+                return this.bosses.length - 1; // subtract 1, since Wing 8 has perma CotM buff.
             }
         },
         methods: {

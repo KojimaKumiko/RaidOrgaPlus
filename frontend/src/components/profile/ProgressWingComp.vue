@@ -51,7 +51,7 @@
 				const difference = Number(new Date()) - timeReference;
 				const rotations = Math.floor(difference / (1000 * 60 * 60 * 24 * 7));
 				const rotationWing = (rotations % this.maxWing) + 1;
-				return this.wing === rotationWing;
+				return this.wing === rotationWing || this.wing === (this.maxWing + 1);
 			},
 			showCotmIcons: function(): boolean {
 				return this.$vStore.getters.windowWidth > 369;

@@ -124,7 +124,7 @@ async function kickPlayer(req: Request, authentication: Authentication): Promise
 	if (raidId && user) {
 		const role = _roles.forRaid(authentication, raidId);
 		const kickRole = (await _raids.getRoleForPlayer(raidId, user))[0];
-		if (role > 1 && role > kickRole) {
+		if (role > 0 && role > kickRole) {
 			const raid = await _raids.get(raidId);
 			const spieler = await _users.get(user);
 

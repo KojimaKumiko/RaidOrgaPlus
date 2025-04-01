@@ -40,14 +40,14 @@
 		},
 		computed: {
 			isEmboldenedWing: function(): boolean {
-				const timeRef = Number(new Date("2022-09-19T00:00:10"));
+				const timeRef = Number(new Date("2022-09-05T00:00:10"));
 				const difference = Number(new Date()) - timeRef;
 				const rotations = Math.floor(difference / (1000 * 60 * 60 * 24 * 7));
 				const rotationWing = (rotations % this.maxWing) + 1;
 				return this.wing === rotationWing;
 			},
 			isBuffWing: function(): boolean {
-				const timeReference = Number(new Date("2022-09-12T00:00:10"));
+				const timeReference = Number(new Date("2022-08-29T00:00:10"));
 				const difference = Number(new Date()) - timeReference;
 				const rotations = Math.floor(difference / (1000 * 60 * 60 * 24 * 7));
 				const rotationWing = (rotations % this.maxWing) + 1;

@@ -100,6 +100,12 @@ const executeCommand = async (interaction: MessageContextMenuCommandInteraction<
 			await finishBewerbung(guildMember, message, orgaAccount);
 
 			await response.update({ content: "Die Bewerbung wurde erfolgreich abgeschlossen!", components: [] });
+
+			const welcomeChannel = await interaction.guild.channels.fetch(process.env.WELCOME_CHANNEL);
+			if (welcomeChannel && welcomeChannel.isTextBased()) {
+				const msg = `@silent ${guildMember.user.username} ist nun ein teil der Community!`;
+				await welcomeChannel.send(msg);
+			}
 		}
 	} catch (e) {
 		await interaction.editReply({ components: [] });

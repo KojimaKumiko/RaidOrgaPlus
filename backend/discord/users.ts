@@ -103,6 +103,14 @@ export async function removeRaidLead(accName: string): Promise<void> {
 	}
 }
 
+export async function removeNewMemberRole(accName: string): Promise<void> {
+	const user = await getGuildMember(accName);
+
+	if (user) {
+		await user.roles.remove(config.newMemberRole);
+	}
+}
+
 function getGuild() {
 	return client.guilds.cache.get(config.server);
 }

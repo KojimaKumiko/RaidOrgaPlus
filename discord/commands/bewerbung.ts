@@ -120,6 +120,7 @@ const finishBewerbung = async (guildMember: GuildMember, message: Message, accou
 	try {
 		await guildMember.roles.remove(process.env.OPEN_ROLE, "Bewerbung abgeschlossen");
 		await guildMember.roles.add(process.env.TRIAL_ROLE, "Bewerbung abgeschlossen");
+		await guildMember.roles.add(process.env.RAIDER_ROLE, "Bewerbung abgeschlossen");
 		await upgradePlayer(account.id);
 		await message.react("👍");
 	} catch (e) {

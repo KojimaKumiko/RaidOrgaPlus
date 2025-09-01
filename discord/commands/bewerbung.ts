@@ -105,13 +105,14 @@ const executeCommand = async (interaction: MessageContextMenuCommandInteraction<
 
 			const welcomeChannel = await interaction.guild.channels.fetch(process.env.WELCOME_CHANNEL);
 			if (welcomeChannel && welcomeChannel.isTextBased()) {
-				const msg = `Hey ${userMention(guildMember.user.id)}, schön, dass du deinen Weg zu uns gefunden hast. <:aurene2:546815178440704001>
+				const msg = `Hey ${userMention(userId)}, schön, dass du deinen Weg zu uns gefunden hast. <:aurene2:546815178440704001>
 Alle wichtigen Infos zur Community findest du in ${channelMention("504274282550132768")}. Falls du eine Raid-Gruppe suchst, schau doch mal in unsere ${channelMention("1047119423145791488")}, gib ein Gesuch unter ${channelMention("807294070173990952")} auf oder melde dich spontan auf ein Gesuch im ${channelMention("380353536745275393")}.
 Du bist die ersten 60 Tage als Newbie gekennzeichnet, dies hat aber keinen Einfluss auf deine Rechte in der Community.`;
 				await welcomeChannel.send(msg);
 			}
 		}
 	} catch (e) {
+		console.error(e);
 		await interaction.editReply({ components: [] });
 	}
 };

@@ -48,7 +48,8 @@ const executeCommand = async (interaction: MessageContextMenuCommandInteraction<
 	const userString = embed.description;
 	const userId = /\d+/.exec(userString)[0];
 
-	const guildMember = await interaction.guild.members.fetch(userId);
+	const guild = interaction.guild;
+	const guildMember = await guild.members.fetch(userId);
 	const nickname = guildMember.nickname ?? "-";
 	const isNicknameCorrect =
 		guildMember.nickname != null && guildMember.nickname.trim() != null
@@ -99,17 +100,18 @@ const executeCommand = async (interaction: MessageContextMenuCommandInteraction<
 		const response = await reply.awaitMessageComponent({ time: 60_000 });
 
 		if (response.customId === "finishBewerbung") {
+			await response.update({ content: "Die Bewerbung wird bearbeitet...", components: [] });
 			await finishBewerbung(guildMember, message, orgaAccount);
 
-			await response.update({ content: "Die Bewerbung wurde erfolgreich abgeschlossen!", components: [] });
-
-			const welcomeChannel = await interaction.guild.channels.fetch(process.env.WELCOME_CHANNEL);
+			const welcomeChannel = await guild.channels.fetch(process.env.WELCOME_CHANNEL);
 			if (welcomeChannel && welcomeChannel.isTextBased()) {
 				const msg = `Hey ${userMention(userId)}, schön, dass du deinen Weg zu uns gefunden hast. <:aurene2:546815178440704001>
 Alle wichtigen Infos zur Community findest du in ${channelMention("504274282550132768")}. Falls du eine Raid-Gruppe suchst, schau doch mal in unsere ${channelMention("1047119423145791488")}, gib ein Gesuch unter ${channelMention("807294070173990952")} auf oder melde dich spontan auf ein Gesuch im ${channelMention("380353536745275393")}.
 Du bist die ersten 60 Tage als Newbie gekennzeichnet, dies hat aber keinen Einfluss auf deine Rechte in der Community.`;
 				await welcomeChannel.send(msg);
 			}
+
+			await response.editReply({ content: "Die Bewerbung wurde erfolgreich abgeschlossen!", components: [] });
 		}
 	} catch (e) {
 		console.error(e);

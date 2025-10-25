@@ -8,6 +8,8 @@ export async function insights(userId: number): Promise<any> {
 		if (!sf_api) return 0;
 		const key = sf_api[0];
 		if (!key) return [];
+
+		return []; // temporarily disable API calls.
 		const itemCounts = await api.itemCount(key);
 
 		const insights = getCountOfItemList(itemCounts, items.insights);

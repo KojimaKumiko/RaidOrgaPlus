@@ -13,6 +13,7 @@ export async function achievementsDone(userId: number): Promise<any[]> {
 			return [];
 		}
 
+		return []; // temporarily disable API calls.
 		return await api.getDoneAchievements(key);
 	} catch (e) {
 		console.error(e);

@@ -15,7 +15,6 @@ async function raidProgress(userId: number): Promise<any> {
 			return [];
 		}
 
-		return []; // temporarily disable API calls.
 		return await api.fetchProgress(key);
 	} catch (e) {
 		console.error(e);

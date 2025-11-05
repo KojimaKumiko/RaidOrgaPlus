@@ -1,4 +1,4 @@
-import { GuildMember, Role } from "discord.js";
+import { Collection, GuildMember, Role } from "discord.js";
 import { AVATAR_BASE_URL } from "./discord";
 import { client } from "../../discord/bot";
 import config from "./config.json";
@@ -6,18 +6,45 @@ import { Spieler } from "models/Spieler";
 import { DiscordMember, DiscordRole } from "models/Discord";
 import { equalsIgnoreCase } from "../util/misc";
 
+interface IMemberCache {
+	members: Collection<string, GuildMember>,
+	cachedUntil: number
+}
+
+const CACHE_FOR = 1000 * 60;
+const memberCache: IMemberCache = { members: null, cachedUntil: 0 };
+
 export async function getUser(id: string): Promise<DiscordMember> {
 	return (await getAllUsers()).find((m) => m.id === id);
 }
 
 export async function getAllUsers(): Promise<DiscordMember[]> {
 	try {
-		const guild = client.guilds.cache.get(config.server);
-		const members = await guild.members.fetch();
+		const members = await getAllGuildMembers();
+		if (members == null) {
+			return [];
+		}
+
 		return members.filter((m) => m.user.bot === false).map(mapMember);
 	} catch (e) {
 		console.log(e);
 		return [];
+	}
+}
+
+async function getAllGuildMembers() {
+	try {
+		const guild = getGuild();
+		let members = memberCache.members;
+		if (members == null || members.size < 0 || memberCache.cachedUntil < Date.now()) {
+			members = await guild.members.fetch();
+			memberCache.members = members;
+			memberCache.cachedUntil = Date.now() + CACHE_FOR;
+		}
+		return members;
+	} catch (e) {
+		console.log(e);
+		return null;
 	}
 }
 
@@ -116,7 +143,7 @@ function getGuild() {
 }
 
 export async function getGuildMember(accName: string): Promise<GuildMember> {
-	const members = await getGuild().members.fetch();
+	const members = await getAllGuildMembers();
 	return members.find((m) => m.displayName.toLocaleUpperCase().includes(accName.toLocaleUpperCase()));
 }
 

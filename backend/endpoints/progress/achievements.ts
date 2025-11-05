@@ -13,7 +13,6 @@ export async function achievementsDone(userId: number): Promise<any[]> {
 			return [];
 		}
 
-		return [];
 		return await api.getDoneAchievements(key);
 	} catch (e) {
 		console.error(e);

@@ -9,7 +9,6 @@ export async function insights(userId: number): Promise<any> {
 		const key = sf_api[0];
 		if (!key) return [];
 
-		return [];
 		const itemCounts = await api.itemCount(key);
 
 		const insights = getCountOfItemList(itemCounts, items.insights);
@@ -37,7 +36,7 @@ export async function insights(userId: number): Promise<any> {
 		]
 	} catch (e) {
 		console.error(e);
-		return {};
+		return [];
 	}
 }
 

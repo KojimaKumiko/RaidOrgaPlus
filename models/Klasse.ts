@@ -48,4 +48,14 @@ export const CLASSES: Class[] = [
 	{ id: 7, name: "Bladesworn", abbr: "Bls", color: "", isBase: true, fk_base: 7 },
 	{ id: 8, name: "Willbender", abbr: "Wlb", color: "", isBase: true, fk_base: 8 },
 	{ id: 9, name: "Vindicator", abbr: "Vin", color: "", isBase: true, fk_base: 9 },
+	// Visions of Eternity
+	{ id: 1, name: "Evoker", abbr: "Evo", color: "", isBase: true, fk_base: 1 },
+	{ id: 2, name: "Troubadour", abbr: "Trb", color: "", isBase: true, fk_base: 2 },
+	{ id: 3, name: "Ritualist", abbr: "Rit", color: "", isBase: true, fk_base: 3 },
+	{ id: 4, name: "Galeshot", abbr: "Gls", color: "", isBase: true, fk_base: 4 },
+	{ id: 5, name: "Amalgam", abbr: "Alg", color: "", isBase: true, fk_base: 5 },
+	{ id: 6, name: "Antiquary", abbr: "Atq", color: "", isBase: true, fk_base: 6 },
+	{ id: 7, name: "Paragon", abbr: "Prg", color: "", isBase: true, fk_base: 7 },
+	{ id: 8, name: "Luminary", abbr: "Lum", color: "", isBase: true, fk_base: 8 },
+	{ id: 9, name: "Conduit", abbr: "Cdt", color: "", isBase: true, fk_base: 9 },
 ];
